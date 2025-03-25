@@ -1,0 +1,78 @@
+# Project specific
+/lessons/
+/.cursor/
+/venv/
+/.venv/
+/.env
+/.env.*
+!/.env.example
+
+# Django
+*.log
+*.pot
+*.pyc
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node
+node_modules/
+/frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env.local
+.env.*.local
+/frontend/.pnp
+/frontend/.pnp.js
+/frontend/coverage
+/frontend/dist
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.vs/
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.sqlite3
+*.db
+
+# Backups
+*.bak
+*.tmp
+*.temp 

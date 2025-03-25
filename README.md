@@ -1,103 +1,136 @@
-# ChatSphere 🌐
+# ChatSphere
 
-A modern real-time chat application with AI integration, built with Django and Vue.js.
+A comprehensive AI-powered chatbot platform that enables users to create, deploy, and manage intelligent chatbots without writing code.
 
-## Features 🚀
+## Features
 
-- Real-time messaging using WebSocket
-- AI-powered chat assistance using LangChain and OpenAI
-- Vector search capabilities with Pinecone
-- User authentication and authorization
-- Message history and search
-- File sharing capabilities
-- Responsive design
+- **Custom Chatbot Creation**: Build chatbots trained on your specific data
+- **Multiple Data Sources**: Upload various document types including PDFs, Word docs, text files, and websites
+- **Advanced AI Models**: Powered by cutting-edge language models for natural conversations
+- **User Authentication**: Secure login and user management system
+- **Conversation Management**: Save, review, and analyze chat conversations
+- **Analytics Dashboard**: Track chatbot performance and user engagement
+- **API Integration**: Connect your chatbots with external platforms
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 
-## Tech Stack 💻
+## Tech Stack
 
-### Backend
-- Django 4.2+
-- Django REST Framework
-- Channels for WebSocket
-- PostgreSQL
-- Redis
-- LangChain & OpenAI for AI features
-- Pinecone for vector search
+- **Frontend**: Vue.js 3 with Vue Router and Pinia state management
+- **Backend**: Django REST Framework
+- **Database**: PostgreSQL
+- **AI Integration**: LangChain, OpenAI, and custom AI services
+- **Authentication**: JWT-based auth system
+- **Containerization**: Docker and Docker Compose
 
-### Frontend
-- Vue.js
-- Vuex for state management
-- Vue Router
-- Axios for HTTP requests
-- Socket.io for real-time communication
-
-## Getting Started 🏁
+## Getting Started
 
 ### Prerequisites
+
 - Python 3.10+
-- Node.js 18+
-- PostgreSQL
-- Redis
-- OpenAI API key
-- Pinecone API key
+- Node.js 18+ and npm
+- Docker and Docker Compose (optional, for containerized setup)
+- Git
 
 ### Installation
 
-1. Clone the repository:
+#### Clone the Repository
+
 ```bash
+# PowerShell
 git clone https://github.com/Wetende/chatsphere.git
-cd ChatSphere
+cd chatsphere
 ```
 
-2. Set up backend:
+#### Backend Setup
+
 ```bash
-cd backend
+# PowerShell
+# Create and activate virtual environment
 python -m venv venv
-source venv/Scripts/activate  # Windows
+.\venv\Scripts\Activate
+
+# Install dependencies
+cd backend
 pip install -r requirements.txt
-```
 
-3. Set up frontend:
-```bash
-cd ../frontend
-npm install
-```
-
-4. Configure environment variables:
-- Copy `.env.example` to `.env` in both backend and frontend directories
-- Update the variables with your configuration
-
-5. Run migrations:
-```bash
-cd ../backend
+# Run migrations
+cd ..
 python manage.py migrate
+
+# Start Django server
+python manage.py runserver
 ```
 
-6. Start the development servers:
-```bash
-# Terminal 1 (Backend)
-python manage.py runserver
+#### Frontend Setup
 
-# Terminal 2 (Frontend)
-cd ../frontend
+```bash
+# PowerShell
+# In a new terminal window, from the project root
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run serve
 ```
 
-Visit http://localhost:3000 to see the application running.
+### Environment Variables
 
-## Contributing 🤝
+Create a `.env` file in the root directory with the following variables:
+
+```
+DEBUG=True
+SECRET_KEY=your_django_secret_key
+DATABASE_URL=postgres://user:password@localhost:5432/chatsphere
+OPENAI_API_KEY=your_openai_api_key
+
+# Optional settings
+ALLOWED_HOSTS=localhost,127.0.0.1
+CORS_ALLOWED_ORIGINS=http://localhost:8080
+```
+
+### Docker Setup (Alternative)
+
+```bash
+# PowerShell
+# Build and start all services
+docker compose up -d
+
+# Check running containers
+docker ps
+
+# View logs
+docker compose logs -f
+```
+
+## Development
+
+After setup, you can access:
+- Frontend: http://localhost:8080
+- Backend API: http://localhost:8000/api/
+- Admin interface: http://localhost:8000/admin/
+
+### Testing API Connection
+
+To verify the API connection is working:
+1. Navigate to http://localhost:8080/test-api
+2. You should see a success message with connection details
+3. If you see an error, check that both servers are running
+
+## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create your feature branch: `git checkout -b feature/my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature/my-new-feature`
+5. Submit a pull request
 
-## License 📝
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Acknowledgments 🙏
+## Acknowledgments
 
-- OpenAI for GPT integration
-- Pinecone for vector search capabilities
-- All contributors who help improve the project 
+- OpenAI for their language models
+- All the open-source libraries that made this project possible 
