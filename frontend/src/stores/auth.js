@@ -1,17 +1,15 @@
 import { defineStore } from 'pinia'
-import { auth } from '@/services/api'
+import api from '@/services/api'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    isAuthenticated: false,
     loading: false,
     error: null
   }),
   
   getters: {
-    currentUser: (state) => state.user,
-    isLoggedIn: (state) => state.isAuthenticated
+    isAuthenticated: (state) => !!state.user
   },
   
   actions: {
@@ -20,13 +18,12 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
       
       try {
-        const response = await auth.login(username, password)
+        const response = await api.auth.login(username, password)
         this.user = response.data
-        this.isAuthenticated = true
-        return Promise.resolve(response)
+        return true
       } catch (error) {
         this.error = error.response?.data?.detail || 'Login failed'
-        return Promise.reject(error)
+        return false
       } finally {
         this.loading = false
       }
@@ -36,11 +33,10 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
       
       try {
-        await auth.logout()
+        await api.auth.logout()
         this.user = null
-        this.isAuthenticated = false
       } catch (error) {
-        this.error = error.response?.data?.detail || 'Logout failed'
+        console.error('Logout error:', error)
       } finally {
         this.loading = false
       }
@@ -48,23 +44,19 @@ export const useAuthStore = defineStore('auth', {
     
     async fetchCurrentUser() {
       this.loading = true
+      this.error = null
       
       try {
-        const response = await auth.getCurrentUser()
+        const response = await api.auth.getCurrentUser()
         this.user = response.data
-        this.isAuthenticated = true
-        return this.user
+        return true
       } catch (error) {
+        this.error = 'Failed to fetch user'
         this.user = null
-        this.isAuthenticated = false
-        this.error = error.response?.data?.detail || 'Failed to fetch user'
+        return false
       } finally {
         this.loading = false
       }
-    },
-    
-    clearError() {
-      this.error = null
     }
   }
 }) 

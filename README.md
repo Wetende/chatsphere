@@ -33,15 +33,79 @@ A comprehensive AI-powered chatbot platform that enables users to create, deploy
 
 ### Installation
 
-#### Clone the Repository
+#### Option 1: Docker Setup (Recommended)
+
+The easiest way to get ChatSphere running is with Docker, which ensures all services work together properly without configuration issues.
+
+##### 1. Install Docker
+
+- **Windows**: Install [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop)
+- **macOS**: Install [Docker Desktop for Mac](https://www.docker.com/products/docker-desktop)
+- **Linux**: Install [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/)
+
+Verify installation with:
+```bash
+docker --version
+docker-compose --version
+```
+
+##### 2. Clone the Repository
 
 ```bash
-# PowerShell
+# PowerShell or Bash
 git clone https://github.com/Wetende/chatsphere.git
 cd chatsphere
 ```
 
-#### Backend Setup
+##### 3. Start the Application
+
+```bash
+# PowerShell or Bash
+# Build and start all services
+docker-compose up -d
+```
+
+That's it! Docker will automatically:
+- Build all necessary container images
+- Install all dependencies inside containers
+- Set up the database with proper configuration
+- Start all services in the correct order
+
+##### 4. Access the Application
+
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000/api/
+- Admin interface: http://localhost:8000/admin/
+
+##### 5. Useful Docker Commands
+
+```bash
+# View logs from all containers
+docker-compose logs -f
+
+# View logs from a specific service
+docker-compose logs -f frontend
+docker-compose logs -f backend
+docker-compose logs -f db
+
+# Stop all services
+docker-compose down
+
+# Rebuild and restart all services (after code changes)
+docker-compose up -d --build
+
+# Run a command in a container (e.g., Django migrations)
+docker-compose exec backend python manage.py migrate
+
+# Create a superuser account
+docker-compose exec backend python manage.py createsuperuser
+```
+
+#### Option 2: Manual Setup
+
+If you prefer to set up services individually (more advanced):
+
+##### Backend Setup
 
 ```bash
 # PowerShell
@@ -61,7 +125,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-#### Frontend Setup
+##### Frontend Setup
 
 ```bash
 # PowerShell
@@ -90,33 +154,41 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 CORS_ALLOWED_ORIGINS=http://localhost:8080
 ```
 
-### Docker Setup (Alternative)
-
-```bash
-# PowerShell
-# Build and start all services
-docker compose up -d
-
-# Check running containers
-docker ps
-
-# View logs
-docker compose logs -f
-```
-
-## Development
-
-After setup, you can access:
-- Frontend: http://localhost:8080
-- Backend API: http://localhost:8000/api/
-- Admin interface: http://localhost:8000/admin/
-
-### Testing API Connection
+## Testing API Connection
 
 To verify the API connection is working:
-1. Navigate to http://localhost:8080/test-api
+1. Navigate to http://localhost:3000/test-api
 2. You should see a success message with connection details
 3. If you see an error, check that both servers are running
+
+## Docker Volumes and Persistence
+
+ChatSphere uses Docker volumes for data persistence. The following data is preserved between container restarts:
+
+- **PostgreSQL data**: Stored in the `postgres_data` volume
+- **Backend code**: Mounted from your local `backend` directory
+- **Frontend code**: Mounted from your local `frontend` directory
+
+This means:
+- You can edit code files locally, and changes will appear in the containers
+- Your database data persists even if you restart or rebuild containers
+- `node_modules` are stored in an anonymous volume for best performance
+
+## Troubleshooting Docker Setup
+
+If you encounter issues with the Docker setup:
+
+1. **Container won't start**:
+   - Check logs: `docker-compose logs -f <service_name>`
+   - Verify port availability: Make sure ports 3000, 8000, and 5432 are not in use
+
+2. **Database connection issues**:
+   - Verify environment variables in docker-compose.yml
+   - Ensure the database container is running: `docker-compose ps`
+
+3. **Frontend development server issues**:
+   - Check frontend logs: `docker-compose logs -f frontend`
+   - Verify volume mounts in docker-compose.yml
 
 ## Contributing
 

@@ -15,5 +15,15 @@ RUN pip install --upgrade pip && \
 # Copy project
 COPY . /app/
 
+# Make the entrypoint script executable
+COPY entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
+
 # Expose port
-EXPOSE 8000 
+EXPOSE 8000
+
+# Set the entrypoint script
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Default command
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"] 

@@ -8,38 +8,54 @@ services:
       - ./backend:/app
     ports:
       - "8000:8000"
+    env_file:
+      - .env
+      - backend/.env
+      - .env.development
     environment:
-      - DEBUG=1
-      - SECRET_KEY=dev_secret_key
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     depends_on:
       - db
-    command: python manage.py runserver 0.0.0.0:8000
+    networks:
+      - chatsphere-network
 
-  # Frontend service (Vue.js)
+  # Frontend service (Vue.js with development server)
   frontend:
     build: ./frontend
     volumes:
       - ./frontend:/app
-      # Exclude node_modules to avoid issues with native modules
+      # Exclude node_modules to avoid conflicts
       - /app/node_modules
     ports:
-      - "8080:8080"
+      - "3000:8080"
+    env_file:
+      - .env
+      - frontend/.env
+      - .env.development
     environment:
-      - NODE_ENV=development
-    command: npm run serve
+      - VUE_APP_API_URL=http://backend:8000/api
+    depends_on:
+      - backend
+    networks:
+      - chatsphere-network
 
   # Database service (PostgreSQL)
   db:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
     environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
+    networks:
+      - chatsphere-network
 
 volumes:
-  postgres_data: 
+  postgres_data:
+
+networks:
+  chatsphere-network:
+    driver: bridge 

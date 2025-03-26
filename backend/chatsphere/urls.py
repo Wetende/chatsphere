@@ -23,4 +23,6 @@ urlpatterns = [
     path('', include(router.urls)),
     # Include authentication URLs for browsable API
     path('auth/', include('rest_framework.urls')),
+    # Test endpoint
+    path('test-connection/', views.test_connection, name='test-connection'),
 ] 

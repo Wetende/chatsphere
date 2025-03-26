@@ -1,35 +1,41 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView, RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div id="app">
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/test-api">Test API</router-link>
+    </nav>
+    <router-view/>
+  </div>
 </template>
 
 <style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 nav {
-  width: 100%;
-  font-size: 12px;
+  padding: 30px;
   text-align: center;
-  margin-top: 2rem;
 }
 
 nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+  font-weight: bold;
+  color: #2c3e50;
+  text-decoration: none;
+  margin: 0 10px;
 }
 
-nav a:first-of-type {
-  border: 0;
+nav a.router-link-exact-active {
+  color: #4361ee;
 }
 </style> 

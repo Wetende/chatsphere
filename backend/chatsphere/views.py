@@ -1,7 +1,8 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from django.contrib.auth.models import User
+from django.utils import timezone
 from .models import (
     ChatRoom, LegacyMessage, SubscriptionPlan, UserProfile, 
     Bot, Document, Chunk, Conversation, Message
@@ -11,6 +12,33 @@ from .serializers import (
     SubscriptionPlanSerializer, UserProfileSerializer, BotSerializer,
     DocumentSerializer, ChunkSerializer, ConversationSerializer, MessageSerializer
 )
+
+
+# Simple test endpoint to verify API connection
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def test_connection(request):
+    print("---------- TEST CONNECTION REQUEST ----------")
+    print(f"Request META: {request.META}")
+    print(f"Host header: {request.META.get('HTTP_HOST', 'Not present')}")
+    print(f"Origin header: {request.META.get('HTTP_ORIGIN', 'Not present')}")
+    print(f"Referer header: {request.META.get('HTTP_REFERER', 'Not present')}")
+    print(f"Debug info: {request.META.get('HTTP_X_DEBUG_INFO', 'Not present')}")
+    print("--------------------------------------------")
+    
+    return Response({
+        'status': 'success', 
+        'message': 'API connection successful!',
+        'data': {
+            'timestamp': timezone.now().isoformat(),
+            'server': 'Django',
+            'request_headers': {
+                'host': request.META.get('HTTP_HOST', 'Not present'),
+                'origin': request.META.get('HTTP_ORIGIN', 'Not present'),
+                'referer': request.META.get('HTTP_REFERER', 'Not present')
+            }
+        }
+    })
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):

@@ -1,153 +1,93 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 
-const apiResponse = ref(null)
-const loading = ref(false)
+const result = ref(null)
 const error = ref(null)
 
-async function testApiConnection() {
-  loading.value = true
-  error.value = null
-  
+const testConnection = async () => {
   try {
-    const response = await axios.get('/api/test-connection/')
-    apiResponse.value = response.data
-    console.log('API Response:', response.data)
+    result.value = null
+    error.value = null
+    
+    console.log('Testing API connection...')
+    console.log('API URL:', process.env.VUE_APP_API_URL || '/api')
+    
+    // Log the axios default config
+    console.log('Axios defaults:', JSON.stringify(axios.defaults, null, 2))
+    
+    const response = await axios.get('/api/test-connection/', {
+      headers: {
+        'X-Debug-Info': 'Testing from frontend'
+      }
+    })
+    console.log('Response received:', response)
+    result.value = response.data
   } catch (err) {
-    error.value = err.message || 'Failed to connect to API'
     console.error('API Error:', err)
-  } finally {
-    loading.value = false
+    error.value = err.message
+    if (err.response) {
+      console.error('Response data:', err.response.data)
+      console.error('Response status:', err.response.status)
+      console.error('Response headers:', err.response.headers)
+      error.value += ` - ${JSON.stringify(err.response.data)}`
+    }
   }
 }
-
-// Test the connection when the component is mounted
-onMounted(() => {
-  testApiConnection()
-})
 </script>
 
 <template>
-  <div class="test-api-container">
+  <div class="test-api">
     <h1>API Connection Test</h1>
-    
-    <div v-if="loading" class="loading">
-      Testing connection to Django backend...
+    <button @click="testConnection" class="test-button">Test API Connection</button>
+    <div class="result" v-if="result">
+      <h2>Result:</h2>
+      <pre>{{ JSON.stringify(result, null, 2) }}</pre>
     </div>
-    
-    <div v-else-if="error" class="error">
-      <h3>Connection Error</h3>
-      <p>{{ error }}</p>
-      <button @click="testApiConnection" class="retry-button">
-        Retry Connection
-      </button>
-    </div>
-    
-    <div v-else-if="apiResponse" class="success">
-      <h3>Connection Successful!</h3>
-      <div class="response-data">
-        <p><strong>Status:</strong> {{ apiResponse.status }}</p>
-        <p><strong>Message:</strong> {{ apiResponse.message }}</p>
-        <p v-if="apiResponse.data">
-          <strong>Timestamp:</strong> {{ apiResponse.data.timestamp }}
-        </p>
-        <p v-if="apiResponse.data">
-          <strong>Server:</strong> {{ apiResponse.data.server }}
-        </p>
-      </div>
-    </div>
-    
-    <div class="actions">
-      <button @click="testApiConnection" class="test-button">
-        Test Connection Again
-      </button>
+    <div class="error" v-if="error">
+      <h2>Error:</h2>
+      <pre>{{ error }}</pre>
     </div>
   </div>
 </template>
 
 <style scoped>
-.test-api-container {
-  max-width: 600px;
+.test-api {
+  max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-h1 {
-  margin-bottom: 2rem;
-  color: #333;
-}
-
-.loading, .error, .success {
-  margin: 2rem 0;
-  padding: 1.5rem;
-  border-radius: 8px;
-}
-
-.loading {
-  background-color: #f0f4f8;
-  color: #4a5568;
-}
-
-.error {
-  background-color: #fff5f5;
-  color: #e53e3e;
-  border: 1px solid #fed7d7;
-}
-
-.success {
-  background-color: #f0fff4;
-  color: #2f855a;
-  border: 1px solid #c6f6d5;
-}
-
-.response-data {
-  text-align: left;
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #f8fafc;
-  border-radius: 4px;
-}
-
-.response-data p {
-  margin: 0.5rem 0;
-}
-
-.actions {
-  margin-top: 2rem;
-}
-
-button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
-}
-
-button:active {
-  transform: translateY(1px);
+  padding: 40px 20px;
 }
 
 .test-button {
   background-color: #4361ee;
   color: white;
   border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
 }
 
-.test-button:hover {
-  background-color: #3a56d4;
+.result, .error {
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 8px;
 }
 
-.retry-button {
-  background-color: #e53e3e;
-  color: white;
-  border: none;
-  margin-top: 1rem;
+.result {
+  background-color: #e3f2fd;
 }
 
-.retry-button:hover {
-  background-color: #c53030;
+.error {
+  background-color: #ffebee;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 10px;
+  border-radius: 4px;
 }
 </style> 

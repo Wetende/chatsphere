@@ -13,9 +13,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-key-for-dev')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get('DEBUG', '1')))
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 't')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+# Print environment variables for debugging
+print(f"DEBUG mode: {DEBUG}")
+print(f"ALLOWED_HOSTS from env: {os.environ.get('ALLOWED_HOSTS', 'not set')}")
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'backend', '*']
+
+print(f"ALLOWED_HOSTS set to: {ALLOWED_HOSTS}")
 
 # Application definition
 INSTALLED_APPS = [
@@ -68,18 +74,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database configuration for local development
 if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'chat_sphere',
-            'USER': 'postgres',
-            'PASSWORD': '1234',
-            'HOST': 'localhost',
-            'PORT': '5432',
+    # Check if running in Docker by looking for the environment variable
+    if os.environ.get('DATABASE_URL'):
+        # Using Docker setup
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=os.environ.get('DATABASE_URL'),
+                conn_max_age=600
+            )
         }
-    }
+    else:
+        # Local development without Docker
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': 'chat_sphere',
+                'USER': 'postgres',
+                'PASSWORD': '1234',
+                'HOST': 'localhost',
+                'PORT': '5432',
+            }
+        }
 else:
-    # Production database configuration (using Docker)
+    # Production database configuration
     DATABASES = {
         'default': dj_database_url.config(
             default='postgres://postgres:postgres@db:5432/postgres',
@@ -128,7 +145,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://frontend:8080"
 ]
+
+print(f"CORS_ALLOWED_ORIGINS set to: {CORS_ALLOWED_ORIGINS}")
+
+# For debugging, allow all origins
+CORS_ALLOW_ALL_ORIGINS = True
+print(f"CORS_ALLOW_ALL_ORIGINS set to: {CORS_ALLOW_ALL_ORIGINS}")
 
 CORS_ALLOW_CREDENTIALS = True
 

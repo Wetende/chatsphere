@@ -32,133 +32,84 @@ async function handleSubmit() {
 
 <template>
   <div class="login-container">
-    <div class="login-card">
-      <h2>Welcome to ChatSphere</h2>
-      <p class="subtitle">Sign in to your account</p>
+    <h1>Login</h1>
+    <form @submit.prevent="handleSubmit" class="login-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          id="username"
+          v-model="username"
+          type="text"
+          placeholder="Enter your username"
+          autocomplete="username"
+          required
+        />
+      </div>
       
-      <form @submit.prevent="handleSubmit" class="login-form">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input 
-            id="username"
-            v-model="username"
-            type="text"
-            placeholder="Enter your username"
-            autocomplete="username"
-            required
-          />
-        </div>
-        
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input 
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="Enter your password"
-            autocomplete="current-password"
-            required
-          />
-        </div>
-        
-        <div v-if="errorMessage" class="error-message">
-          {{ errorMessage }}
-        </div>
-        
-        <button 
-          type="submit" 
-          class="login-button"
-          :disabled="isLoading"
-        >
-          {{ isLoading ? 'Signing in...' : 'Sign In' }}
-        </button>
-      </form>
-    </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          id="password"
+          v-model="password"
+          type="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+      
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      
+      <button 
+        type="submit" 
+        class="login-button"
+        :disabled="isLoading"
+      >
+        {{ isLoading ? 'Signing in...' : 'Sign In' }}
+      </button>
+    </form>
   </div>
 </template>
 
 <style scoped>
 .login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f5f7fa;
-  padding: 20px;
-}
-
-.login-card {
-  width: 100%;
   max-width: 400px;
-  padding: 30px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-  margin-bottom: 8px;
-  color: #333;
-  text-align: center;
-}
-
-.subtitle {
-  margin-bottom: 30px;
-  color: #666;
-  text-align: center;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  margin-bottom: 20px;
 }
 
 label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 input {
-  padding: 12px;
-  border: 1px solid #ddd;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 16px;
-  transition: border-color 0.3s;
-}
-
-input:focus {
-  border-color: #4361ee;
-  outline: none;
 }
 
 .login-button {
-  margin-top: 10px;
+  width: 100%;
   padding: 12px;
   background-color: #4361ee;
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 16px;
-  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-size: 16px;
 }
 
 .login-button:hover {
   background-color: #3a56d4;
-}
-
-.login-button:disabled {
-  background-color: #a0aec0;
-  cursor: not-allowed;
 }
 
 .error-message {

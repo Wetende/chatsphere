@@ -1,8 +1,11 @@
 import axios from 'axios'
 
+// Get the API base URL from environment variables or use a default
+const API_BASE_URL = process.env.VUE_APP_API_URL || '/api'
+
 // Create axios instance with base URL and default headers
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
