@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import api from '@/services/api'
 
 const result = ref(null)
 const error = ref(null)
@@ -11,16 +11,9 @@ const testConnection = async () => {
     error.value = null
     
     console.log('Testing API connection...')
-    console.log('API URL:', process.env.VUE_APP_API_URL || '/api')
+    console.log('API URL:', import.meta.env.VITE_API_BASE_URL || '/api')
     
-    // Log the axios default config
-    console.log('Axios defaults:', JSON.stringify(axios.defaults, null, 2))
-    
-    const response = await axios.get('/api/test-connection/', {
-      headers: {
-        'X-Debug-Info': 'Testing from frontend'
-      }
-    })
+    const response = await api.test.testConnection()
     console.log('Response received:', response)
     result.value = response.data
   } catch (err) {

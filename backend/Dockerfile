@@ -8,9 +8,10 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # Install dependencies
-COPY requirements.txt /app/
+COPY requirements.txt requirements-no-hashes.txt /app/
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt || \
+    pip install --no-cache-dir -r requirements-no-hashes.txt
 
 # Copy project
 COPY . /app/

@@ -1,0 +1,65 @@
+# Django and REST framework
+django>=4.2
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+django-environ
+django-filter
+django-redis
+channels
+daphne
+django-allauth
+djoser
+drf-yasg
+
+# Database
+psycopg2-binary
+dj-database-url
+redis
+
+# Server
+gunicorn
+
+# AI and Machine Learning
+langchain
+openai
+pinecone-client
+tiktoken
+numpy
+pandas
+
+# Async and WebSocket
+aiohttp
+websockets
+asgiref
+
+# Authentication and Security
+PyJWT
+python-jose
+cryptography
+python-dotenv
+
+# Utils
+python-dateutil
+requests
+urllib3
+pydantic
+python-magic
+Pillow
+
+# Testing
+pytest
+pytest-django
+pytest-asyncio
+coverage
+
+# Development
+black
+flake8
+isort
+mypy
+pre-commit
+
+# Documentation
+Sphinx
+sphinx-rtd-theme 

@@ -1,124 +1,131 @@
 import { defineStore } from 'pinia'
-import api from '@/services/api'
+import { ref, computed } from 'vue'
+import api from '../services/api'
 
-export const useBotStore = defineStore('bots', {
-  state: () => ({
-    bots: [],
-    currentBot: null,
-    loading: false,
-    error: null
-  }),
-  
-  getters: {
-    getAllBots: (state) => state.bots,
-    getBotById: (state) => (id) => {
-      return state.bots.find(bot => bot.id === id)
-    },
-    isLoading: (state) => state.loading
-  },
-  
-  actions: {
-    async fetchBots() {
-      this.loading = true
-      this.error = null
-      
-      try {
-        const response = await api.bots.getAll()
-        this.bots = response.data
-        return this.bots
-      } catch (error) {
-        this.error = error.response?.data?.detail || 'Failed to fetch bots'
-        return []
-      } finally {
-        this.loading = false
-      }
-    },
-    
-    async fetchBot(id) {
-      this.loading = true
-      this.error = null
-      
-      try {
-        const response = await api.bots.get(id)
-        this.currentBot = response.data
-        return this.currentBot
-      } catch (error) {
-        this.error = error.response?.data?.detail || 'Failed to fetch bot'
-        return null
-      } finally {
-        this.loading = false
-      }
-    },
-    
-    async createBot(botData) {
-      this.loading = true
-      this.error = null
-      
-      try {
-        const response = await api.bots.create(botData)
-        const newBot = response.data
-        this.bots.push(newBot)
-        return newBot
-      } catch (error) {
-        this.error = error.response?.data?.detail || 'Failed to create bot'
-        return Promise.reject(error)
-      } finally {
-        this.loading = false
-      }
-    },
-    
-    async updateBot(id, botData) {
-      this.loading = true
-      this.error = null
-      
-      try {
-        const response = await api.bots.update(id, botData)
-        const updatedBot = response.data
-        
-        // Update the bot in the list
-        const index = this.bots.findIndex(b => b.id === id)
-        if (index !== -1) {
-          this.bots[index] = updatedBot
-        }
-        
-        if (this.currentBot && this.currentBot.id === id) {
-          this.currentBot = updatedBot
-        }
-        
-        return updatedBot
-      } catch (error) {
-        this.error = error.response?.data?.detail || `Failed to update bot with ID ${id}`
-        return Promise.reject(error)
-      } finally {
-        this.loading = false
-      }
-    },
-    
-    async deleteBot(id) {
-      this.loading = true
-      this.error = null
-      
-      try {
-        await api.bots.delete(id)
-        
-        // Remove the bot from the list
-        this.bots = this.bots.filter(b => b.id !== id)
-        
-        if (this.currentBot && this.currentBot.id === id) {
-          this.currentBot = null
-        }
-        
-        return true
-      } catch (error) {
-        this.error = error.response?.data?.detail || `Failed to delete bot with ID ${id}`
-        return Promise.reject(error)
-      } finally {
-        this.loading = false
-      }
-    },
-    
-    clearError() {
-      this.error = null
+export const useBotStore = defineStore('bots', () => {
+  // State
+  const bots = ref([])
+  const loading = ref(false)
+  const error = ref(null)
+
+  // Getters
+  const activeBots = computed(() => {
+    return bots.value.filter(bot => bot.active === true)
+  })
+
+  const inactiveBots = computed(() => {
+    return bots.value.filter(bot => bot.active === false)
+  })
+
+  const getBotById = (id) => {
+    return bots.value.find(bot => bot.id === id)
+  }
+
+  // Actions
+  async function fetchBots() {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await api.get('/api/bots/')
+      bots.value = response.data
+      return bots.value
+    } catch (err) {
+      console.error('Error fetching bots:', err)
+      error.value = 'Failed to load bots. Please try again.'
+      return []
+    } finally {
+      loading.value = false
     }
+  }
+
+  async function createBot(botData) {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await api.post('/api/bots/', botData)
+      bots.value.push(response.data)
+      return response.data
+    } catch (err) {
+      console.error('Error creating bot:', err)
+      error.value = 'Failed to create bot. Please check your input and try again.'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function updateBot(id, botData) {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await api.put(`/api/bots/${id}/`, botData)
+      
+      // Update the bot in the local state
+      const index = bots.value.findIndex(bot => bot.id === id)
+      if (index !== -1) {
+        bots.value[index] = response.data
+      }
+      
+      return response.data
+    } catch (err) {
+      console.error('Error updating bot:', err)
+      error.value = 'Failed to update bot. Please try again.'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function deleteBot(id) {
+    loading.value = true
+    error.value = null
+
+    try {
+      await api.delete(`/api/bots/${id}/`)
+      
+      // Remove the bot from the local state
+      bots.value = bots.value.filter(bot => bot.id !== id)
+      
+      return true
+    } catch (err) {
+      console.error('Error deleting bot:', err)
+      error.value = 'Failed to delete bot. Please try again.'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function toggleBotStatus(id) {
+    const bot = getBotById(id)
+    if (!bot) {
+      error.value = 'Bot not found'
+      return null
+    }
+
+    const updatedStatus = !bot.active
+    return updateBot(id, { ...bot, active: updatedStatus })
+  }
+
+  return {
+    // State
+    bots,
+    loading,
+    error,
+    
+    // Getters
+    activeBots,
+    inactiveBots,
+    getBotById,
+    
+    // Actions
+    fetchBots,
+    createBot,
+    updateBot,
+    deleteBot,
+    toggleBotStatus
   }
 }) 

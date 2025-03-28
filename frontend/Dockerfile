@@ -1,4 +1,5 @@
-FROM node:16-alpine
+# Build stage
+FROM node:18-alpine as build-stage
 
 # Set working directory
 WORKDIR /app
@@ -6,18 +7,26 @@ WORKDIR /app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies with better npm settings
-RUN npm config set registry https://registry.npmjs.org/ && \
-    npm config set fetch-retry-mintimeout 20000 && \
-    npm config set fetch-retry-maxtimeout 120000 && \
-    npm config set fetch-retries 5 && \
-    npm install --loglevel error
+# Install dependencies
+RUN npm ci
 
-# Copy the rest of the code
+# Copy all files
 COPY . .
 
-# Expose port
-EXPOSE 8080
+# Build the app for production
+RUN npm run build
 
-# Start development server
-CMD ["npm", "run", "serve", "--", "--host", "0.0.0.0"] 
+# Production stage
+FROM nginx:stable-alpine as production-stage
+
+# Copy built assets from the build stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"] 

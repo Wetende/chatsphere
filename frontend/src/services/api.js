@@ -1,111 +1,94 @@
 import axios from 'axios'
 
-// Get the API base URL from environment variables or use a default
-const API_BASE_URL = process.env.VUE_APP_API_URL || '/api'
-
-// Create axios instance with base URL and default headers
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true,
+// Create axios instance
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   }
 })
 
-// Authentication endpoints
-export const auth = {
-  login(username, password) {
-    return apiClient.post('/auth/login/', { username, password })
-  },
-  logout() {
-    return apiClient.post('/auth/logout/')
-  },
-  getCurrentUser() {
-    return apiClient.get('/users/me/')
-  }
-}
-
-// Bots endpoints
-export const bots = {
-  getAll() {
-    return apiClient.get('/bots/')
-  },
-  get(id) {
-    return apiClient.get(`/bots/${id}/`)
-  },
-  create(bot) {
-    return apiClient.post('/bots/', bot)
-  },
-  update(id, bot) {
-    return apiClient.put(`/bots/${id}/`, bot)
-  },
-  delete(id) {
-    return apiClient.delete(`/bots/${id}/`)
-  },
-  getConversations(id) {
-    return apiClient.get(`/bots/${id}/conversations/`)
-  }
-}
-
-// Conversations endpoints
-export const conversations = {
-  getAll() {
-    return apiClient.get('/conversations/')
-  },
-  get(id) {
-    return apiClient.get(`/conversations/${id}/`)
-  },
-  create(conversation) {
-    return apiClient.post('/conversations/', conversation)
-  },
-  update(id, conversation) {
-    return apiClient.put(`/conversations/${id}/`, conversation)
-  },
-  delete(id) {
-    return apiClient.delete(`/conversations/${id}/`)
-  },
-  getMessages(id) {
-    return apiClient.get(`/conversations/${id}/messages/`)
-  }
-}
-
-// Messages endpoints
-export const messages = {
-  getAll(conversationId) {
-    return apiClient.get('/messages/', {
-      params: { conversation: conversationId }
-    })
-  },
-  create(message) {
-    return apiClient.post('/messages/', message)
-  }
-}
-
-// Add a request interceptor to handle authentication
-apiClient.interceptors.request.use(
-  config => {
-    // You can add token handling here if using JWT
+// Add a request interceptor for authentication
+api.interceptors.request.use(
+  (config) => {
+    // Get the token from localStorage
+    const token = localStorage.getItem('token')
+    // If token exists, add it to the request headers
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
-  error => Promise.reject(error)
-)
-
-// Add a response interceptor to handle errors
-apiClient.interceptors.response.use(
-  response => response,
-  error => {
-    if (error.response && error.response.status === 401) {
-      // Handle authentication errors (e.g., redirect to login)
-      console.error('Authentication error')
-    }
+  (error) => {
     return Promise.reject(error)
   }
 )
 
-export default {
-  auth,
-  bots,
-  conversations,
-  messages
-} 
+// Add a response interceptor for token refresh
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+    
+    // If error is 401 and it's not a retry and refresh token exists
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      localStorage.getItem('refreshToken')
+    ) {
+      originalRequest._retry = true
+      
+      try {
+        // Attempt to refresh the token
+        const response = await axios.post(
+          `${api.defaults.baseURL}/api/token/refresh/`,
+          {
+            refresh: localStorage.getItem('refreshToken')
+          }
+        )
+        
+        // If we got a new token, update storage and headers
+        if (response.data.access) {
+          localStorage.setItem('token', response.data.access)
+          api.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`
+          originalRequest.headers['Authorization'] = `Bearer ${response.data.access}`
+          
+          // Retry the original request
+          return api(originalRequest)
+        }
+      } catch (refreshError) {
+        // If refresh fails, clear tokens and redirect to login
+        localStorage.removeItem('token')
+        localStorage.removeItem('refreshToken')
+        
+        // Only redirect to login if not already there to prevent redirect loops
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login'
+        }
+        
+        return Promise.reject(refreshError)
+      }
+    }
+    
+    return Promise.reject(error)
+  }
+)
+
+// Test API connection
+export const testApiConnection = async () => {
+  try {
+    const response = await api.get('/api/test-connection/')
+    return {
+      success: true,
+      data: response.data
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    }
+  }
+}
+
+export default api 

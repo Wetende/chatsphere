@@ -1,6 +1,7 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from django.utils import timezone
 from .models import (
@@ -10,9 +11,23 @@ from .models import (
 from .serializers import (
     UserSerializer, ChatRoomSerializer, LegacyMessageSerializer,
     SubscriptionPlanSerializer, UserProfileSerializer, BotSerializer,
-    DocumentSerializer, ChunkSerializer, ConversationSerializer, MessageSerializer
+    DocumentSerializer, ChunkSerializer, ConversationSerializer, MessageSerializer,
+    RegisterSerializer
 )
 
+# Registration view
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = RegisterSerializer
+
+# Current user view
+class CurrentUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
 
 # Simple test endpoint to verify API connection
 @api_view(['GET'])
