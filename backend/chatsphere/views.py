@@ -14,6 +14,21 @@ from .serializers import (
     DocumentSerializer, ChunkSerializer, ConversationSerializer, MessageSerializer,
     RegisterSerializer
 )
+import os
+import json
+import logging
+from datetime import datetime
+import openai
+
+# Configure logger
+logger = logging.getLogger(__name__)
+
+# Configure OpenAI API key from environment variable
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+if OPENAI_API_KEY:
+    openai.api_key = OPENAI_API_KEY
+else:
+    logger.warning("OpenAI API key not found in environment variables")
 
 # Registration view
 class RegisterView(generics.CreateAPIView):
@@ -196,6 +211,82 @@ class MessageViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(conversation_id=conversation_id)
             
         return queryset
+    
+    def create(self, request, *args, **kwargs):
+        """Override create to handle AI responses automatically for user messages"""
+        data = request.data
+        conversation_id = data.get('conversation')
+        role = data.get('role')
+        
+        # First, save the user's message
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        message = serializer.save()
+        
+        # If this is a user message, generate an AI response
+        if role == 'user' and OPENAI_API_KEY:
+            try:
+                # Get the conversation
+                conversation = Conversation.objects.get(id=conversation_id)
+                bot = conversation.bot
+                
+                # Get conversation history (limit to last 10 messages for context)
+                history = Message.objects.filter(conversation=conversation).order_by('timestamp')[:10]
+                
+                # Format messages for OpenAI
+                messages = []
+                
+                # Add system message with bot configuration
+                system_message = f"You are {bot.name}, an AI assistant. "
+                if bot.description:
+                    system_message += bot.description
+                
+                messages.append({"role": "system", "content": system_message})
+                
+                # Add conversation history
+                for msg in history:
+                    messages.append({"role": msg.role, "content": msg.content})
+                
+                # Call OpenAI API
+                logger.info(f"Sending request to OpenAI for conversation {conversation_id}")
+                
+                response = openai.ChatCompletion.create(
+                    model=bot.model_type,
+                    messages=messages,
+                    temperature=bot.configuration.get('temperature', 0.7),
+                    max_tokens=bot.configuration.get('max_tokens', 1000)
+                )
+                
+                # Extract the response content
+                ai_response = response.choices[0].message.content.strip()
+                
+                # Save the AI response as a new message
+                ai_message = Message.objects.create(
+                    conversation=conversation,
+                    role="assistant",
+                    content=ai_response,
+                    metadata={
+                        "model": bot.model_type,
+                        "tokens": response.usage.total_tokens
+                    }
+                )
+                
+                # Return both the user message and AI response
+                return Response(
+                    {
+                        "user_message": serializer.data,
+                        "ai_response": self.get_serializer(ai_message).data
+                    },
+                    status=status.HTTP_201_CREATED
+                )
+                
+            except Exception as e:
+                logger.error(f"Error generating AI response: {str(e)}")
+                # Return just the user message if AI response generation fails
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        # For non-user messages or when OpenAI is not configured, just return the created message
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # Legacy ViewSets for backward compatibility

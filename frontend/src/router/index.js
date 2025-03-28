@@ -36,6 +36,12 @@ const routes = [
     component: () => import('../views/DashboardView.vue')
   },
   {
+    path: '/create-chatbot',
+    name: 'create-chatbot',
+    meta: { requiresAuth: true },
+    component: () => import('../views/ChatbotWizardView.vue')
+  },
+  {
     path: '/about',
     name: 'about',
     meta: { public: true },

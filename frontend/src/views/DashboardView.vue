@@ -127,7 +127,7 @@ onMounted(fetchDashboardData)
       <section class="bots-section">
         <div class="section-header">
           <h3>Your Chatbots</h3>
-          <button class="primary-button">+ Create New Bot</button>
+          <button class="primary-button" @click="$router.push('/create-chatbot')">+ Create New Bot</button>
         </div>
         
         <div v-if="bots.length === 0" class="empty-state">
