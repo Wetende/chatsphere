@@ -1,0 +1,134 @@
+# ChatSphere: Vector Embedding Implementation Plan
+
+This document outlines the plan for implementing text training capability and vector embedding search using PostgreSQL in our Docker environment.
+
+## Overview
+
+We will enhance ChatSphere with:
+1. Basic text training capability
+2. Document processing pipeline
+3. Vector embeddings using PostgreSQL with pgvector
+4. Retrieval-augmented generation for chatbot responses
+
+## Phase 1: Setup PostgreSQL with pgvector
+- [x] 1.1 Create a custom PostgreSQL docker image with the pgvector extension (✅)
+- [x] 1.2 Update the docker-compose.yml file to use the custom image (✅)
+- [x] 1.3 Create an initialization script for enabling the pgvector extension (✅)
+- [x] 1.4 Test the PostgreSQL setup to ensure pgvector is working (✅)
+
+## Phase 2: Update Database Schema
+- [x] 2.1 Create a Django migration to add a vector field to the Chunk model (✅)
+- [x] 2.2 Modify the Document and Chunk models to support vector operations (✅)
+
+## Phase 3: Backend Services Implementation
+- [x] 3.1 Create a vector service for handling vector operations (✅)
+- [x] 3.2 Implement OpenAI service for generating embeddings (✅) 
+- [x] 3.3 Develop document processing service for handling document uploads and text extraction (✅)
+- [x] 3.4 Create API endpoints for document upload and text training (✅)
+- [x] 3.5 Update message processing to incorporate vector search (✅)
+
+## Phase 4: Frontend Implementation
+- [x] 4.1 Add document upload and training UI to the bot detail page (✅)
+- [ ] 4.2 Create document management interface
+- [ ] 4.3 Implement progress indicators for document processing
+- [ ] 4.4 Add error handling and user feedback for training operations
+
+## Phase 5: Testing and Optimization
+- [ ] 5.1 Write tests for vector search functionality
+- [ ] 5.2 Optimize vector search performance
+- [ ] 5.3 Implement caching for frequent queries
+- [ ] 5.4 Test with large document collections
+
+## Phase 6: Deployment
+- [ ] 6.1 Update deployment scripts to include pgvector
+- [ ] 6.2 Configure production environment
+- [ ] 6.3 Deploy and monitor
+
+## Technical Implementation Details
+
+### Docker Modifications
+
+To add pgvector to our PostgreSQL container, we need to:
+
+```dockerfile
+# Update PostgreSQL Dockerfile
+FROM postgres:14
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    postgresql-server-dev-14
+
+# Clone and build pgvector
+RUN git clone --branch v0.4.0 https://github.com/pgvector/pgvector.git && \
+    cd pgvector && \
+    make && \
+    make install
+
+# Clean up
+RUN apt-get remove -y build-essential git postgresql-server-dev-14 && \
+    apt-get autoremove -y && \
+    rm -rf /pgvector
+
+# Add initialization script
+COPY ./init-pgvector.sql /docker-entrypoint-initdb.d/
+```
+
+### Database Schema
+
+The vector column will be added to the chunks table:
+
+```sql
+-- Initialize pgvector extension
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Modify chunks table
+ALTER TABLE chatsphere_chunk ADD COLUMN IF NOT EXISTS embedding vector(1536);
+
+-- Create index for similarity search
+CREATE INDEX IF NOT EXISTS chunks_embedding_idx ON chatsphere_chunk USING ivfflat (embedding vector_l2_ops) WITH (lists = 100);
+```
+
+### Service Architecture
+
+We will implement the following services:
+
+1. **OpenAIService**: Handles embedding generation via OpenAI API
+2. **VectorService**: Manages vector storage and retrieval in PostgreSQL
+3. **DocumentService**: Processes documents, extracts text, and manages chunking
+4. **Background Task Service**: Handles asynchronous processing
+
+### Chunking Strategy
+
+Text will be split into chunks with the following approach:
+
+- Default chunk size: 1000 characters
+- Overlap between chunks: 200 characters
+- Prefer splitting at paragraph or sentence boundaries
+- Include metadata about position in document
+
+## Lessons & Notes
+
+This section will be updated with lessons learned during implementation:
+
+1. **PostgreSQL Vector Search**: 
+   - Performance characteristics compared to dedicated vector DBs
+   - Indexing strategies for different dataset sizes
+
+2. **Embedding Generation**:
+   - Optimal batch sizes for API calls
+   - Handling rate limits and retries
+
+3. **Document Processing**:
+   - Text extraction challenges from different formats
+   - Chunking strategies for different content types
+
+## Migration Path to Pinecone
+
+As the project scales, we plan to migrate from PostgreSQL to Pinecone:
+
+1. Implement dual-write capability to both PostgreSQL and Pinecone
+2. Validate results from both systems
+3. Gradually shift read operations to Pinecone
+4. Complete migration with validation 

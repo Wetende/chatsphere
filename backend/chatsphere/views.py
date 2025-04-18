@@ -19,6 +19,12 @@ import json
 import logging
 from datetime import datetime
 import openai
+from .services.document_service import DocumentService
+from .services.openai_service import OpenAIService
+from .services.vector_service import VectorService
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+from django.db import transaction
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -29,6 +35,11 @@ if OPENAI_API_KEY:
     openai.api_key = OPENAI_API_KEY
 else:
     logger.warning("OpenAI API key not found in environment variables")
+
+# Initialize services
+document_service = DocumentService()
+openai_service = OpenAIService()
+vector_service = VectorService()
 
 # Registration view
 class RegisterView(generics.CreateAPIView):
@@ -105,188 +116,182 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return UserProfile.objects.filter(user=user)
 
 
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        
+        # Write permissions are only allowed to the owner
+        if hasattr(obj, 'user'):
+            return obj.user == request.user
+        elif hasattr(obj, 'bot'):
+            return obj.bot.user == request.user
+        return False
+
+
 class BotViewSet(viewsets.ModelViewSet):
-    """ViewSet for Bot model"""
-    queryset = Bot.objects.all()
+    """
+    API endpoint for bots
+    """
     serializer_class = BotSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     
     def get_queryset(self):
-        """Filter bots to only show the user's own bots"""
-        user = self.request.user
-        if user.is_staff:
-            return Bot.objects.all()
-        return Bot.objects.filter(user=user)
+        return Bot.objects.filter(user=self.request.user)
     
-    @action(detail=True, methods=['get'])
-    def conversations(self, request, pk=None):
-        """Get conversations for a specific bot"""
-        bot = self.get_object()
-        conversations = bot.conversations.all()
-        serializer = ConversationSerializer(conversations, many=True)
-        return Response(serializer.data)
-
-
-class DocumentViewSet(viewsets.ModelViewSet):
-    """ViewSet for Document model"""
-    queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_queryset(self):
-        """Filter documents to only show those belonging to the user's bots"""
-        user = self.request.user
-        if user.is_staff:
-            return Document.objects.all()
-        return Document.objects.filter(bot__user=user)
-
-
-class ChunkViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet for Chunk model (read-only)"""
-    queryset = Chunk.objects.all()
-    serializer_class = ChunkSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_queryset(self):
-        """Filter chunks to only show those belonging to the user's documents"""
-        user = self.request.user
-        if user.is_staff:
-            return Chunk.objects.all()
-        return Chunk.objects.filter(document__bot__user=user)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
-    """ViewSet for Conversation model"""
-    queryset = Conversation.objects.all()
+    """
+    API endpoint for conversations
+    """
     serializer_class = ConversationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     
     def get_queryset(self):
-        """Filter conversations to only show those belonging to the user"""
-        user = self.request.user
-        if user.is_staff:
-            return Conversation.objects.all()
-        
-        # Include both conversations where user is the owner and anonymous conversations
-        # with the user's bots that match the current session
-        return Conversation.objects.filter(
-            bot__user=user
-        ) | Conversation.objects.filter(
-            user=user
-        )
-    
-    @action(detail=True, methods=['get'])
-    def messages(self, request, pk=None):
-        """Get messages for a specific conversation"""
-        conversation = self.get_object()
-        messages = conversation.messages.all()
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data)
+        return Conversation.objects.filter(bot__user=self.request.user)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    """ViewSet for Message model"""
-    queryset = Message.objects.all()
+    """
+    API endpoint for messages
+    """
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     
     def get_queryset(self):
-        """Filter messages by conversation if provided in query params"""
-        user = self.request.user
-        queryset = Message.objects.all()
-        
-        # Staff can see all messages
-        if not user.is_staff:
-            # Regular users can only see messages in conversations they own or
-            # conversations with bots they own
-            queryset = queryset.filter(
-                conversation__user=user
-            ) | queryset.filter(
-                conversation__bot__user=user
-            )
-        
-        # Filter by conversation if specified
-        conversation_id = self.request.query_params.get('conversation', None)
-        if conversation_id is not None:
-            queryset = queryset.filter(conversation_id=conversation_id)
-            
+        return Message.objects.filter(conversation__bot__user=self.request.user)
+
+
+class DocumentViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for documents
+    """
+    serializer_class = DocumentSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+    
+    def get_queryset(self):
+        queryset = Document.objects.filter(bot__user=self.request.user)
+        # Filter by bot if provided
+        bot_id = self.request.query_params.get('bot', None)
+        if bot_id:
+            queryset = queryset.filter(bot_id=bot_id)
         return queryset
     
-    def create(self, request, *args, **kwargs):
-        """Override create to handle AI responses automatically for user messages"""
-        data = request.data
-        conversation_id = data.get('conversation')
-        role = data.get('role')
+    def perform_create(self, serializer):
+        # Handle file upload
+        bot_id = self.request.data.get('bot_id')
+        bot = get_object_or_404(Bot, id=bot_id)
         
-        # First, save the user's message
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        message = serializer.save()
+        # Check if user has permission to add documents to this bot
+        if bot.user != self.request.user:
+            raise PermissionDenied("You don't have permission to add documents to this bot.")
         
-        # If this is a user message, generate an AI response
-        if role == 'user' and OPENAI_API_KEY:
-            try:
-                # Get the conversation
-                conversation = Conversation.objects.get(id=conversation_id)
-                bot = conversation.bot
-                
-                # Get conversation history (limit to last 10 messages for context)
-                history = Message.objects.filter(conversation=conversation).order_by('timestamp')[:10]
-                
-                # Format messages for OpenAI
-                messages = []
-                
-                # Add system message with bot configuration
-                system_message = f"You are {bot.name}, an AI assistant. "
-                if bot.description:
-                    system_message += bot.description
-                
-                messages.append({"role": "system", "content": system_message})
-                
-                # Add conversation history
-                for msg in history:
-                    messages.append({"role": msg.role, "content": msg.content})
-                
-                # Call OpenAI API
-                logger.info(f"Sending request to OpenAI for conversation {conversation_id}")
-                
-                response = openai.ChatCompletion.create(
-                    model=bot.model_type,
-                    messages=messages,
-                    temperature=bot.configuration.get('temperature', 0.7),
-                    max_tokens=bot.configuration.get('max_tokens', 1000)
-                )
-                
-                # Extract the response content
-                ai_response = response.choices[0].message.content.strip()
-                
-                # Save the AI response as a new message
-                ai_message = Message.objects.create(
-                    conversation=conversation,
-                    role="assistant",
-                    content=ai_response,
-                    metadata={
-                        "model": bot.model_type,
-                        "tokens": response.usage.total_tokens
-                    }
-                )
-                
-                # Return both the user message and AI response
+        # Get the uploaded file
+        file = self.request.FILES.get('file')
+        if not file:
+            return Response(
+                {"error": "No file was provided."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        name = self.request.data.get('name', file.name)
+        
+        try:
+            # Initialize services
+            vector_service = VectorService()
+            openai_service = OpenAIService()
+            document_service = DocumentService(vector_service, openai_service)
+            
+            # Create document from file
+            document = document_service.create_document_from_file(
+                bot=bot,
+                file=file,
+                name=name
+            )
+            
+            # Return serialized document
+            serializer = self.get_serializer(document)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            logger.error(f"Error processing document: {str(e)}")
+            return Response(
+                {"error": f"Error processing document: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    @action(detail=False, methods=['post'])
+    def train_text(self, request):
+        """
+        Custom action to upload text for training a bot
+        """
+        # Get required parameters
+        bot_id = request.data.get('bot_id')
+        name = request.data.get('name')
+        text = request.data.get('text')
+        
+        # Validate parameters
+        if not bot_id:
+            return Response(
+                {"error": "bot_id is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not text:
+            return Response(
+                {"error": "text is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not name:
+            name = "Text Training"
+        
+        # Get the bot
+        bot = get_object_or_404(Bot, id=bot_id)
+        
+        # Check if user has permission to add documents to this bot
+        if bot.user != request.user:
+            raise PermissionDenied("You don't have permission to add documents to this bot.")
+        
+        try:
+            # Initialize services
+            vector_service = VectorService()
+            openai_service = OpenAIService()
+            document_service = DocumentService(vector_service, openai_service)
+            
+            # Create document from text
+            document = document_service.create_document_from_text(
+                bot=bot, 
+                name=name, 
+                text=text
+            )
+            
+            # Return serialized document
+            serializer = self.get_serializer(document)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            logger.error(f"Error processing text document: {str(e)}")
                 return Response(
-                    {
-                        "user_message": serializer.data,
-                        "ai_response": self.get_serializer(ai_message).data
-                    },
-                    status=status.HTTP_201_CREATED
-                )
-                
-            except Exception as e:
-                logger.error(f"Error generating AI response: {str(e)}")
-                # Return just the user message if AI response generation fails
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-        # For non-user messages or when OpenAI is not configured, just return the created message
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                {"error": f"Error processing text document: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class ChunkViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint for chunks (read-only)
+    """
+    serializer_class = ChunkSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+    
+    def get_queryset(self):
+        return Chunk.objects.filter(document__bot__user=self.request.user)
 
 
 # Legacy ViewSets for backward compatibility

@@ -47,8 +47,8 @@ class UserSerializer(serializers.ModelSerializer):
     """Serializer for User model"""
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'is_staff')
-        read_only_fields = ('id', 'is_staff')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name')
+        read_only_fields = ('id',)
 
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
@@ -74,11 +74,9 @@ class BotSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Bot
-        fields = [
-            'id', 'user', 'name', 'description', 'avatar', 'welcome_message', 
-            'model_type', 'configuration', 'created_at'
-        ]
-        read_only_fields = ['id', 'user', 'created_at']
+        fields = ['id', 'name', 'description', 'model_type', 'configuration', 
+                 'user', 'created_at', 'updated_at', 'is_active']
+        read_only_fields = ['user', 'created_at', 'updated_at']
     
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
@@ -88,14 +86,16 @@ class BotSerializer(serializers.ModelSerializer):
 class DocumentSerializer(serializers.ModelSerializer):
     """Serializer for Document model"""
     bot = serializers.PrimaryKeyRelatedField(queryset=Bot.objects.all())
+    chunks_count = serializers.SerializerMethodField()
     
     class Meta:
         model = Document
-        fields = [
-            'id', 'bot', 'name', 'file', 'url', 'content_type', 
-            'upload_date', 'status', 'error_message'
-        ]
-        read_only_fields = ['id', 'upload_date', 'status', 'error_message']
+        fields = ['id', 'name', 'content_type', 'bot', 'file', 'status', 
+                 'error_message', 'created_at', 'updated_at', 'metadata', 'chunks_count']
+        read_only_fields = ['created_at', 'updated_at', 'status', 'error_message', 'content_type']
+    
+    def get_chunks_count(self, obj):
+        return obj.chunks.count()
 
 
 class ChunkSerializer(serializers.ModelSerializer):
@@ -104,8 +104,8 @@ class ChunkSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Chunk
-        fields = ['id', 'document', 'content', 'embedding_id', 'metadata']
-        read_only_fields = ['id', 'embedding_id']
+        fields = ['id', 'document', 'content', 'metadata', 'created_at']
+        read_only_fields = ['created_at']
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -113,8 +113,8 @@ class MessageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Message
-        fields = ['id', 'conversation', 'role', 'content', 'timestamp', 'metadata']
-        read_only_fields = ['id', 'timestamp']
+        fields = ['id', 'conversation', 'message_type', 'content', 'created_at', 'metadata']
+        read_only_fields = ['created_at']
 
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -124,13 +124,13 @@ class ConversationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Conversation
-        fields = ['id', 'bot', 'user', 'title', 'created_at', 'is_active', 'messages']
-        read_only_fields = ['id', 'created_at']
+        fields = ['id', 'bot', 'user_id', 'started_at', 'ended_at', 'metadata']
+        read_only_fields = ['started_at', 'ended_at']
     
     def create(self, validated_data):
         # Set the user from request if not provided
-        if 'user' not in validated_data and self.context['request'].user.is_authenticated:
-            validated_data['user'] = self.context['request'].user
+        if 'user_id' not in validated_data and self.context['request'].user.is_authenticated:
+            validated_data['user_id'] = self.context['request'].user.id
         return super().create(validated_data)
     
     def to_representation(self, instance):

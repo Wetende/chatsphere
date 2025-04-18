@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 import json
+from pgvector.django import VectorField
 
 
 class SubscriptionPlan(models.Model):
@@ -47,13 +48,15 @@ class Bot(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bots')
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
     avatar = models.ImageField(upload_to='bot_avatars/', blank=True, null=True)
     welcome_message = models.TextField(default="Hi! How can I help you today?")
     model_type = models.CharField(max_length=50, choices=MODEL_TYPE_CHOICES, default='gpt-3.5-turbo')
-    configuration = models.JSONField(default=dict)
+    configuration = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
     
     def __str__(self):
         return self.name
@@ -62,9 +65,9 @@ class Bot(models.Model):
 class Document(models.Model):
     """Document model for bot knowledge base"""
     STATUS_CHOICES = [
-        ('processing', 'Processing'),
-        ('ready', 'Ready'),
-        ('error', 'Error'),
+        ('PROCESSING', 'Processing'),
+        ('READY', 'Ready'),
+        ('ERROR', 'Error'),
     ]
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -72,10 +75,12 @@ class Document(models.Model):
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to='documents/', null=True, blank=True)
     url = models.URLField(max_length=2000, null=True, blank=True)
-    content_type = models.CharField(max_length=50)
-    upload_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
-    error_message = models.TextField(blank=True, null=True)
+    content_type = models.CharField(max_length=100)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PROCESSING')
+    error_message = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    metadata = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
         return self.name
@@ -86,49 +91,51 @@ class Chunk(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='chunks')
     content = models.TextField()
-    embedding_id = models.CharField(max_length=100, null=True, blank=True)
-    metadata = models.JSONField(default=dict)
+    embedding = VectorField(dimensions=1536, null=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"Chunk {self.id} of {self.document.name}"
+        return f"Chunk {self.id} from {self.document.name}"
 
 
 class Conversation(models.Model):
     """Conversation model"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bot = models.ForeignKey(Bot, on_delete=models.CASCADE, related_name='conversations')
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='conversations')
+    user_id = models.CharField(max_length=255, blank=True)  # Anonymous user identifier
     title = models.CharField(max_length=255, default="New Conversation")
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
+    started_at = models.DateTimeField(auto_now_add=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
         return f"{self.title} ({self.bot.name})"
     
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-started_at']
 
 
 class Message(models.Model):
     """Message model for storing chat messages"""
-    ROLE_CHOICES = [
-        ('user', 'User'),
-        ('assistant', 'Assistant'),
-        ('system', 'System'),
+    MESSAGE_TYPE_CHOICES = [
+        ('USER', 'User'),
+        ('BOT', 'Bot'),
+        ('SYSTEM', 'System'),
     ]
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    message_type = models.CharField(max_length=10, choices=MESSAGE_TYPE_CHOICES)
     content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    metadata = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    metadata = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
-        return f"{self.role}: {self.content[:50]}..."
+        return f"{self.message_type} message: {self.content[:50]}..."
     
     class Meta:
-        ordering = ['timestamp']
+        ordering = ['created_at']
 
 
 class ChatRoom(models.Model):
