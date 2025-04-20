@@ -119,8 +119,13 @@ const handleRegister = async () => {
       return
     }
     
-    // Call registration API
-    await api.post('/api/register/', formData)
+    // DEBUG: Log the base URL and the final constructed URL
+    const requestUrl = `${api.defaults.baseURL}/register/`; // Manually construct for logging
+    console.log('API Base URL:', api.defaults.baseURL);
+    console.log('Attempting to POST to:', requestUrl);
+
+    // Call registration API - use path relative to baseURL
+    await api.post('/register/', formData)
     
     // After registration, log in the user
     await authStore.login({
@@ -131,7 +136,10 @@ const handleRegister = async () => {
     // Redirect to dashboard
     router.push('/dashboard')
   } catch (err) {
-    console.error('Registration error:', err)
+    // DEBUG: Log the full error object
+    console.error('Registration error object:', err); 
+    console.error('Registration error response:', err.response);
+    console.error('Registration error request:', err.request);
     
     if (err.response?.data) {
       // Handle validation errors

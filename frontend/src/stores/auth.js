@@ -17,7 +17,9 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(credentials) {
     loading.value = true
     try {
-      const response = await api.post('/api/token/', credentials)
+      console.log('Attempting login with credentials:', { username: credentials.username, password: '***' })
+      const response = await api.post('/token/', credentials)
+      console.log('Login response:', response.data)
       
       // Store tokens
       token.value = response.data.access
@@ -39,7 +41,11 @@ export const useAuthStore = defineStore('auth', () => {
       
       return true
     } catch (error) {
-      console.error('Login error:', error)
+      console.error('Login error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      })
       throw error
     } finally {
       loading.value = false
@@ -47,14 +53,23 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function fetchCurrentUser() {
-    if (!token.value) return null
+    if (!token.value) {
+      console.log('No token available, skipping user fetch')
+      return null
+    }
     
     try {
-      const response = await api.get('/api/users/me/')
+      console.log('Fetching current user data')
+      const response = await api.get('/users/me/')
+      console.log('User data received:', response.data)
       user.value = response.data
       return user.value
     } catch (error) {
-      console.error('Error fetching user:', error)
+      console.error('Error fetching user:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      })
       // If unauthorized, logout
       if (error.response?.status === 401) {
         await logout()
@@ -64,12 +79,17 @@ export const useAuthStore = defineStore('auth', () => {
   }
   
   async function refreshAccessToken() {
-    if (!refreshToken.value) return false
+    if (!refreshToken.value) {
+      console.log('No refresh token available')
+      return false
+    }
     
     try {
-      const response = await api.post('/api/token/refresh/', {
+      console.log('Attempting to refresh access token')
+      const response = await api.post('/token/refresh/', {
         refresh: refreshToken.value
       })
+      console.log('Token refresh successful')
       
       token.value = response.data.access
       localStorage.setItem('token', token.value)
@@ -79,13 +99,18 @@ export const useAuthStore = defineStore('auth', () => {
       
       return true
     } catch (error) {
-      console.error('Token refresh error:', error)
+      console.error('Token refresh error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      })
       await logout()
       return false
     }
   }
   
   async function logout() {
+    console.log('Logging out user')
     // Clear state
     token.value = null
     refreshToken.value = null
@@ -105,8 +130,10 @@ export const useAuthStore = defineStore('auth', () => {
   // Initialize auth state
   function init() {
     if (token.value) {
+      console.log('Initializing auth state with existing token')
       api.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
-      fetchCurrentUser().catch(() => {
+      fetchCurrentUser().catch((error) => {
+        console.error('Error during auth initialization:', error)
         // Silent fail on init - user will be redirected by router guard if needed
       })
     }

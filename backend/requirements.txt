@@ -16,6 +16,7 @@ drf-yasg             # For API documentation
 psycopg2-binary      # Binary version for easier installation
 dj-database-url==2.1.0  # For database connection via URL
 redis==5.0.1
+pgvector
 
 # Server
 gunicorn             # Production server

@@ -21,7 +21,8 @@ router.register(r'rooms', views.ChatRoomViewSet)
 router.register(r'legacy-messages', views.LegacyMessageViewSet)
 
 urlpatterns = [
-    path('api/', include(router.urls)),
+    # Include router URLs without api/ prefix
+    path('', include(router.urls)),
     # Include authentication URLs for browsable API
     path('auth/', include('rest_framework.urls')),
     # JWT Authentication

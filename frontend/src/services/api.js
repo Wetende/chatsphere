@@ -1,8 +1,17 @@
 import axios from 'axios'
 
+// Determine base URL based on environment
+const isProduction = import.meta.env.PROD;
+const baseURL = isProduction 
+  ? '/api' 
+  : import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+
+console.log(`[api.js] Environment: ${isProduction ? 'Production' : 'Development'}`);
+console.log(`[api.js] Setting baseURL to: ${baseURL}`);
+
 // Create axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  baseURL: baseURL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -42,7 +51,7 @@ api.interceptors.response.use(
       try {
         // Attempt to refresh the token
         const response = await axios.post(
-          `${api.defaults.baseURL}/api/token/refresh/`,
+          `${api.defaults.baseURL}/token/refresh/`,
           {
             refresh: localStorage.getItem('refreshToken')
           }
@@ -78,15 +87,17 @@ api.interceptors.response.use(
 // Test API connection
 export const testApiConnection = async () => {
   try {
-    const response = await api.get('/api/test-connection/')
+    const response = await api.get('/test-connection/')
     return {
       success: true,
       data: response.data
     }
   } catch (error) {
+    console.error('API connection test failed:', error)
     return {
       success: false,
-      error: error.message
+      error: error.message,
+      details: error.response?.data
     }
   }
 }

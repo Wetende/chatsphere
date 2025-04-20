@@ -47,6 +47,16 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
 
+    def create(self, request, *args, **kwargs):
+        logger.info(f"Registration attempt with data: {request.data}")
+        try:
+            response = super().create(request, *args, **kwargs)
+            logger.info("Registration successful")
+            return response
+        except Exception as e:
+            logger.error(f"Registration failed: {str(e)}")
+            raise
+
 # Current user view
 class CurrentUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -277,7 +287,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             logger.error(f"Error processing text document: {str(e)}")
-                return Response(
+            return Response(
                 {"error": f"Error processing text document: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

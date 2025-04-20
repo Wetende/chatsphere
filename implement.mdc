@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
 # ChatSphere: Vector Embedding Implementation Plan
 
 This document outlines the plan for implementing text training capability and vector embedding search using PostgreSQL in our Docker environment.

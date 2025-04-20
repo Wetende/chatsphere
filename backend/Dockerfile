@@ -7,6 +7,18 @@ ENV PYTHONUNBUFFERED=1
 # Set work directory
 WORKDIR /app
 
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    python3-dev \
+    libpq-dev \
+    gcc \
+    g++ \
+    git \
+    postgresql-server-dev-all \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install dependencies
 COPY requirements.txt requirements-no-hashes.txt /app/
 RUN pip install --upgrade pip && \
