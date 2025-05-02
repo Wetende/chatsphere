@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(blank=True, null=True)),
                 ('avatar', models.ImageField(blank=True, null=True, upload_to='bot_avatars/')),
                 ('welcome_message', models.TextField(default='Hi! How can I help you today?')),
-                ('model_type', models.CharField(choices=[('gpt-3.5-turbo', 'GPT-3.5 Turbo'), ('gpt-4', 'GPT-4'), ('claude-2', 'Claude 2'), ('claude-instant', 'Claude Instant'), ('mistral-7b', 'Mistral 7B'), ('llama-2', 'Llama 2')], default='gpt-3.5-turbo', max_length=50)),
+                ('model_type', models.CharField(choices=[('gemini-2.0-flash', 'Gemini 2.0 Flash'), ('claude-2', 'Claude 2'), ('claude-instant', 'Claude Instant'), ('mistral-7b', 'Mistral 7B'), ('llama-2', 'Llama 2')], default='gemini-2.0-flash', max_length=50)),
                 ('configuration', models.JSONField(default=dict)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='bots', to=settings.AUTH_USER_MODEL)),
@@ -80,7 +80,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('content', models.TextField()),
-                ('embedding_id', models.CharField(blank=True, max_length=100, null=True)),
+                ('pinecone_vector_id', models.CharField(blank=True, db_index=True, max_length=100, null=True)),
                 ('metadata', models.JSONField(default=dict)),
                 ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='chunks', to='chatsphere.document')),
             ],

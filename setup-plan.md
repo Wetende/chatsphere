@@ -6,11 +6,11 @@ This guide will walk you through setting up ChatSphere on your Windows computer.
 
 Before we can run ChatSphere, we need to install several important tools:
 - Git: For downloading and managing code
-- Python: The programming language for our backend server
+- Python: The programming language for our backend server and agent
 - Node.js: For running our frontend application
-- Docker: For creating containers that make our app work the same way on all computers
+- Docker: For creating containers that make our app work the same way on all computers (optional but recommended)
 - PostgreSQL: Our database for storing messages and user information
-- Redis: For temporary data storage and real-time features
+- Redis: For temporary data storage and real-time features (optional)
 - VS Code: A program that helps us write and edit code
 
 ### 1️⃣ Open PowerShell as Administrator
@@ -67,39 +67,34 @@ git clone https://github.com/Wetende/chatsphere.git
 cd ChatSphere
 ```
 
-### 3️⃣ Set Up Backend Server (Django)
-These commands create a special environment for Django and install all required packages:
+### 3️⃣ Set Up Backend Environment (Django & Agent)
+These commands create a special environment and install all required packages for both the Django backend and the FastAPI agent service.
 ```powershell
 # Create and activate virtual environment
 python -m venv venv
 .\venv\Scripts\activate
 
-# Install Django and other backend dependencies
+# Install Django backend dependencies
 cd backend
-pip install django
-pip install djangorestframework
-pip install django-cors-headers
-pip install python-dotenv
-pip install psycopg2
-pip install channels
-pip install daphne
-pip install -r requirements/local.txt
+# Ensure requirements.txt has httpx added
+pip install -r requirements.txt 
+cd .. # Back to root
 
-# Install AI-related packages
-pip install langchain
-pip install pinecone-client
-pip install openai
-pip install python-dotenv
+# Install FastAPI agent dependencies
+cd backend\chatsphere_agent
+# Ensure requirements.txt has fastapi, uvicorn, langchain-google-genai etc.
+pip install -r requirements.txt
+cd ..\.. # Back to root
 ```
 
-### 4️⃣ Set Up PostgreSQL Admin
+### 4️⃣ Set Up PostgreSQL Admin (Optional, for manual DB management)
 Follow these steps to set up PostgreSQL admin interface:
 ```powershell
 # Install pgAdmin 4
 choco install pgadmin4 -y
 
-# Start PostgreSQL service
-net start postgresql-x64-14
+# Start PostgreSQL service (if running manually, Docker handles this otherwise)
+net start postgresql-x64-14 
 
 # Set up PostgreSQL password
 psql -U postgres
@@ -121,160 +116,163 @@ To access pgAdmin 4:
      - Username: postgres
      - Password: [the one you set above]
 
-### 5️⃣ Configure Database
+### 5️⃣ Configure Database (if running manually)
+If you are *not* using Docker, you'll need to create the database. Docker Compose handles this automatically.
 ```powershell
-# Create database
-createdb -U postgres chatsphere
+# Create database (only if NOT using Docker)
+createdb -U postgres chatsphere 
 
-# Apply Django migrations
-cd ~\Projects\ChatSphere\backend
+# Apply Django migrations (activate backend venv first if needed)
+cd backend
+# .\..\venv\Scripts\activate # Activate venv if not already active
 python manage.py makemigrations
 python manage.py migrate
 
 # Create superuser
 python manage.py createsuperuser
+cd ..
 ```
 
 ### 6️⃣ Set Up Frontend (Vue.js)
 ```powershell
-# Install Vue CLI globally
-npm install -g @vue/cli
+# Install Vue CLI globally (if not already installed)
+# npm install -g @vue/cli 
 
 # Navigate to frontend directory
-cd ~\Projects\ChatSphere\frontend
+cd frontend
 
 # Install dependencies
 npm install
 
-# Install additional required packages
-npm install axios
-npm install vuex
-npm install vue-router
-npm install @mdi/font
-npm install @vue/composition-api
+# Install additional required packages (if needed, check package.json)
+# npm install axios vuex vue-router @mdi/font @vue/composition-api 
 ```
 
 ### 7️⃣ Configure Environment Variables
-Create `.env` files for both backend and frontend:
-
-Backend `.env` (create in backend folder):
+Copy the `.env.example` file in the project root to `.env` and fill in your details:
+```powershell
+# From the project root directory
+Copy-Item .env.example .env 
+```
+Edit the `.env` file with a text editor (like VS Code) and ensure these are set:
 ```plaintext
+# General
 DEBUG=True
-SECRET_KEY=your-secret-key-here
-DATABASE_URL=postgres://postgres:your-password@localhost:5432/chatsphere
-ALLOWED_HOSTS=localhost,127.0.0.1
-CORS_ORIGIN_WHITELIST=http://localhost:3000
+SECRET_KEY=generate_a_strong_secret_key_here
 
-# AI Configuration
-OPENAI_API_KEY=your-openai-key
-PINECONE_API_KEY=your-pinecone-key
-PINECONE_ENVIRONMENT=your-pinecone-environment
-PINECONE_INDEX_NAME=your-index-name
+# Database (Adjust if running DB manually/differently)
+DATABASE_URL=postgres://user:password@db:5432/chatsphere # 'db' is the service name in docker-compose
+
+# Django Server
+ALLOWED_HOSTS=localhost,127.0.0.1,backend # Add 'backend' for Docker networking
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://frontend:3000 # Add frontend service name
+
+# Agent Service
+AGENT_SERVICE_URL=http://agent:8001 # 'agent' is the service name in docker-compose
+
+# API Keys
+GOOGLE_API_KEY=your_google_api_key_here
+PINECONE_API_KEY=your_pinecone_api_key_here
+PINECONE_ENVIRONMENT=your_pinecone_environment_here
+PINECONE_INDEX_NAME=your_pinecone_index_name_here
 ```
 
-Frontend `.env` (create in frontend folder):
-```plaintext
-VUE_APP_API_URL=http://localhost:8000
-VUE_APP_WS_URL=ws://localhost:8000
-```
+### 8️⃣ Review AI Integration Code (`backend/chatsphere_agent/`)
+The core AI logic is now in the `backend/chatsphere_agent/` directory, likely using files like `main.py`, `agent.py`, `vector_store.py`, `config.py`. Ensure these files correctly:
+- Load API keys and settings from the `.env` file using `python-dotenv`.
+- Initialize the Google Generative AI client (`ChatGoogleGenerativeAI`) for the LLM.
+- Initialize the Google Generative AI Embeddings client.
+- Initialize the Pinecone client and connect to your index.
+- Set up LangChain components (vector store retriever, agent executor) using Gemini and Pinecone.
+- Expose the functionality via FastAPI endpoints in `main.py`.
 
-### 8️⃣ Set Up AI Integration
-Create a new file `backend/ai_config.py`:
+Example structure (refer to `restructuring.md` for more details):
 ```python
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Pinecone
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationalRetrievalChain
-import pinecone
+# backend/chatsphere_agent/config.py (Example snippet)
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
 
-# Initialize Pinecone
-pinecone.init(
-    api_key=os.getenv('PINECONE_API_KEY'),
-    environment=os.getenv('PINECONE_ENVIRONMENT')
-)
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_ENVIRONMENT = os.getenv("PINECONE_ENVIRONMENT")
+PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
+# ... other settings
 
-# Initialize OpenAI
-embeddings = OpenAIEmbeddings(openai_api_key=os.getenv('OPENAI_API_KEY'))
-chat = ChatOpenAI(openai_api_key=os.getenv('OPENAI_API_KEY'))
+# backend/chatsphere_agent/agent.py (Example snippet)
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+# ... other imports
 
-# Set up vector store
-index_name = os.getenv('PINECONE_INDEX_NAME')
-vectorstore = Pinecone.from_existing_index(index_name, embeddings)
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", google_api_key=config.GOOGLE_API_KEY)
+embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=config.GOOGLE_API_KEY) 
+# Note: Ensure Pinecone index dimension matches embedding dimension (e.g., 768 for embedding-001)
 
-# Create retrieval chain
-qa_chain = ConversationalRetrievalChain.from_llm(
-    llm=chat,
-    retriever=vectorstore.as_retriever(),
-    return_source_documents=True
-)
+# ... vector store setup using Pinecone and embeddings ...
+# ... agent setup using llm and retriever ...
+
+# backend/chatsphere_agent/main.py (Example snippet)
+# ... FastAPI setup ...
+# Endpoints call functions using the configured llm, embeddings, vector store, agent ...
 ```
 
 ### 9️⃣ Start Services
-In first PowerShell window (Backend):
+
+**Using Docker (Recommended):**
 ```powershell
-cd ~\Projects\ChatSphere\backend
-.\venv\Scripts\activate
-python manage.py runserver
+# From the project root directory
+docker-compose up -d --build 
 ```
 
-In second PowerShell window (Frontend):
+**Manually (Requires 3 separate PowerShell windows):**
+
+Window 1 (Backend - Django):
+```powershell
+cd ~\Projects\ChatSphere\backend
+# .\..\venv\Scripts\activate # Activate venv if not already active
+python manage.py runserver 0.0.0.0:8000 
+```
+
+Window 2 (Agent - FastAPI):
+```powershell
+cd ~\Projects\ChatSphere\backend\chatsphere_agent
+# .\..\venv\Scripts\activate # Activate venv if not already active
+uvicorn main:app --reload --host 0.0.0.0 --port 8001
+```
+
+Window 3 (Frontend - Vue):
 ```powershell
 cd ~\Projects\ChatSphere\frontend
-npm run serve
+npm run serve 
 ```
 
 ## Accessing ChatSphere
-1. Backend Admin: http://localhost:8000/admin
-2. Frontend App: http://localhost:3000
-3. pgAdmin: http://localhost/pgadmin4
+1. Frontend App: http://localhost:3000 (or the port shown by `npm run serve`)
+2. Backend Admin: http://localhost:8000/admin
+3. Agent API Docs: http://localhost:8001/docs
+4. pgAdmin (if installed): http://localhost/pgadmin4
 
 ## Additional Setup Steps
 
 ### Initialize Pinecone Index
-Run these commands in the Python shell:
-```powershell
-cd ~\Projects\ChatSphere\backend
-python manage.py shell
-```
+You need to create your index manually in the Pinecone console ([https://app.pinecone.io/](https://app.pinecone.io/)) before running the application.
+- Create an index with the name specified in your `.env` file (`PINECONE_INDEX_NAME`).
+- **Crucially**, set the **dimension** of the index to match the output dimension of the Google embedding model you are using (e.g., `768` for `models/embedding-001`).
+- Choose an appropriate metric (e.g., `cosine`).
 
-Then in the Python shell:
-```python
-import pinecone
-import os
-from dotenv import load_dotenv
+## Troubleshooting
 
-load_dotenv()
+### Common Issues
+- **API Key Errors**: Double-check `GOOGLE_API_KEY`, `PINECONE_API_KEY`, `PINECONE_ENVIRONMENT` in your `.env` file.
+- **Connection Errors (Django <-> Agent)**: Ensure `AGENT_SERVICE_URL` is correct and both services are running and accessible to each other (check Docker networking if applicable). Check logs for `httpx` errors.
+- **Pinecone Errors**: Verify index name, environment, and dimension match between your code/`.env` file and the Pinecone console. Check agent logs.
+- **Embedding Dimension Mismatch**: Ensure the Pinecone index dimension matches the Google embedding model's output dimension (e.g., 768).
+- **Port Conflicts**: Make sure ports 3000, 8000, 8001, 5432 (if running Postgres manually) are not already in use.
+- **Dependency Issues**: Ensure you have run `pip install -r requirements.txt` in both `backend` and `backend/chatsphere_agent`, and `npm install` in `frontend`.
 
-# Initialize Pinecone
-pinecone.init(
-    api_key=os.getenv('PINECONE_API_KEY'),
-    environment=os.getenv('PINECONE_ENVIRONMENT')
-)
-
-# Create index if it doesn't exist
-if os.getenv('PINECONE_INDEX_NAME') not in pinecone.list_indexes():
-    pinecone.create_index(
-        name=os.getenv('PINECONE_INDEX_NAME'),
-        dimension=1536,  # OpenAI embeddings dimension
-        metric='cosine'
-    )
-```
-
-## Troubleshooting Guide 🔧
-
-### Command Errors:
-- Directory Error: Make sure you're in the correct folder (use `pwd` to check your location)
-- Permission Error: Run PowerShell as Administrator
-- Copy/Paste Error: Make sure to copy the entire command, including any hidden characters
-
-### Common Issues:
-- Database Connection Error: Make sure PostgreSQL is running (check Services in Task Manager)
-- Docker Error: Ensure Docker Desktop is running (look for whale icon in taskbar)
-- Port Already in Use: Check if another program is using ports 3000 or 8000
+### Checking Logs
+- **Docker**: `docker-compose logs -f <service_name>` (e.g., `backend`, `agent`, `frontend`, `db`)
+- **Manual**: Check the console output in each PowerShell window where a service is running.
 
 ## Stopping ChatSphere 🛑
 To stop the servers:

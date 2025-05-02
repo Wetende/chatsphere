@@ -1,6 +1,0 @@
-langchain
-langchain-google-genai
-python-dotenv
-pinecone
-psycopg2-binary
-langchain-community

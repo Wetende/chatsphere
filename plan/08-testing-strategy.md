@@ -15,7 +15,7 @@ tests/
 ├── integration/          # Integration tests
 │   ├── api/             # API endpoint tests
 │   ├── database/        # Database interaction tests
-│   └── external/        # External service tests
+│   └── external/        # External service tests (Agent Service, DB)
 ├── e2e/                 # End-to-end tests
 │   ├── flows/           # User flow tests
 │   └── scenarios/       # Complex scenario tests
@@ -23,7 +23,7 @@ tests/
 │   ├── load/            # Load testing scripts
 │   └── stress/          # Stress testing scripts
 ├── security/            # Security tests
-└── ai/                  # AI/ML specific tests
+└── ai/                  # AI/ML specific tests (in agent service project)
 ```
 
 ## Test Categories
@@ -65,29 +65,29 @@ class TestChatbotModel(TestCase):
                 name="Test Bot"
             )
 
-# tests/unit/services/test_embedding.py
+# backend/chatsphere_agent/tests/unit/test_embeddings.py (Example in Agent Service)
 import pytest
 import numpy as np
-from services.ai.embeddings import EmbeddingGenerator
+from chatsphere_agent.vector_store import generate_embeddings # Example function
 
 class TestEmbeddingGenerator:
-    @pytest.fixture
-    def embedding_generator(self):
-        return EmbeddingGenerator()
     
-    def test_create_embeddings(self, embedding_generator):
+    @pytest.mark.asyncio
+    async def test_create_embeddings(self):
+        # This test would likely need mocking for the Google API call
         text = "Test content for embedding"
-        result = embedding_generator.create_embeddings([text])
+        result = await generate_embeddings([text]) # Assuming an async function
         
         assert len(result) == 1
         assert isinstance(result[0], np.ndarray)
-        assert result[0].shape == (1536,)  # OpenAI embedding size
+        # Check shape based on the specific Google model used (e.g., 768 for embedding-001)
+        assert result[0].shape == (768,) 
 ```
 
 ### 2. Integration Testing
 
 ```python
-# tests/integration/api/test_chatbot_api.py
+# backend/chatsphere/tests/integration/api/test_chatbot_api.py
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
@@ -126,45 +126,88 @@ class TestChatbotAPI:
         assert response.status_code == 200
         assert len(response.data) == 2
 
-# tests/integration/database/test_vector_store.py
+# backend/chatsphere/tests/integration/external/test_agent_client.py
 import pytest
-from services.vector_store import PineconeClient
-from services.ai.embeddings import EmbeddingGenerator
+import httpx
+from respx import mock
+from chatsphere.services.agent_client import call_chat, call_embed_and_store
 
-class TestVectorStore:
-    @pytest.fixture
-    def vector_store(self):
-        return PineconeClient()
+AGENT_SERVICE_URL = "http://test-agent-service:8001" # Use a test URL
+
+@pytest.mark.asyncio
+async def test_call_chat_success(respx_mock):
+    respx_mock.post(f"{AGENT_SERVICE_URL}/chat").mock(return_value=httpx.Response(200, json={"response": "Test AI response"}))
     
-    @pytest.fixture
-    def embedding_generator(self):
-        return EmbeddingGenerator()
+    response = await call_chat(
+        bot_id="test_bot", 
+        message="Hello", 
+        history=[], 
+        user_id="test_user"
+    )
+    assert response == "Test AI response"
+
+@pytest.mark.asyncio
+async def test_call_embed_success(respx_mock):
+    respx_mock.post(f"{AGENT_SERVICE_URL}/embed_and_store").mock(return_value=httpx.Response(200, json={
+        "status": "success", 
+        "document_id": "doc123", 
+        "stored_vector_count": 1
+    }))
     
-    async def test_store_and_query(self, vector_store, embedding_generator):
-        # Test data
-        text = "Test content for vector store"
-        chatbot_id = "test_bot_123"
-        
-        # Generate and store embedding
-        embedding = await embedding_generator.create_embeddings([text])
-        await vector_store.upsert_vectors(
-            vectors=[embedding],
-            metadata=[{
-                'chatbot_id': chatbot_id,
-                'content': text
-            }],
-            namespace='test'
-        )
-        
-        # Query the vector store
-        results = await vector_store.query_vectors(
-            query_vector=embedding,
-            namespace='test',
-            top_k=1
-        )
-        
-        assert len(results) == 1
-        assert results[0]['metadata']['content'] == text
+    success = await call_embed_and_store(document_id="doc123", chunks=["chunk 1"])
+    assert success is True
+
+# backend/chatsphere_agent/tests/integration/test_vector_store.py (Example in Agent Service)
+import pytest
+import asyncio
+from unittest.mock import patch, AsyncMock # Import mocking tools
+from chatsphere_agent.vector_store import embed_and_store_chunks, get_relevant_chunks
+# Requires setting up a test Pinecone index or, more commonly, mocking the Pinecone client
+
+# Example Mocking setup (adapt as needed)
+@pytest.fixture
+def mock_pinecone_index():
+    mock_index = AsyncMock() # Use AsyncMock for async methods
+    # Mock specific methods like upsert, query
+    mock_index.upsert.return_value = None # Or mock return value if needed
+    mock_query_response = AsyncMock()
+    mock_match = AsyncMock()
+    mock_match.metadata = {'text': 'mocked relevant text'}
+    mock_query_response.matches = [mock_match]
+    mock_index.query.return_value = mock_query_response
+    return mock_index
+
+@pytest.fixture
+def mock_embedding_model():
+    mock_model = AsyncMock()
+    # Mock embed_query and embed_documents
+    mock_model.embed_query.return_value = [0.1] * 768 # Return vector of correct dimension
+    mock_model.embed_documents.return_value = [[0.2] * 768] # Return list of vectors
+    return mock_model
+
+@pytest.mark.asyncio
+@patch('chatsphere_agent.vector_store.get_embedding_model') # Patch the function that returns the model
+@patch('chatsphere_agent.vector_store.get_pinecone_index') # Patch the function that returns the index
+async def test_store_and_query_mocked(mock_get_index, mock_get_model, mock_pinecone_index, mock_embedding_model):
+    # Assign return values to the patched functions
+    mock_get_index.return_value = mock_pinecone_index
+    mock_get_model.return_value = mock_embedding_model
+
+    doc_id = "test_doc_integration"
+    chunks = ["This is test content for Pinecone integration."]
+    metadata = {"bot_id": "test_bot_mock"}
+
+    # Store
+    await embed_and_store_chunks(doc_id, chunks, metadata, mock_pinecone_index)
+    # Assert that index.upsert was called correctly
+    mock_pinecone_index.upsert.assert_called_once()
+
+    # Query
+    results = await get_relevant_chunks("test_bot_mock", "test query", index=mock_pinecone_index)
+    # Assert that index.query was called correctly
+    mock_pinecone_index.query.assert_called_once()
+    assert len(results) == 1
+    assert results[0] == "mocked relevant text"
 ```
 
 ### 3. End-to-End Testing
@@ -199,8 +242,9 @@ class TestChatbotCreation:
             "test_data/sample.pdf"
         )
         
-        # Wait for processing
-        self.page.wait_for_selector("[data-test=processing-complete]")
+        # Wait for processing (adjust timeout/selector based on actual UI feedback)
+        # This implicitly tests the call to the agent service for embedding
+        self.page.wait_for_selector("[data-test=processing-complete]", timeout=60000)
         
         # Verify creation
         expect(self.page.locator("[data-test=success-message]")).to_be_visible()
@@ -213,26 +257,27 @@ from playwright.sync_api import Page, expect
 
 class TestChatInteraction:
     def test_chat_conversation_flow(self, page: Page):
-        # Navigate to chat interface
+        # Navigate to chat interface for a pre-trained bot
         page.goto("/chat/customer-service-bot")
         
         # Send message
         page.fill("[data-test=chat-input]", "How do I reset my password?")
         page.click("[data-test=send-button]")
         
-        # Wait for response
-        response = page.wait_for_selector("[data-test=bot-response]")
+        # Wait for response (which involves call to agent service)
+        response_locator = page.locator("[data-test=bot-response]")
+        expect(response_locator).to_be_visible(timeout=30000)
         
         # Verify response contains relevant information
-        expect(response).to_contain_text("password reset")
+        expect(response_locator).to_contain_text("password reset")
         
         # Test follow-up question
         page.fill("[data-test=chat-input]", "Where do I find the reset link?")
         page.click("[data-test=send-button]")
         
         # Verify context awareness
-        response = page.wait_for_selector("[data-test=bot-response]")
-        expect(response).to_contain_text("email")
+        expect(response_locator.last).to_be_visible(timeout=30000)
+        expect(response_locator.last).to_contain_text("email")
 ```
 
 ### 4. Performance Testing
@@ -243,306 +288,224 @@ import asyncio
 import aiohttp
 from locust import HttpUser, task, between
 
+# Note: This test targets the Django backend API endpoint for chat.
+# It indirectly tests the performance of the Django -> Agent service call.
+# Separate Locust tests could target the Agent service directly if needed.
+
 class ChatUser(HttpUser):
     wait_time = between(1, 3)
+    host = "http://localhost:8000" # Target the Django backend
     
     def on_start(self):
-        # Login and setup
-        self.client.post("/api/login", {
-            "email": f"user_{self.user_id}@example.com",
-            "password": "test123"
-        })
-    
+        # Perform login to get JWT token
+        self.token = self._login()
+        self.headers = {'Authorization': f'Bearer {self.token}'}
+
+    def _login(self):
+        # Replace with actual login logic
+        response = self.client.post("/api/token/", json={"username": "loadtestuser", "password": "password"})
+        if response.status_code == 200:
+            return response.json().get('access')
+        return None
+
     @task
     def send_chat_message(self):
+        if not self.token:
+            self._login()
+            if not self.token:
+                return # Skip task if login failed
+                
+        bot_id = "your_test_bot_id" # Replace with a valid bot ID
+        chat_endpoint = f"/api/chat/{bot_id}/send/" # Example endpoint
+        payload = {
+            "message": "Tell me about performance testing."
+        }
         self.client.post(
-            "/api/chat/message",
-            json={
-                "chatbot_id": "test_bot",
-                "message": "Test message for load testing"
-            }
+            chat_endpoint,
+            json=payload,
+            headers=self.headers,
+            name="/api/chat/{bot_id}/send/"
         )
 
-# tests/performance/stress/test_concurrent_training.py
-import asyncio
-import aiohttp
-from typing import List
+# tests/performance/stress/test_embedding_stress.py
+# This would target the agent service's /embed_and_store endpoint directly
+# using Locust or another tool like k6.
 
-async def train_chatbot(session, chatbot_id: str, data: List[str]):
-    async with session.post(
-        f"/api/chatbots/{chatbot_id}/train",
-        json={"training_data": data}
-    ) as response:
-        return await response.json()
-
-async def stress_test_training():
-    async with aiohttp.ClientSession() as session:
-        # Create multiple training tasks
-        tasks = [
-            train_chatbot(
-                session,
-                f"bot_{i}",
-                ["Test data for stress testing"]
-            )
-            for i in range(100)
-        ]
-        
-        # Run concurrently
-        results = await asyncio.gather(*tasks)
-        
-        # Analyze results
-        success_count = sum(1 for r in results if r.get('status') == 'success')
-        return success_count
+# Example using k6 (JavaScript):
+# import http from 'k6/http';
+# import { check, sleep } from 'k6';
+# 
+# export let options = {
+#   stages: [
+#     { duration: '1m', target: 50 }, // ramp up to 50 users
+#     { duration: '3m', target: 50 }, // stay at 50 users
+#     { duration: '1m', target: 0 }, // ramp down
+#   ],
+# };
+# 
+# const AGENT_URL = 'http://localhost:8001/embed_and_store';
+# 
+# export default function () {
+#   const payload = JSON.stringify({
+#     document_id: `doc-${__VU}-${__ITER}`,
+#     chunks: [
+#       `This is test chunk 1 for stress testing user ${__VU} iteration ${__ITER}.`,
+#       `This is test chunk 2 for stress testing user ${__VU} iteration ${__ITER}.`
+#     ],
+#   });
+# 
+#   const params = {
+#     headers: {
+#       'Content-Type': 'application/json',
+#     },
+#   };
+# 
+#   const res = http.post(AGENT_URL, payload, params);
+#   check(res, { 'status was 200': (r) => r.status == 200 });
+#   sleep(1);
+# }
 ```
 
 ### 5. Security Testing
 
-```python
-# tests/security/test_authentication.py
-import pytest
-from rest_framework.test import APIClient
-
-class TestAuthentication:
-    @pytest.fixture
-    def api_client(self):
-        return APIClient()
-    
-    def test_invalid_api_key(self, api_client):
-        api_client.credentials(HTTP_X_API_KEY='invalid_key')
-        response = api_client.get('/api/chatbots/')
-        assert response.status_code == 401
-    
-    def test_expired_token(self, api_client):
-        api_client.credentials(
-            HTTP_AUTHORIZATION='Bearer expired_token_here'
-        )
-        response = api_client.get('/api/chatbots/')
-        assert response.status_code == 401
-    
-    def test_rate_limiting(self, api_client, user):
-        api_client.force_authenticate(user=user)
-        
-        # Send requests up to limit
-        for _ in range(user.usage_limit):
-            response = api_client.post('/api/chat/message', {
-                'message': 'test'
-            })
-            assert response.status_code == 200
-        
-        # Next request should be blocked
-        response = api_client.post('/api/chat/message', {
-            'message': 'test'
-        })
-        assert response.status_code == 429
-
-# tests/security/test_data_privacy.py
-class TestDataPrivacy:
-    def test_pii_detection(self):
-        text = "My email is test@example.com and phone is 123-456-7890"
-        detected_pii = detect_pii(text)
-        
-        assert 'email' in detected_pii
-        assert 'phone' in detected_pii
-        
-    def test_data_isolation(self, api_client, user1, user2):
-        # Create chatbot for user1
-        chatbot = create_test_chatbot(user1)
-        
-        # Try to access with user2
-        api_client.force_authenticate(user=user2)
-        response = api_client.get(f'/api/chatbots/{chatbot.id}/')
-        
-        assert response.status_code == 403
-```
+- **Tools**: OWASP ZAP, Bandit (Python), Snyk (Dependencies)
+- **Focus Areas**:
+    - Input validation (API endpoints, chat inputs)
+    - Authentication & Authorization checks (Django & potentially agent service if needed)
+    - Dependency scanning
+    - Sensitive data exposure (API keys, logs)
+    - Rate limiting on API endpoints
 
 ### 6. AI/ML Testing
 
-```python
-# tests/ai/test_model_performance.py
-from services.ai import AIService
-from metrics import calculate_metrics
-
-class TestModelPerformance:
-    def test_response_quality(self):
-        ai_service = AIService()
-        test_cases = [
-            {
-                'prompt': 'How do I reset my password?',
-                'context': ['Users can reset passwords through email'],
-                'expected_keywords': ['email', 'reset', 'link']
-            }
-        ]
-        
-        for case in test_cases:
-            response = ai_service.generate_response(
-                case['prompt'],
-                case['context']
-            )
-            
-            # Check for expected information
-            for keyword in case['expected_keywords']:
-                assert keyword.lower() in response.lower()
-    
-    def test_embedding_quality(self):
-        embedding_service = EmbeddingGenerator()
-        
-        # Test semantic similarity
-        text1 = "How do I reset my password?"
-        text2 = "I need to change my password"
-        
-        emb1 = embedding_service.create_embeddings([text1])[0]
-        emb2 = embedding_service.create_embeddings([text2])[0]
-        
-        similarity = calculate_cosine_similarity(emb1, emb2)
-        assert similarity > 0.8  # High similarity threshold
-```
-
-## Test Automation
-
-### 1. CI/CD Integration
-
-```yaml
-# .github/workflows/test.yml
-name: ChatSphere Tests
-
-on: [push, pull_request]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_pass
-        ports:
-          - 5432:5432
-      
-      redis:
-        image: redis:6
-        ports:
-          - 6379:6379
-    
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements/test.txt
-      
-      - name: Run unit tests
-        run: pytest tests/unit/
-      
-      - name: Run integration tests
-        run: pytest tests/integration/
-      
-      - name: Run E2E tests
-        run: pytest tests/e2e/
-      
-      - name: Run security tests
-        run: pytest tests/security/
-```
-
-### 2. Test Data Management
+- **Location**: Primarily within the `backend/chatsphere_agent` tests.
+- **Focus Areas**:
+    - **Embedding Quality**: Cosine similarity checks between related text snippets.
+    - **Retrieval Relevance**: Evaluate if retrieved context matches query intent (requires labeled data or manual inspection).
+    - **LLM Response Quality**: Check for:
+        - Hallucinations (using specific prompts)
+        - Relevance to context and query
+        - Safety/Bias (using evaluation datasets/prompts)
+        - Format correctness (if expecting JSON etc.)
+    - **Robustness**: Test with edge cases, noisy input, long conversations.
+    - **Tool Usage** (if agent uses tools): Verify correct tool invocation and response handling.
 
 ```python
-# tests/conftest.py
+# backend/chatsphere_agent/tests/ai/test_retrieval.py
 import pytest
-from typing import Dict, Any
-from pathlib import Path
+from chatsphere_agent.vector_store import get_relevant_chunks
 
-class TestDataManager:
-    @staticmethod
-    def load_test_data(category: str) -> Dict[str, Any]:
-        data_file = Path(f"tests/data/{category}.json")
-        return json.loads(data_file.read_text())
+@pytest.mark.asyncio
+async def test_retrieval_relevance():
+    # Assumes vector store is populated with known data
+    query = "Information about testing strategies"
+    bot_id = "test_knowledge_bot"
     
-    @staticmethod
-    def generate_test_vectors(count: int) -> List[np.ndarray]:
-        return [
-            np.random.rand(1536)  # OpenAI embedding size
-            for _ in range(count)
-        ]
-
-@pytest.fixture
-def test_data_manager():
-    return TestDataManager()
-
-@pytest.fixture
-def mock_openai(monkeypatch):
-    def mock_completion(*args, **kwargs):
-        return {
-            'choices': [{
-                'message': {
-                    'content': 'Mocked AI response'
-                }
-            }]
-        }
+    results = await get_relevant_chunks(bot_id, query)
     
-    monkeypatch.setattr(
-        'openai.ChatCompletion.create',
-        mock_completion
-    )
+    assert len(results) > 0
+    # Check if the content of results contains keywords like 'testing', 'strategy'
+    assert any("testing" in chunk.lower() for chunk in results)
+
+# backend/chatsphere_agent/tests/ai/test_llm_responses.py
+import pytest
+from chatsphere_agent.agent import get_agent_executor # Example
+
+# Requires mocking vector store retrieval and potentially tools
+@pytest.mark.asyncio
+async def test_llm_avoids_hallucination(mock_retriever):
+    agent_executor = get_agent_executor() # Assume config is handled
+    
+    # Prompt designed to potentially cause hallucination
+    prompt = "Tell me about the fictional planet Zorgon."
+    mock_retriever.set_context("No information found about Zorgon.") # Mock retrieval
+    
+    result = await agent_executor.invoke({"input": prompt, "chat_history": [], "context": mock_retriever.get_context()})
+    response = result.get('output')
+    
+    # Expect the model to state it doesn't know
+    assert "don't have information" in response.lower() or "cannot find" in response.lower()
 ```
 
-## Test Coverage Requirements
+### AI Quality Testing (within `chatsphere_agent/tests/ai/`)
 
-1. **Unit Tests**
-   - Minimum 90% code coverage
-   - All models and services
-   - Critical utility functions
+This critical testing category focuses on the functional correctness and quality of the AI responses generated by the Agent Service.
 
-2. **Integration Tests**
-   - All API endpoints
-   - Database operations
-   - External service interactions
+- **Goal**: Ensure relevance, coherence, safety, and accuracy of AI outputs.
+- **Methodology**: Create test suites with predefined inputs (queries, context, history) and expected outputs or qualitative criteria.
+- **Test Types**:
+    - **Retrieval Accuracy**: Given a query and known relevant text chunks in the (mocked) vector store, assert that the correct chunks are retrieved by `get_relevant_chunks`.
+    - **Response Relevance**: Given a query and retrieved context, assert that the LLM response (mocking the LLM call or using a small, controlled test) is relevant to the query and context.
+    - **Context Utilization**: Assert that the LLM response demonstrably uses information from the provided context chunks.
+    - **Hallucination Check**: Create test cases where the context *lacks* the answer and assert that the LLM avoids inventing information (e.g., responds with "I don't know based on the provided information").
+    - **Prompt Template Testing**: Test different system prompts or prompt structures (potentially loaded via `config_params`) to evaluate their impact on response quality.
+    - **Safety & Bias Testing**: Use predefined datasets or test cases designed to probe for harmful, biased, or inappropriate responses. Assert that safety mechanisms (if any) trigger or that responses remain neutral/safe.
+    - **Agent Configuration Testing**: If multiple agent types (`rag`, `react`) are implemented, create tests verifying that the correct agent logic is invoked based on the `config_params` and that it behaves as expected.
 
-3. **E2E Tests**
-   - Critical user flows
-   - Payment processing
-   - Bot creation and training
+```python
+# backend/chatsphere_agent/tests/ai/test_response_relevance.py (Conceptual Example)
+import pytest
+# Assume setup involves mocking LLM and retriever
 
-4. **Performance Tests**
-   - Response time < 500ms
-   - Support 1000 concurrent users
-   - Handle 100 requests/second
+@pytest.mark.asyncio
+async def test_relevant_response_generation(mocked_llm_chain):
+    # Setup mock LLM to return a canned response based on input
+    # Setup context
+    context = "The capital of France is Paris."
+    query = "What is the capital of France?"
+    history = []
+    config = {"agent_type": "rag"}
+    
+    # Invoke the chat logic (similar to main.py /chat endpoint)
+    # response = await invoke_chat_logic(query, history, context, config)
+    response = "Paris is the capital of France."
 
-5. **Security Tests**
-   - Authentication/Authorization
-   - Data privacy
-   - Input validation
+    # Assertions
+    assert "Paris" in response
+    assert "France" in response
+    # Add negative assertions if needed
+    assert "Berlin" not in response 
+```
 
-6. **AI/ML Tests**
-   - Model accuracy > 90%
-   - Response relevance
-   - Context awareness
+## Test Execution
 
-## Monitoring and Reporting
+- **Unit & Integration Tests**: Run via `pytest` within the respective service directories (`backend/` and `backend/chatsphere_agent/`).
+- **E2E Tests**: Run via `playwright test` against a running instance of the full application (Docker Compose recommended).
+- **Performance Tests**: Run via `locust` (Python) or `k6` (JavaScript) against running service endpoints.
+- **CI/CD**: Integrate test execution into GitHub Actions (or similar) for automated testing on pushes and pull requests.
 
-1. **Test Results**
-   - Automated reports
-   - Failure analysis
-   - Trend tracking
+## Mocking Dependencies
 
-2. **Coverage Reports**
-   - Code coverage
-   - Feature coverage
-   - API coverage
+- **External APIs (Google, Pinecone)**: Use libraries like `respx` (for `httpx`), `pytest-mock`, or specific SDK mocks.
+- **Databases**: Use test databases (in-memory like SQLite for simple unit tests, separate test Postgres instance for integration tests).
+- **Inter-service Communication (Django <-> Agent)**: Use `respx` in Django tests to mock HTTP calls to the agent service.
 
-3. **Performance Metrics**
-   - Response times
-   - Error rates
-   - Resource usage
+```python
+# Example mocking OpenAI/Google API calls
+@pytest.fixture
+def mock_google_llm(monkeypatch):
+    class MockChatGoogle:
+        async def invoke(self, *args, **kwargs):
+            return {'output': 'Mocked Gemini Response'}
+            
+    monkeypatch.setattr(
+        'langchain_google_genai.ChatGoogleGenerativeAI',
+        MockChatGoogle 
+    )
 
-## Next Steps
-
-For details on how this testing strategy supports our deployment and continuous integration processes, refer to the [Deployment Strategy](./09-deployment-strategy.md) document. 
+# Example mocking Pinecone client
+@pytest.fixture
+def mock_pinecone_index(monkeypatch):
+    class MockPineconeIndex:
+        async def upsert(self, *args, **kwargs):
+            return {'upserted_count': 1}
+        async def query(self, *args, **kwargs):
+            # Return mock query results
+            return {'matches': [{'id': 'vec1', 'score': 0.9, 'metadata': {'text': 'mocked text'}}]}
+            
+    class MockPinecone:
+        def Index(self, *args, **kwargs):
+            return MockPineconeIndex()
+            
+    monkeypatch.setattr('pinecone.Pinecone', MockPinecone)
+```

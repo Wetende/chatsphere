@@ -44,7 +44,7 @@ ChatSphere will be developed using an iterative, phased approach:
 - Implement user authentication and account management
 - Create basic chatbot creation flow
 - Develop initial widget system
-- Set up basic AI integration
+- Set up basic AI integration (Django <-> Agent Service communication)
 
 ### Tasks
 - [x] Implement user registration/login
@@ -52,16 +52,18 @@ ChatSphere will be developed using an iterative, phased approach:
 - [x] Develop basic dashboard UI
 - [x] Implement chatbot creation wizard
 - [x] Create initial widget design
-- [x] Set up OpenAI API integration
-- [] Implement basic text training capability
-- [] Create simple embedding and retrieval system
+- [] Set up basic Agent Service (FastAPI) structure
+- [] Implement Agent client in Django backend
+- [ ] Implement basic text training capability (calling Agent Service)
+- [ ] Create simple embedding and retrieval system (within Agent Service using Gemini/Pinecone)
+- [ ] Implement initial LangChain conversational retrieval agent logic in Agent Service
 
 ### Deliverables
 - User authentication system ✅
 - Basic dashboard ✅
 - Simple chatbot creation process ✅
 - Functional chatbot widget ✅
-- Initial AI integration ✅
+- Initial Agent Service setup and communication 
 
 ### Status
 **IN PROGRESS** - (Target completion: April 15, 2024)
@@ -71,44 +73,45 @@ ChatSphere will be developed using an iterative, phased approach:
 ### Goals
 - Expand data source options
 - Enhance widget customization
-- Improve training capabilities
+- Improve training capabilities (in Agent Service)
 - Implement basic analytics
 
 ### Tasks
-- [ ] Add PDF document training capability
-- [ ] Implement URL scraping and training
+- [ ] Add PDF document training capability (Django backend processing + Agent embedding)
+- [ ] Implement URL scraping and training (Django backend processing + Agent embedding)
 - [ ] Enhance widget customization options
 - [ ] Create widget preview system
-- [ ] Implement LangChain integration
-- [ ] Set up Pinecone for vector search
+- [ ] Implement LangChain agent logic in Agent Service
+- [ ] Optimize Pinecone vector search in Agent Service
 - [ ] Develop training progress visualization
 - [ ] Create basic conversation analytics
-- [ ] Implement chatbot settings and behavior options
+- [ ] Implement chatbot settings and behavior options (passed to Agent Service)
 
 ### Deliverables
 - Multi-source training system
 - Widget customization interface
-- Enhanced AI capabilities
+- Enhanced AI capabilities (via Agent Service)
 - Basic analytics dashboard
 
 ## Phase 3: Advanced Features and Integrations (Weeks 11-14)
 
 ### Goals
-- Implement advanced AI features
+- Implement advanced AI features (within Agent Service)
 - Enhance analytics and reporting
-- Add integrations and API access
+- Add integrations and API access (via Django Backend)
 - Improve performance and scalability
 
 ### Tasks
-- [ ] Implement webhook system
-- [ ] Create API documentation
+- [ ] Implement webhook system (in Django Backend)
+- [ ] Create API documentation (for Django Backend API)
 - [ ] Develop comprehensive analytics
-- [ ] Implement multi-language support
-- [ ] Enhance conversation context handling
+- [ ] Implement multi-language support (Frontend + potentially Agent Service prompts)
+- [ ] Enhance conversation context handling (in Agent Service)
 - [ ] Create conversation feedback system
-- [ ] Optimize performance and response times
-- [ ] Implement entity extraction and sentiment analysis
+- [ ] Optimize performance and response times (both services)
+- [ ] Implement entity extraction and sentiment analysis (in Agent Service)
 - [ ] Add export/import functionality
+- [ ] Explore and implement support for different agent types (e.g., ReAct, tool-using agents) within the Agent Service, configurable via the Django backend.
 
 ### Deliverables
 - Advanced AI features
@@ -126,12 +129,12 @@ ChatSphere will be developed using an iterative, phased approach:
 - Preparation for production deployment
 
 ### Tasks
-- [ ] Conduct comprehensive testing
+- [ ] Conduct comprehensive testing (Unit, Integration, E2E across both services)
 - [ ] Optimize loading times and performance
 - [ ] Complete user documentation
 - [ ] Prepare marketing materials
 - [ ] Conduct security audit and address findings
-- [ ] Configure production environment
+- [ ] Configure production environment (Docker Compose/Kubernetes)
 - [ ] Create launch plan
 
 ### Deliverables
@@ -167,15 +170,15 @@ Week 15-16: Polish and Launch Preparation
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
-| API Changes (OpenAI/external services) | High | Medium | Design flexible interfaces that can adapt to API changes; maintain abstraction layers |
-| Performance bottlenecks | Medium | High | Regular performance testing; implement caching strategies; optimize database queries |
-| Data security concerns | Medium | High | Regular security audits; implement data encryption; follow security best practices |
+| API Changes (Google AI/Pinecone) | Medium | Medium | Design flexible interfaces in Agent Service; maintain abstraction layers; monitor API updates |
+| Performance bottlenecks (Agent Service) | Medium | High | Regular performance testing of Agent endpoints; implement caching; optimize Pinecone queries/indexing |
+| Data security concerns | Medium | High | Regular security audits; implement data encryption; secure API keys; restrict Agent Service access |
 | Feature scope creep | High | Medium | Maintain clear priorities; use strict change management process |
-| Integration challenges | Medium | Medium | Thorough testing of integrations; maintain compatibility with standard protocols |
+| Integration challenges (Django <-> Agent) | Medium | Medium | Thorough testing of inter-service communication; robust error handling; clear API contracts |
 
 ## Dependencies
 
-- Access to OpenAI API keys
+- Access to Google Cloud API keys (for Gemini)
 - Pinecone account and API access
 - Development server resources
 - Testing devices (for cross-platform compatibility)

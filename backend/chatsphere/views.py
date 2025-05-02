@@ -18,10 +18,7 @@ import os
 import json
 import logging
 from datetime import datetime
-import openai
 from .services.document_service import DocumentService
-from .services.openai_service import OpenAIService
-from .services.vector_service import VectorService
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.db import transaction
@@ -29,17 +26,8 @@ from django.db import transaction
 # Configure logger
 logger = logging.getLogger(__name__)
 
-# Configure OpenAI API key from environment variable
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-if OPENAI_API_KEY:
-    openai.api_key = OPENAI_API_KEY
-else:
-    logger.warning("OpenAI API key not found in environment variables")
-
 # Initialize services
 document_service = DocumentService()
-openai_service = OpenAIService()
-vector_service = VectorService()
 
 # Registration view
 class RegisterView(generics.CreateAPIView):
@@ -214,14 +202,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
         name = self.request.data.get('name', file.name)
         
         try:
-            # Initialize services
-            vector_service = VectorService()
-            openai_service = OpenAIService()
-            document_service = DocumentService(vector_service, openai_service)
+            # Initialize document service
+            document_service = DocumentService()
             
             # Create document from file
             document = document_service.create_document_from_file(
-                bot=bot,
+                bot_id=bot.id,
                 file=file,
                 name=name
             )
@@ -249,46 +235,50 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # Validate parameters
         if not bot_id:
             return Response(
-                {"error": "bot_id is required."},
+                {"error": "Bot ID is required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
         if not text:
             return Response(
-                {"error": "text is required."},
+                {"error": "Text content is required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
         if not name:
-            name = "Text Training"
+            name = f"Text Document - {datetime.now().strftime('%Y-%m-%d %H:%M')}"
         
-        # Get the bot
-        bot = get_object_or_404(Bot, id=bot_id)
-        
-        # Check if user has permission to add documents to this bot
-        if bot.user != request.user:
-            raise PermissionDenied("You don't have permission to add documents to this bot.")
+        # Verify bot ownership
+        try:
+            bot = Bot.objects.get(id=bot_id)
+            if bot.user != request.user:
+                raise PermissionDenied("You don't have permission to add documents to this bot.")
+        except Bot.DoesNotExist:
+            return Response(
+                {"error": "Bot not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
         
         try:
-            # Initialize services
-            vector_service = VectorService()
-            openai_service = OpenAIService()
-            document_service = DocumentService(vector_service, openai_service)
-            
-            # Create document from text
+            # Process text content
             document = document_service.create_document_from_text(
-                bot=bot, 
-                name=name, 
-                text=text
+                bot_id=bot_id,
+                name=name,
+                text_content=text
             )
             
-            # Return serialized document
-            serializer = self.get_serializer(document)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if document:
+                serializer = DocumentSerializer(document)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(
+                    {"error": "Document creation failed."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
         except Exception as e:
-            logger.error(f"Error processing text document: {str(e)}")
+            logger.error(f"Error creating document from text: {str(e)}")
             return Response(
-                {"error": f"Error processing text document: {str(e)}"},
+                {"error": f"Error creating document: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -304,8 +294,6 @@ class ChunkViewSet(viewsets.ReadOnlyModelViewSet):
         return Chunk.objects.filter(document__bot__user=self.request.user)
 
 
-# Legacy ViewSets for backward compatibility
-
 class ChatRoomViewSet(viewsets.ModelViewSet):
     """ViewSet for ChatRoom model (legacy)"""
     queryset = ChatRoom.objects.all()
@@ -315,8 +303,8 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def messages(self, request, pk=None):
         """Get messages for a specific chat room"""
-        room = self.get_object()
-        messages = room.legacy_messages.all()
+        chatroom = self.get_object()
+        messages = LegacyMessage.objects.filter(room=chatroom)
         serializer = LegacyMessageSerializer(messages, many=True)
         return Response(serializer.data)
 
@@ -328,10 +316,6 @@ class LegacyMessageViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
-        """Filter messages by room if provided in query params"""
-        queryset = LegacyMessage.objects.all()
-        room_id = self.request.query_params.get('room', None)
-        if room_id is not None:
-            queryset = queryset.filter(room_id=room_id)
-        return queryset 
- 
+        """Filter messages to only show those in rooms the user has access to"""
+        user = self.request.user
+        return LegacyMessage.objects.filter(user=user) 

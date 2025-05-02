@@ -4,456 +4,286 @@ This document outlines the database design and data storage strategy for ChatSph
 
 ## Technology Stack
 
-- **Primary Database**: PostgreSQL 15+
-- **Vector Store**: Pinecone
-- **Cache Layer**: Redis
-- **Search Engine**: Elasticsearch
-- **Message Queue**: Redis (for Celery)
-- **Session Store**: Redis
+- **Primary Database**: PostgreSQL 15+ (for core application data)
+- **Vector Store**: Pinecone (for embeddings and similarity search)
+- **Cache Layer**: Redis (optional, for caching frequent queries)
+- **Search Engine**: Elasticsearch (optional, for advanced text search beyond vector similarity)
+- **Message Queue**: Redis (for Celery background tasks, e.g., document processing coordination)
+- **Session Store**: Redis or Database (depending on scale)
 
 ## Database Architecture
 
 ### Overview
 
+- **PostgreSQL**: Stores relational data like users, chatbot configurations, training source metadata, conversation history, and analytics.
+- **Pinecone**: Stores the vector embeddings generated from training data chunks. Each vector is associated with metadata linking it back to the chatbot, document, and chunk in PostgreSQL.
+- **Redis**: Used for caching API responses, user sessions, and potentially as a Celery message broker.
+- **Elasticsearch**: Can be added later if complex keyword search, filtering, or aggregations on text content are required beyond vector similarity.
+
 ```
-databases/
+data_stores/
 ├── postgresql/           # Primary relational database
-│   ├── users/           # User-related schemas
-│   ├── chatbots/        # Chatbot configurations
-│   ├── training/        # Training data
-│   └── analytics/       # Usage and metrics
-├── pinecone/            # Vector embeddings
-├── elasticsearch/       # Full-text search
-└── redis/              # Caching and queues
+│   ├── users/           # User accounts, profiles, subscriptions
+│   ├── chatbots/        # Bot definitions, configurations
+│   ├── documents/       # Document metadata, chunk text (content)
+│   ├── conversations/   # Session info, messages
+│   └── analytics/       # Usage stats, error logs
+├── pinecone/            # Vector embeddings store
+│   └── chatbot_embeddings/ # Namespace/Index for vectors
+├── redis/              # Caching, Session store, Celery Broker
+└── elasticsearch/       # Optional: Full-text search indexing
 ```
 
 ## Schema Design
 
-### 1. User Management
+### 1. User Management (PostgreSQL)
 
 ```sql
--- User Account Management
+-- User Accounts
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(150) UNIQUE NOT NULL, -- Standard Django User
     email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    full_name VARCHAR(100),
-    company_name VARCHAR(200),
-    subscription_tier VARCHAR(50) NOT NULL,
-    api_key VARCHAR(100) UNIQUE NOT NULL,
-    usage_limit INTEGER DEFAULT 1000,
-    is_active BOOLEAN DEFAULT true,
+    password VARCHAR(128) NOT NULL, -- Handled by Django Auth
+    first_name VARCHAR(150) NOT NULL,
+    last_name VARCHAR(150) NOT NULL,
+    is_staff BOOLEAN NOT NULL DEFAULT false,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    date_joined TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    -- Add other Django User fields if needed
+);
+
+-- Extended User Profile
+CREATE TABLE user_profiles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    subscription_status VARCHAR(20) NOT NULL DEFAULT 'free', -- e.g., free, active, trialing
+    subscription_plan_id UUID REFERENCES subscription_plans(id) ON DELETE SET NULL,
+    stripe_customer_id VARCHAR(100) NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_api_key ON users(api_key);
-
--- User Subscription Management
-CREATE TABLE subscriptions (
+-- Subscription Plans
+CREATE TABLE subscription_plans (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id),
-    plan_name VARCHAR(50) NOT NULL,
-    price_id VARCHAR(100) NOT NULL,
-    status VARCHAR(20) NOT NULL,
-    current_period_start TIMESTAMP WITH TIME ZONE,
-    current_period_end TIMESTAMP WITH TIME ZONE,
-    cancel_at_period_end BOOLEAN DEFAULT false,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    name VARCHAR(100) UNIQUE NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    description TEXT,
+    features JSONB DEFAULT '{}', -- e.g., {"max_bots": 5, "max_docs_per_bot": 10}
+    stripe_price_id VARCHAR(100) NULL -- For Stripe integration
 );
 
-CREATE INDEX idx_subscriptions_user_id ON subscriptions(user_id);
-
--- API Usage Tracking
-CREATE TABLE api_usage (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id),
-    endpoint VARCHAR(255) NOT NULL,
-    tokens_used INTEGER NOT NULL,
-    response_time INTEGER NOT NULL, -- in milliseconds
-    status_code INTEGER NOT NULL,
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX idx_api_usage_user_id_timestamp ON api_usage(user_id, timestamp);
+-- (Consider tables for API Keys, Usage Limits if needed separately)
 ```
 
-### 2. Chatbot Management
+### 2. Chatbot Management (PostgreSQL)
 
 ```sql
--- Chatbot Configuration
-CREATE TABLE chatbots (
+-- Chatbots
+CREATE TABLE bots (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id),
-    name VARCHAR(200) NOT NULL,
-    description TEXT,
-    language VARCHAR(10) DEFAULT 'en',
-    model_config JSONB NOT NULL DEFAULT '{}',
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    avatar VARCHAR(200) NULL, -- Path to avatar file
+    welcome_message TEXT DEFAULT 'Hi! How can I help you today?',
+    model_type VARCHAR(50) NOT NULL DEFAULT 'gemini-2.0-flash', -- e.g., gemini-2.0-flash
+    configuration JSONB DEFAULT '{}', -- e.g., temperature, prompt instructions
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_name_per_user UNIQUE (user_id, name)
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    -- Removed unique constraint on (user_id, name) unless required
 );
+CREATE INDEX idx_bots_user_id ON bots(user_id);
 
-CREATE INDEX idx_chatbots_user_id ON chatbots(user_id);
-CREATE INDEX idx_chatbots_is_active ON chatbots(is_active);
-
--- Training Sources
-CREATE TABLE training_sources (
+-- Documents (Training Sources)
+CREATE TABLE documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    chatbot_id UUID REFERENCES chatbots(id),
-    source_type VARCHAR(50) NOT NULL,
-    content TEXT NOT NULL,
-    metadata JSONB DEFAULT '{}',
-    status VARCHAR(20) DEFAULT 'pending',
-    processed_at TIMESTAMP WITH TIME ZONE,
+    bot_id UUID NOT NULL REFERENCES bots(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    file VARCHAR(200) NULL, -- Path to uploaded file
+    url VARCHAR(2000) NULL,
+    content_type VARCHAR(100) NOT NULL, -- e.g., application/pdf, text/plain
+    status VARCHAR(20) NOT NULL DEFAULT 'processing', -- processing, ready, embedding, error
+    error_message TEXT NULL,
+    metadata JSONB DEFAULT '{}', -- e.g., original filename, source URL
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX idx_documents_bot_id ON documents(bot_id);
+CREATE INDEX idx_documents_status ON documents(status);
 
-CREATE INDEX idx_training_sources_chatbot_id ON training_sources(chatbot_id);
-CREATE INDEX idx_training_sources_status ON training_sources(status);
-
--- Chat Sessions
-CREATE TABLE chat_sessions (
+-- Document Chunks (Content only, embedding is in Pinecone)
+CREATE TABLE chunks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    chatbot_id UUID REFERENCES chatbots(id),
-    user_identifier VARCHAR(255) NOT NULL,
-    metadata JSONB DEFAULT '{}',
-    started_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    ended_at TIMESTAMP WITH TIME ZONE,
-    CONSTRAINT unique_session_user UNIQUE (chatbot_id, user_identifier, started_at)
-);
-
-CREATE INDEX idx_chat_sessions_chatbot_id ON chat_sessions(chatbot_id);
-
--- Chat Messages
-CREATE TABLE chat_messages (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    session_id UUID REFERENCES chat_sessions(id),
-    role VARCHAR(20) NOT NULL,
+    document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
-    tokens_used INTEGER NOT NULL,
-    metadata JSONB DEFAULT '{}',
+    pinecone_vector_id VARCHAR(100) NULL, -- Populated after successful embedding via Agent Service. Potentially unique per document.
+    metadata JSONB DEFAULT '{}', -- e.g., chunk index, position in doc
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX idx_chunks_document_id ON chunks(document_id);
+CREATE INDEX idx_chunks_pinecone_vector_id ON chunks(pinecone_vector_id);
 
-CREATE INDEX idx_chat_messages_session_id ON chat_messages(session_id);
-CREATE INDEX idx_chat_messages_created_at ON chat_messages(created_at);
+-- Conversations
+CREATE TABLE conversations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    bot_id UUID NOT NULL REFERENCES bots(id) ON DELETE CASCADE,
+    user_id VARCHAR(255) NULL, -- Identifier for the end-user chatting (can be anonymous ID)
+    title VARCHAR(255) DEFAULT 'New Conversation',
+    metadata JSONB DEFAULT '{}',
+    started_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    ended_at TIMESTAMP WITH TIME ZONE NULL
+);
+CREATE INDEX idx_conversations_bot_id ON conversations(bot_id);
+CREATE INDEX idx_conversations_user_id ON conversations(user_id);
+
+-- Messages
+CREATE TABLE messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    message_type VARCHAR(10) NOT NULL, -- USER, BOT, SYSTEM
+    content TEXT NOT NULL,
+    metadata JSONB DEFAULT '{}', -- e.g., tokens used, latency, sources cited
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_messages_conversation_id ON messages(conversation_id);
+CREATE INDEX idx_messages_created_at ON messages(created_at);
 ```
 
 ### 3. Vector Store Schema (Pinecone)
 
+Pinecone configuration happens in the Pinecone console and via the client initialization in the agent service.
+
+- **Index Name**: Defined by `PINECONE_INDEX_NAME` (e.g., `chatsphere-embeddings`).
+- **Dimension**: Must match the output dimension of the Google embedding model used (e.g., **768** for `models/embedding-001`).
+- **Metric**: Typically `cosine` or `dotproduct`.
+- **Metadata Indexing**: Configure Pinecone to index relevant metadata fields for filtering during search.
+
 ```python
-# Vector store schema definition
-vector_schema = {
-    "dimension": 1536,  # OpenAI ada-002 embedding size
-    "metadata_config": {
-        "indexed": [
-            {"name": "chatbot_id", "type": "string"},
-            {"name": "source_id", "type": "string"},
-            {"name": "chunk_index", "type": "integer"},
-            {"name": "language", "type": "string"}
-        ]
-    }
+# Example Metadata stored with each vector in Pinecone:
+metadata_example = {
+    "bot_id": "uuid-of-the-bot",
+    "document_id": "uuid-of-the-document",
+    "chunk_id": "uuid-of-the-chunk-in-postgres", # Useful for linking back
+    # Add other filterable fields as needed, e.g.:
+    # "user_id": "uuid-of-bot-owner", 
+    # "created_at_unix": 1679306400 
 }
 
-# Example vector record
-vector_record = {
-    "id": "vec_123",
-    "values": [...],  # 1536-dimensional vector
-    "metadata": {
-        "chatbot_id": "chat_abc",
-        "source_id": "src_xyz",
-        "chunk_index": 1,
-        "language": "en",
-        "content": "Text chunk content",
-        "created_at": "2024-03-20T10:00:00Z"
-    }
-}
+# Example vector upsert structure (using pinecone-client):
+# vectors_to_upsert = [
+#    ("pinecone-vector-id-1", [0.1, 0.2, ...], {"bot_id": "...", "document_id": "...", "chunk_id": "..."}),
+#    ("pinecone-vector-id-2", [0.3, 0.4, ...], {"bot_id": "...", "document_id": "...", "chunk_id": "..."}),
+# ]
+# index.upsert(vectors=vectors_to_upsert, namespace="optional-namespace") 
 ```
 
-### 4. Analytics & Metrics
+### 4. Analytics & Metrics (PostgreSQL)
 
 ```sql
--- Usage Analytics
+-- Usage Analytics (Example: Track message counts per bot)
 CREATE TABLE analytics_usage (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    chatbot_id UUID REFERENCES chatbots(id),
-    metric_type VARCHAR(50) NOT NULL,
-    value INTEGER NOT NULL,
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    id BIGSERIAL PRIMARY KEY,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    bot_id UUID REFERENCES bots(id) ON DELETE SET NULL,
+    metric_type VARCHAR(50) NOT NULL, -- e.g., 'messages_processed', 'documents_embedded', 'api_calls'
+    value INTEGER NOT NULL DEFAULT 1,
+    metadata JSONB NULL -- e.g., {"user_id": "...", "conversation_id": "..."}
 );
+CREATE INDEX idx_analytics_usage_bot_id_timestamp ON analytics_usage(bot_id, timestamp);
+CREATE INDEX idx_analytics_usage_metric_type_timestamp ON analytics_usage(metric_type, timestamp);
 
-CREATE INDEX idx_analytics_usage_chatbot_id_timestamp 
-ON analytics_usage(chatbot_id, timestamp);
-
--- Performance Metrics
-CREATE TABLE performance_metrics (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    chatbot_id UUID REFERENCES chatbots(id),
-    metric_name VARCHAR(100) NOT NULL,
-    value FLOAT NOT NULL,
-    labels JSONB DEFAULT '{}',
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+-- Conversation Quality Feedback (Example)
+CREATE TABLE conversation_feedback (
+    id BIGSERIAL PRIMARY KEY,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    message_id UUID NULL REFERENCES messages(id) ON DELETE SET NULL, -- Optional: link to specific message
+    rating SMALLINT NULL, -- e.g., 1-5 stars
+    feedback_text TEXT NULL,
+    user_id VARCHAR(255) NULL -- End-user identifier
 );
+CREATE INDEX idx_conv_feedback_conv_id ON conversation_feedback(conversation_id);
 
-CREATE INDEX idx_performance_metrics_chatbot_id_timestamp 
-ON performance_metrics(chatbot_id, timestamp);
+-- Training Source Usage (Example)
+CREATE TABLE training_source_stats (
+    id BIGSERIAL PRIMARY KEY,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    retrieval_count INTEGER NOT NULL DEFAULT 0, -- Incremented when chunk is retrieved
+    last_retrieved TIMESTAMPTZ NULL
+);
+CREATE INDEX idx_training_source_doc_id ON training_source_stats(document_id);
 
--- Error Tracking
+-- Error Tracking (Simplified)
 CREATE TABLE error_logs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    chatbot_id UUID REFERENCES chatbots(id),
+    id BIGSERIAL PRIMARY KEY,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    service VARCHAR(50) NOT NULL, -- e.g., 'backend', 'agent'
     error_type VARCHAR(100) NOT NULL,
     error_message TEXT NOT NULL,
-    stack_trace TEXT,
-    metadata JSONB DEFAULT '{}',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    details JSONB NULL, -- e.g., stack trace, request info
+    bot_id UUID NULL REFERENCES bots(id) ON DELETE SET NULL
 );
-
-CREATE INDEX idx_error_logs_chatbot_id_created_at 
-ON error_logs(chatbot_id, created_at);
+CREATE INDEX idx_error_logs_timestamp ON error_logs(timestamp);
+CREATE INDEX idx_error_logs_service ON error_logs(service);
+CREATE INDEX idx_error_logs_error_type ON error_logs(error_type);
 ```
 
 ## Data Access Patterns
 
 ### 1. Query Optimization
 
-```sql
--- Commonly used queries with optimized indexes
-
--- Get user's active chatbots with usage metrics
-CREATE MATERIALIZED VIEW user_chatbot_metrics AS
-SELECT 
-    c.id AS chatbot_id,
-    c.name,
-    c.user_id,
-    COUNT(DISTINCT cs.id) AS total_sessions,
-    COUNT(cm.id) AS total_messages,
-    SUM(cm.tokens_used) AS total_tokens
-FROM chatbots c
-LEFT JOIN chat_sessions cs ON c.id = cs.chatbot_id
-LEFT JOIN chat_messages cm ON cs.id = cm.session_id
-WHERE c.is_active = true
-GROUP BY c.id, c.name, c.user_id;
-
--- Refresh materialized view
-CREATE OR REPLACE FUNCTION refresh_user_chatbot_metrics()
-RETURNS trigger AS $$
-BEGIN
-    REFRESH MATERIALIZED VIEW CONCURRENTLY user_chatbot_metrics;
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
--- Trigger to refresh metrics
-CREATE TRIGGER refresh_metrics_trigger
-AFTER INSERT OR UPDATE OR DELETE ON chat_messages
-FOR EACH STATEMENT
-EXECUTE FUNCTION refresh_user_chatbot_metrics();
-```
-
-### 2. Partitioning Strategy
+- **Indexing**: Ensure appropriate indexes are created on foreign keys (`*_id` fields) and frequently queried columns (e.g., `status`, `timestamp`, `user_id`).
+- **Pinecone Filtering**: Utilize Pinecone's metadata filtering capabilities during similarity search to retrieve context only for the relevant `bot_id`.
+- **Caching**: Cache frequently accessed, rarely changing data (e.g., subscription plans, bot configurations) using Redis.
+- **Materialized Views**: Consider for complex analytics queries that don't need real-time data (less likely needed initially).
 
 ```sql
--- Partition chat messages by month
-CREATE TABLE chat_messages_partitioned (
-    id UUID NOT NULL,
-    session_id UUID NOT NULL,
-    role VARCHAR(20) NOT NULL,
-    content TEXT NOT NULL,
-    tokens_used INTEGER NOT NULL,
-    metadata JSONB DEFAULT '{}',
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL
-) PARTITION BY RANGE (created_at);
+-- Example query for retrieving messages for a conversation
+SELECT * FROM messages 
+WHERE conversation_id = 'uuid-of-conversation' 
+ORDER BY created_at ASC;
+-- Ensure idx_messages_conversation_id and idx_messages_created_at exist
 
--- Create monthly partitions
-CREATE TABLE chat_messages_y2024m01 PARTITION OF chat_messages_partitioned
-    FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
-
-CREATE TABLE chat_messages_y2024m02 PARTITION OF chat_messages_partitioned
-    FOR VALUES FROM ('2024-02-01') TO ('2024-03-01');
-
--- Function to create future partitions
-CREATE OR REPLACE FUNCTION create_message_partition(
-    start_date DATE
-)
-RETURNS void AS $$
-DECLARE
-    partition_name TEXT;
-    start_timestamp TIMESTAMP;
-    end_timestamp TIMESTAMP;
-BEGIN
-    partition_name := 'chat_messages_y' || 
-                     TO_CHAR(start_date, 'YYYY') ||
-                     'm' || TO_CHAR(start_date, 'MM');
-    start_timestamp := start_date::TIMESTAMP;
-    end_timestamp := (start_date + INTERVAL '1 month')::TIMESTAMP;
-    
-    EXECUTE format(
-        'CREATE TABLE IF NOT EXISTS %I PARTITION OF chat_messages_partitioned
-         FOR VALUES FROM (%L) TO (%L)',
-        partition_name,
-        start_timestamp,
-        end_timestamp
-    );
-END;
-$$ LANGUAGE plpgsql;
+-- Example Pinecone query structure (conceptual)
+# query_vector = get_embedding("user query")
+# results = index.query(
+#   vector=query_vector,
+#   top_k=5, 
+#   include_metadata=True,
+#   filter={"bot_id": "uuid-of-current-bot"},
+#   namespace="optional-namespace"
+# )
 ```
 
-## Caching Strategy
+### 2. Data Integrity
 
-### 1. Redis Cache Configuration
+- **Foreign Keys**: Use `ON DELETE CASCADE` or `ON DELETE SET NULL` appropriately to maintain referential integrity.
+- **Constraints**: Use `NOT NULL` and `UNIQUE` constraints where applicable.
+- **Transactions**: Wrap related database operations (e.g., creating Document and Chunk records) within atomic transactions in the Django backend.
 
-```python
-# cache_config.py
-REDIS_CONFIG = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://localhost:6379/0',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'SOCKET_CONNECT_TIMEOUT': 5,
-            'SOCKET_TIMEOUT': 5,
-            'RETRY_ON_TIMEOUT': True,
-            'MAX_CONNECTIONS': 1000,
-            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-            'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
-        }
-    }
-}
+### 3. Scalability Considerations
 
-CACHE_TTL = {
-    'chatbot_config': 3600,        # 1 hour
-    'user_profile': 1800,          # 30 minutes
-    'session_data': 7200,          # 2 hours
-    'api_response': 300,           # 5 minutes
-    'analytics_dashboard': 600,     # 10 minutes
-}
-```
-
-### 2. Cache Invalidation
-
-```python
-# cache_invalidation.py
-from django.core.cache import cache
-from typing import List
-
-class CacheInvalidator:
-    @staticmethod
-    def invalidate_chatbot_cache(chatbot_id: str):
-        keys_to_delete = [
-            f'chatbot:{chatbot_id}:config',
-            f'chatbot:{chatbot_id}:metrics',
-            f'chatbot:{chatbot_id}:sessions'
-        ]
-        cache.delete_many(keys_to_delete)
-    
-    @staticmethod
-    def invalidate_user_cache(user_id: str):
-        keys_to_delete = [
-            f'user:{user_id}:profile',
-            f'user:{user_id}:chatbots',
-            f'user:{user_id}:usage'
-        ]
-        cache.delete_many(keys_to_delete)
-```
+- **Connection Pooling**: Use a connection pooler like PgBouncer if database connections become a bottleneck.
+- **Read Replicas**: Set up PostgreSQL read replicas for read-heavy workloads (e.g., analytics).
+- **Database Sharding**: Complex, consider only if single-node PostgreSQL performance limits are reached (unlikely for most initial use cases).
+- **Pinecone Scaling**: Pinecone scales independently. Choose the appropriate pod type and size based on expected vector count and query load.
 
 ## Data Migration Strategy
 
-### 1. Migration Scripts
-
-```python
-# migrations/0001_initial.py
-from django.db import migrations
-
-class Migration(migrations.Migration):
-    dependencies = []
-    
-    operations = [
-        migrations.RunSQL(
-            # Forward migration
-            """
-            -- Create extensions
-            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-            CREATE EXTENSION IF NOT EXISTS "pg_trgm";
-            
-            -- Enable row level security
-            ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-            ALTER TABLE chatbots ENABLE ROW LEVEL SECURITY;
-            
-            -- Create RLS policies
-            CREATE POLICY user_isolation_policy ON users
-                FOR ALL
-                TO authenticated_users
-                USING (id = current_user_id());
-                
-            CREATE POLICY chatbot_isolation_policy ON chatbots
-                FOR ALL
-                TO authenticated_users
-                USING (user_id = current_user_id());
-            """,
-            
-            # Rollback
-            """
-            DROP POLICY IF EXISTS chatbot_isolation_policy ON chatbots;
-            DROP POLICY IF EXISTS user_isolation_policy ON users;
-            ALTER TABLE chatbots DISABLE ROW LEVEL SECURITY;
-            ALTER TABLE users DISABLE ROW LEVEL SECURITY;
-            """
-        )
-    ]
-```
+- **Initial Setup**: Use Django migrations (`manage.py makemigrations`, `manage.py migrate`) to create the PostgreSQL schema.
+- **Schema Changes**: Continue using Django migrations for evolving the PostgreSQL schema.
+- **Pinecone**: Schema (dimension, metric) is defined at index creation. Changes typically require creating a new index and re-embedding data.
+- **Data Backfilling**: If significant schema changes occur or data needs reprocessing (e.g., changing embedding models), write custom Django management commands or scripts to handle the backfilling process.
 
 ## Backup and Recovery
 
-### 1. Backup Strategy
-
-```bash
-# backup_script.sh
-#!/bin/bash
-
-# PostgreSQL backup
-pg_dump -Fc -f "/backups/postgres/chatsphere_$(date +%Y%m%d).dump" chatsphere_db
-
-# Redis backup
-redis-cli SAVE
-cp /var/lib/redis/dump.rdb "/backups/redis/redis_$(date +%Y%m%d).rdb"
-
-# Vector store backup (Pinecone API)
-python manage.py backup_vectors --output="/backups/vectors/vectors_$(date +%Y%m%d).json"
-```
-
-### 2. Recovery Procedures
-
-```python
-# recovery.py
-from typing import Optional
-import subprocess
-from datetime import datetime
-
-class DatabaseRecovery:
-    @staticmethod
-    def restore_postgres(backup_date: Optional[datetime] = None):
-        if backup_date is None:
-            # Get latest backup
-            backup_file = subprocess.check_output(
-                "ls -t /backups/postgres/*.dump | head -1",
-                shell=True
-            ).decode().strip()
-        else:
-            backup_file = f"/backups/postgres/chatsphere_{backup_date:%Y%m%d}.dump"
-            
-        subprocess.run([
-            "pg_restore",
-            "-d", "chatsphere_db",
-            "-c",  # Clean (drop) database objects before recreating
-            backup_file
-        ])
-```
+- **PostgreSQL**: Implement regular backups (e.g., using `pg_dump` or managed database provider tools).
+- **Pinecone**: Pinecone manages its own infrastructure resilience. Consider application-level strategies if you need point-in-time recovery of specific vectors (e.g., storing chunk content in Postgres allows re-embedding).
+- **Disaster Recovery**: Plan for cross-region backups or failover depending on availability requirements.
 
 ## Security Measures
 

@@ -38,5 +38,5 @@ EXPOSE 8000
 # Set the entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-# Default command
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"] 
+# Default command (now uses Gunicorn)
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"] 

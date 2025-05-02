@@ -7,12 +7,12 @@ djangorestframework-simplejwt>=5.0.0,<6.0.0
 
 # Database
 psycopg2-binary>=2.9.5,<3.0.0
-pgvector>=0.2.0,<1.0.0
 
 # OpenAI and utilities
 openai>=1.0.0,<2.0.0
 python-dotenv>=1.0.0,<2.0.0
 requests>=2.28.0,<3.0.0
+pinecone>=6.0.0,<7.0.0
 
 # File processing
 python-magic>=0.4.27,<1.0.0

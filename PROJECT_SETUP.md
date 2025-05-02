@@ -1,13 +1,13 @@
 # ChatSphere Project Setup
 
-This document provides setup instructions for the ChatSphere project with vector search capabilities.
+This document provides setup instructions for the ChatSphere project.
 
 ## Prerequisites
 
-- Python 3.9+ 
-- Node.js 16+ and npm
-- Docker and Docker Compose
-- PostgreSQL 14+
+- Python 3.10+ 
+- Node.js 18+ and npm
+- Docker and Docker Compose (optional)
+- PostgreSQL 14+ (only if running manually)
 
 ## Installation
 
@@ -18,179 +18,120 @@ git clone https://github.com/yourusername/chatsphere.git
 cd chatsphere
 ```
 
-### 2. Backend Setup
+### 2. Environment Variables
 
-#### Create a Virtual Environment
-
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-#### Install Dependencies
+Create a `.env` file in the root directory by copying `.env.example`:
 
 ```bash
-pip install -r requirements.txt
+# PowerShell
+Copy-Item .env.example .env
+# Bash
+cp .env.example .env
 ```
 
-#### Environment Variables
+Edit the `.env` file and fill in the required values, especially:
+- `SECRET_KEY`
+- `DATABASE_URL` (adjust if not using Docker default)
+- `GOOGLE_API_KEY`
+- `PINECONE_API_KEY`
+- `PINECONE_ENVIRONMENT`
+- `PINECONE_INDEX_NAME`
+- `AGENT_SERVICE_URL` (defaults to `http://localhost:8001` for local dev, change if needed)
 
-Create a `.env` file in the backend directory:
-
-```
-DEBUG=True
-SECRET_KEY=your_secret_key_here
-ALLOWED_HOSTS=localhost,127.0.0.1
-CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
-
-# Database
-DB_NAME=chatsphere
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_HOST=db
-DB_PORT=5432
-
-# OpenAI
-OPENAI_API_KEY=your_openai_api_key_here
-```
-
-### 3. Frontend Setup
-
-```bash
-cd frontend
-npm install
-```
-
-### 4. Docker Setup
+### 3. Docker Setup (Recommended)
 
 #### Build and Start the Containers
 
 ```bash
-docker-compose build
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 This will start:
-- PostgreSQL with pgvector extension
-- Django backend
-- Vue.js frontend
-- Nginx for serving static files
+- PostgreSQL database
+- Django backend service
+- FastAPI agent service
+- Vue.js frontend service
+
+Refer to the main `README.md` for more Docker details.
+
+### 4. Manual Setup (Alternative)
+
+Refer to the main `README.md` for detailed steps on setting up the Django backend, FastAPI agent, and Vue.js frontend manually without Docker.
 
 ## Vector Search Setup
 
-The application uses pgvector extension for PostgreSQL to enable vector search functionality. The Docker setup includes:
+The application uses a separate FastAPI service (`chatsphere_agent`) which utilizes **Pinecone** for vector storage and search. This replaces the previous `pgvector` implementation.
 
-1. Custom PostgreSQL image with pgvector extension
-2. Initialization script for enabling the extension
-3. Database migration for adding vector fields and indexes
-
-### PostgreSQL with pgvector
-
-Here's the Dockerfile for the PostgreSQL container:
-
-```dockerfile
-FROM postgres:14
-
-# Install build dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    git \
-    postgresql-server-dev-14
-
-# Clone and build pgvector
-RUN git clone --branch v0.4.0 https://github.com/pgvector/pgvector.git && \
-    cd pgvector && \
-    make && \
-    make install
-
-# Clean up
-RUN apt-get remove -y build-essential git postgresql-server-dev-14 && \
-    apt-get autoremove -y && \
-    rm -rf /pgvector
-```
+The FastAPI service handles:
+- Generating embeddings using Google Gemini models.
+- Storing embeddings in a specified Pinecone index.
+- Performing similarity searches against the Pinecone index to retrieve context for the AI agent.
 
 ### Required Packages
 
 The project requires the following key packages:
 
-1. **Django & REST Framework:**
-   - Django
-   - djangorestframework
-   - django-cors-headers
-   - djangorestframework-simplejwt
+1. **Django Backend (`backend/requirements.txt`):**
+   - Django, djangorestframework, django-cors-headers, djangorestframework-simplejwt
+   - psycopg2-binary (for Postgres connection)
+   - httpx (for calling the agent service)
 
-2. **Database:**
-   - psycopg2-binary
-   - pgvector
+2. **FastAPI Agent (`backend/chatsphere_agent/requirements.txt`):**
+   - fastapi, uvicorn
+   - langchain, langchain-google-genai, langchain-pinecone
+   - pinecone-client
+   - python-dotenv
 
-3. **OpenAI Integration:**
-   - openai
-
-4. **File Processing:**
-   - python-magic
-   - PyPDF2
-
-5. **Frontend:**
-   - Vue.js
+3. **Frontend (`frontend/package.json`):**
+   - Vue.js, Vue Router, Pinia
    - Axios
    - TailwindCSS
 
 ## Running the Application
 
-### Start the Development Servers
-
-#### Backend
-
-```bash
-cd backend
-python manage.py runserver
-```
-
-#### Frontend
-
-```bash
-cd frontend
-npm run dev
-```
+Refer to the main `README.md` for instructions on running via Docker or manually.
 
 ### Accessing the Application
 
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:8000/api/
+- Frontend: http://localhost:3000 (or your configured frontend port)
+- Backend API: http://localhost:8000/api/ (or your configured backend port)
+- Agent Service API (if exposed): http://localhost:8001/docs (or your configured agent port)
 - Admin Interface: http://localhost:8000/admin/
 
 ## Testing Vector Search
 
-1. Create a bot in the application
-2. Upload documents or text through the training interface
-3. Start a chat with the bot
-4. Ask questions related to the uploaded content
+Vector search is now handled internally by the agent service when you chat with a bot.
+
+1. Create a bot in the application.
+2. Upload documents or text through the training interface (this will trigger calls to the agent service's `/embed_and_store` endpoint).
+3. Start a chat with the bot (this will trigger calls to the agent service's `/chat` endpoint, which performs the similarity search).
+4. Ask questions related to the uploaded content.
 
 ## Troubleshooting
 
-### pgvector Extension Issues
+### Pinecone Issues
 
-If you encounter issues with the pgvector extension, you can check if it's properly installed:
+- Verify your Pinecone API key, environment, and index name in the `.env` file.
+- Check the agent service logs (`docker-compose logs -f agent` or console output) for connection or indexing errors.
+- Ensure the specified Pinecone index exists and is configured correctly (e.g., correct dimension for Gemini embeddings).
 
-```sql
-SELECT * FROM pg_extension WHERE extname = 'vector';
-```
+### Google Gemini API Issues
 
-### OpenAI API Issues
+- Ensure your Google API key is correctly set in the `.env` file.
+- Check the agent service logs for API authentication or rate limit errors.
 
-Ensure your OpenAI API key is correctly set in the environment variables and that you have sufficient credits for API calls.
+### Agent Service Communication Issues
 
-### Database Migration Issues
-
-If the vector field migration fails, you may need to manually create the extension:
-
-```sql
-CREATE EXTENSION IF NOT EXISTS vector;
-```
+- Ensure the agent service is running.
+- Verify the `AGENT_SERVICE_URL` in the Django backend's environment is correct.
+- Check backend logs for errors when calling the agent service.
+- Check agent service logs for errors when receiving requests from the backend.
 
 ## Additional Resources
 
-- [pgvector Documentation](https://github.com/pgvector/pgvector)
-- [OpenAI API Documentation](https://platform.openai.com/docs/api-reference)
+- [Pinecone Documentation](https://docs.pinecone.io/)
+- [Google AI for Developers](https://ai.google.dev/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [LangChain Documentation](https://python.langchain.com/)
 - [Django Documentation](https://docs.djangoproject.com/)
 - [Vue.js Documentation](https://vuejs.org/guide/introduction.html) 

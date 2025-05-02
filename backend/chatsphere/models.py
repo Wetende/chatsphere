@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 import json
-from pgvector.django import VectorField
 
 
 class SubscriptionPlan(models.Model):
@@ -38,8 +37,7 @@ class UserProfile(models.Model):
 class Bot(models.Model):
     """AI bot model"""
     MODEL_TYPE_CHOICES = [
-        ('gpt-3.5-turbo', 'GPT-3.5 Turbo'),
-        ('gpt-4', 'GPT-4'),
+        ('gemini-2.0-flash', 'Gemini 2.0 Flash'),
         ('claude-2', 'Claude 2'),
         ('claude-instant', 'Claude Instant'),
         ('mistral-7b', 'Mistral 7B'),
@@ -52,7 +50,7 @@ class Bot(models.Model):
     description = models.TextField(blank=True)
     avatar = models.ImageField(upload_to='bot_avatars/', blank=True, null=True)
     welcome_message = models.TextField(default="Hi! How can I help you today?")
-    model_type = models.CharField(max_length=50, choices=MODEL_TYPE_CHOICES, default='gpt-3.5-turbo')
+    model_type = models.CharField(max_length=50, choices=MODEL_TYPE_CHOICES, default='gemini-2.0-flash')
     configuration = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -91,7 +89,8 @@ class Chunk(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='chunks')
     content = models.TextField()
-    embedding = VectorField(dimensions=1536, null=True)
+    # Consider adding a field to store the Pinecone vector ID if needed later:
+    pinecone_vector_id = models.CharField(max_length=100, null=True, blank=True, db_index=True)
     metadata = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
