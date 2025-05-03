@@ -16,9 +16,7 @@ router.register(r'chunks', views.ChunkViewSet, basename='chunk')
 router.register(r'conversations', views.ConversationViewSet, basename='conversation')
 router.register(r'messages', views.MessageViewSet, basename='message')
 
-# Legacy API endpoints (for backward compatibility)
-router.register(r'rooms', views.ChatRoomViewSet)
-router.register(r'legacy-messages', views.LegacyMessageViewSet)
+# Legacy API endpoints removed as models/views were deleted
 
 urlpatterns = [
     # Include router URLs without api/ prefix

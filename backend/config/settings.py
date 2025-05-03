@@ -5,6 +5,7 @@ Django settings for ChatSphere project.
 import os
 import dj_database_url
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,7 +20,10 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 't')
 print(f"DEBUG mode: {DEBUG}")
 print(f"ALLOWED_HOSTS from env: {os.environ.get('ALLOWED_HOSTS', 'not set')}")
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'backend', '*']
+# Update ALLOWED_HOSTS to only include localhost and 127.0.0.1 for local dev
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# If running in Docker or needing access from other containers/network, add them back as needed
+# Example for Docker: ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend']
 
 print(f"ALLOWED_HOSTS set to: {ALLOWED_HOSTS}")
 
@@ -72,36 +76,30 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Database configuration for local development
-if DEBUG:
-    # Check if running in Docker by looking for the environment variable
-    if os.environ.get('DATABASE_URL'):
-        # Using Docker setup
-        DATABASES = {
-            'default': dj_database_url.config(
-                default=os.environ.get('DATABASE_URL'),
-                conn_max_age=600
-            )
-        }
-    else:
-        # Local development without Docker
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': 'chat_sphere',
-                'USER': 'postgres',
-                'PASSWORD': '1234',
-                'HOST': 'localhost',
-                'PORT': '5432',
-            }
-        }
-else:
-    # Production database configuration
+# Simplify database configuration: Always prioritize DATABASE_URL if set.
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
-            default='postgres://postgres:postgres@db:5432/postgres',
-            conn_max_age=600
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True, # Recommended for robust connections
         )
+    }
+else:
+    # Fallback for local development if DATABASE_URL is not set in .env
+    # (You should primarily rely on DATABASE_URL)
+    print("WARNING: DATABASE_URL not set in environment. Falling back to manual PostgreSQL config.")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'chatsphere',
+            'USER': 'postgres',
+            'PASSWORD': 'root', # Use a fallback password or ideally set DATABASE_URL
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
     }
 
 # Password validation
@@ -175,7 +173,6 @@ REST_FRAMEWORK = {
 }
 
 # Simple JWT settings
-from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),

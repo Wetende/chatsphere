@@ -5,11 +5,11 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from django.utils import timezone
 from .models import (
-    ChatRoom, LegacyMessage, SubscriptionPlan, UserProfile, 
+    SubscriptionPlan, UserProfile, 
     Bot, Document, Chunk, Conversation, Message
 )
 from .serializers import (
-    UserSerializer, ChatRoomSerializer, LegacyMessageSerializer,
+    UserSerializer, 
     SubscriptionPlanSerializer, UserProfileSerializer, BotSerializer,
     DocumentSerializer, ChunkSerializer, ConversationSerializer, MessageSerializer,
     RegisterSerializer
@@ -293,29 +293,4 @@ class ChunkViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Chunk.objects.filter(document__bot__user=self.request.user)
 
-
-class ChatRoomViewSet(viewsets.ModelViewSet):
-    """ViewSet for ChatRoom model (legacy)"""
-    queryset = ChatRoom.objects.all()
-    serializer_class = ChatRoomSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    @action(detail=True, methods=['get'])
-    def messages(self, request, pk=None):
-        """Get messages for a specific chat room"""
-        chatroom = self.get_object()
-        messages = LegacyMessage.objects.filter(room=chatroom)
-        serializer = LegacyMessageSerializer(messages, many=True)
-        return Response(serializer.data)
-
-
-class LegacyMessageViewSet(viewsets.ModelViewSet):
-    """ViewSet for LegacyMessage model (legacy)"""
-    queryset = LegacyMessage.objects.all()
-    serializer_class = LegacyMessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_queryset(self):
-        """Filter messages to only show those in rooms the user has access to"""
-        user = self.request.user
-        return LegacyMessage.objects.filter(user=user) 
+# Removed ChatRoomViewSet and LegacyMessageViewSet as they referenced deleted models 

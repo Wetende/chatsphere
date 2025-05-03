@@ -1,63 +1,37 @@
-# Django and REST framework
-django
+# Essential Django packages
+Django
 djangorestframework
 djangorestframework-simplejwt
 django-cors-headers
 django-environ
-django-filter
-django-redis
-channels
-daphne
-django-allauth
-djoser                # For authentication endpoints
-drf-yasg             # For API documentation
-
-# Database
-psycopg2-binary      # Binary version for easier installation
-dj-database-url  # For database connection via URL
-redis
-
-# Server
-gunicorn             # Production server
-
-# Async and WebSocket
-aiohttp
-websockets
-asgiref
-
-# Authentication and Security
-PyJWT        # Kept from original
-python-jose
-cryptography
 python-dotenv
 
-# Utils
-python-dateutil
-requests
-urllib3
-pydantic
-python-magic
-Pillow
-
-# Testing
-pytest
-pytest-django
-pytest-asyncio
-coverage
-
+# Database 
+psycopg2-binary
+dj_database_url
 # Development
 black
 flake8
-isort
 mypy
-pre-commit
 
-# Documentation
-Sphinx
-sphinx-rtd-theme
+# AI 
+langchain
+langchain-community
+langchain-google-genai
+langchain-text-splitters
+pinecone
 
-# Additional requirements
-Django~=5.0.6
-psycopg2-binary~=2.9.9
-django-stubs[compatible-mypy]~=4.2.7
-gunicorn
+# Ingestion specific
+pymupdf
+beautifulsoup4
+requests
+
+langchain
+langchain-google-genai
+google-generativeai
+
+# Document handling
+Pillow
+
+
+pytest

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from .models import (
-    ChatRoom, LegacyMessage, SubscriptionPlan, UserProfile, 
+    SubscriptionPlan, UserProfile, 
     Bot, Document, Chunk, Conversation, Message
 )
 from rest_framework.validators import UniqueValidator
@@ -140,28 +140,4 @@ class ConversationSerializer(serializers.ModelSerializer):
         return representation
 
 
-# Legacy serializers for backward compatibility
-
-class LegacyMessageSerializer(serializers.ModelSerializer):
-    """Serializer for LegacyMessage model"""
-    user = UserSerializer(read_only=True)
-    
-    class Meta:
-        model = LegacyMessage
-        fields = ['id', 'room', 'user', 'content', 'timestamp']
-        read_only_fields = ['user', 'timestamp']
-    
-    def create(self, validated_data):
-        # Set the user from request
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
-
-
-class ChatRoomSerializer(serializers.ModelSerializer):
-    """Serializer for ChatRoom model"""
-    legacy_messages = LegacyMessageSerializer(many=True, read_only=True)
-    
-    class Meta:
-        model = ChatRoom
-        fields = ['id', 'name', 'created_at', 'legacy_messages']
-        read_only_fields = ['created_at'] 
+# Legacy serializers removed as models were deleted 
