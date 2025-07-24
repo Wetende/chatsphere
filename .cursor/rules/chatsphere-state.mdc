@@ -1,0 +1,556 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# ChatSphere State Management Guide
+
+## Overview
+This document outlines the state management architecture in ChatSphere, covering both frontend Pinia stores and backend state handling using Django and Redis.
+
+## Related Global Rules
+- [Global Rules: AI State](mdc:globalrules/ai-state.md)
+- [Global Rules: Frontend Architecture](mdc:globalrules/frontend-architecture.md)
+
+## Related Technology Rules
+- [Vue.js Rules: State Management](mdc:technology%20rules/vuejs.md#state)
+- [Django Rules: State](mdc:technology%20rules/django.md#state)
+
+## State Management Architecture
+
+### 1. Frontend State Management (Pinia)
+
+```typescript
+// frontend/src/stores/types.ts
+export interface User {
+  id: number
+  username: string
+  email: string
+  role: string
+  permissions: string[]
+}
+
+export interface Bot {
+  id: number
+  name: string
+  description: string
+  status: 'idle' | 'training' | 'ready'
+  lastTrained: string
+  userId: number
+}
+
+export interface Conversation {
+  id: number
+  botId: number
+  title: string
+  createdAt: string
+  updatedAt: string
+  messages: Message[]
+}
+
+export interface Message {
+  id: number
+  conversationId: number
+  content: string
+  role: 'user' | 'assistant'
+  timestamp: string
+}
+
+// frontend/src/stores/auth.ts
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import type { User } from './types'
+import { api } from '@/services/api'
+
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref<User | null>(null)
+  const token = ref<string | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  
+  const isAuthenticated = computed(() => !!user.value)
+  const isAdmin = computed(() => user.value?.role === 'admin')
+  
+  async function login(credentials: {
+    username: string
+    password: string
+  }) {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.post('/auth/login/', credentials)
+      token.value = response.data.token
+      user.value = response.data.user
+      
+      // Store token in secure storage
+      localStorage.setItem('token', token.value)
+    } catch (err) {
+      error.value = 'Login failed'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  function logout() {
+    user.value = null
+    token.value = null
+    localStorage.removeItem('token')
+  }
+  
+  return {
+    user,
+    token,
+    loading,
+    error,
+    isAuthenticated,
+    isAdmin,
+    login,
+    logout
+  }
+})
+
+// frontend/src/stores/bot.ts
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import type { Bot } from './types'
+import { api } from '@/services/api'
+
+export const useBotStore = defineStore('bot', () => {
+  const bots = ref<Bot[]>([])
+  const selectedBot = ref<Bot | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  
+  const sortedBots = computed(() => {
+    return [...bots.value].sort((a, b) => {
+      return new Date(b.lastTrained).getTime() - new Date(a.lastTrained).getTime()
+    })
+  })
+  
+  const readyBots = computed(() => {
+    return bots.value.filter(bot => bot.status === 'ready')
+  })
+  
+  async function fetchBots() {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.get('/bots/')
+      bots.value = response.data
+    } catch (err) {
+      error.value = 'Failed to fetch bots'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  async function createBot(data: Partial<Bot>) {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.post('/bots/', data)
+      bots.value.push(response.data)
+      return response.data
+    } catch (err) {
+      error.value = 'Failed to create bot'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  return {
+    bots,
+    selectedBot,
+    loading,
+    error,
+    sortedBots,
+    readyBots,
+    fetchBots,
+    createBot
+  }
+})
+
+// frontend/src/stores/conversation.ts
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import type { Conversation, Message } from './types'
+import { api } from '@/services/api'
+
+export const useConversationStore = defineStore('conversation', () => {
+  const conversations = ref<Conversation[]>([])
+  const activeConversation = ref<Conversation | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  
+  const sortedConversations = computed(() => {
+    return [...conversations.value].sort((a, b) => {
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    })
+  })
+  
+  async function fetchConversations(botId: number) {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.get(`/bots/${botId}/conversations/`)
+      conversations.value = response.data
+    } catch (err) {
+      error.value = 'Failed to fetch conversations'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  async function sendMessage(message: string) {
+    if (!activeConversation.value) return
+    
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.post(
+        `/conversations/${activeConversation.value.id}/messages/`,
+        { content: message }
+      )
+      
+      activeConversation.value.messages.push(response.data)
+      return response.data
+    } catch (err) {
+      error.value = 'Failed to send message'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  return {
+    conversations,
+    activeConversation,
+    loading,
+    error,
+    sortedConversations,
+    fetchConversations,
+    sendMessage
+  }
+})
+```
+
+### 2. Backend State Management (Django & Redis)
+
+```python
+# backend/core/state.py
+from typing import Any, Dict, Optional
+from django.core.cache import cache
+from django.conf import settings
+import json
+
+class StateManager:
+    """Manages application state using Redis"""
+    
+    def __init__(self, prefix: str = 'state'):
+        self.prefix = prefix
+    
+    def _get_key(self, key: str) -> str:
+        """Generate Redis key with prefix"""
+        return f'{self.prefix}:{key}'
+    
+    def set(
+        self,
+        key: str,
+        value: Any,
+        timeout: Optional[int] = None
+    ) -> None:
+        """Set state value"""
+        full_key = self._get_key(key)
+        
+        if isinstance(value, (dict, list)):
+            value = json.dumps(value)
+        
+        cache.set(
+            full_key,
+            value,
+            timeout or settings.STATE_TIMEOUT
+        )
+    
+    def get(
+        self,
+        key: str,
+        default: Any = None
+    ) -> Any:
+        """Get state value"""
+        full_key = self._get_key(key)
+        value = cache.get(full_key, default)
+        
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                return value
+        
+        return value
+    
+    def delete(self, key: str) -> None:
+        """Delete state value"""
+        full_key = self._get_key(key)
+        cache.delete(full_key)
+    
+    def increment(
+        self,
+        key: str,
+        amount: int = 1
+    ) -> int:
+        """Increment counter"""
+        full_key = self._get_key(key)
+        return cache.incr(full_key, amount)
+    
+    def decrement(
+        self,
+        key: str,
+        amount: int = 1
+    ) -> int:
+        """Decrement counter"""
+        full_key = self._get_key(key)
+        return cache.decr(full_key, amount)
+
+# Usage in bot training
+class BotTrainingState:
+    def __init__(self, bot_id: int):
+        self.state = StateManager(f'bot:{bot_id}:training')
+    
+    def set_progress(self, progress: int) -> None:
+        """Set training progress"""
+        self.state.set('progress', progress)
+    
+    def get_progress(self) -> int:
+        """Get training progress"""
+        return self.state.get('progress', 0)
+    
+    def set_status(self, status: str) -> None:
+        """Set training status"""
+        self.state.set('status', status)
+    
+    def get_status(self) -> str:
+        """Get training status"""
+        return self.state.get('status', 'idle')
+    
+    def set_error(self, error: str) -> None:
+        """Set training error"""
+        self.state.set('error', error)
+    
+    def get_error(self) -> Optional[str]:
+        """Get training error"""
+        return self.state.get('error')
+    
+    def clear(self) -> None:
+        """Clear training state"""
+        self.state.delete('progress')
+        self.state.delete('status')
+        self.state.delete('error')
+
+# Usage in conversation state
+class ConversationState:
+    def __init__(self, conversation_id: int):
+        self.state = StateManager(f'conversation:{conversation_id}')
+    
+    def set_context(self, context: Dict) -> None:
+        """Set conversation context"""
+        self.state.set('context', context)
+    
+    def get_context(self) -> Dict:
+        """Get conversation context"""
+        return self.state.get('context', {})
+    
+    def add_message(self, message: Dict) -> None:
+        """Add message to history"""
+        history = self.get_message_history()
+        history.append(message)
+        self.state.set('history', history)
+    
+    def get_message_history(self) -> list:
+        """Get message history"""
+        return self.state.get('history', [])
+    
+    def clear(self) -> None:
+        """Clear conversation state"""
+        self.state.delete('context')
+        self.state.delete('history')
+```
+
+### 3. WebSocket State Sync
+
+```typescript
+// frontend/src/services/websocket.ts
+import { useConversationStore } from '@/stores/conversation'
+import { useBotStore } from '@/stores/bot'
+
+export class WebSocketService {
+  private ws: WebSocket | null = null
+  private reconnectAttempts = 0
+  private maxReconnectAttempts = 5
+  
+  constructor(private url: string) {}
+  
+  connect() {
+    this.ws = new WebSocket(this.url)
+    
+    this.ws.onopen = () => {
+      console.log('WebSocket connected')
+      this.reconnectAttempts = 0
+    }
+    
+    this.ws.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      this.handleMessage(data)
+    }
+    
+    this.ws.onclose = () => {
+      console.log('WebSocket closed')
+      this.reconnect()
+    }
+    
+    this.ws.onerror = (error) => {
+      console.error('WebSocket error:', error)
+    }
+  }
+  
+  private reconnect() {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error('Max reconnection attempts reached')
+      return
+    }
+    
+    this.reconnectAttempts++
+    setTimeout(() => {
+      console.log('Attempting to reconnect...')
+      this.connect()
+    }, 1000 * Math.pow(2, this.reconnectAttempts))
+  }
+  
+  private handleMessage(data: any) {
+    const conversationStore = useConversationStore()
+    const botStore = useBotStore()
+    
+    switch (data.type) {
+      case 'bot_updated':
+        botStore.bots = botStore.bots.map(bot =>
+          bot.id === data.bot.id ? { ...bot, ...data.bot } : bot
+        )
+        break
+      
+      case 'message_received':
+        if (
+          conversationStore.activeConversation?.id ===
+          data.message.conversationId
+        ) {
+          conversationStore.activeConversation.messages.push(data.message)
+        }
+        break
+      
+      case 'training_progress':
+        if (botStore.selectedBot?.id === data.botId) {
+          botStore.selectedBot = {
+            ...botStore.selectedBot,
+            status: data.status,
+            trainingProgress: data.progress
+          }
+        }
+        break
+    }
+  }
+  
+  send(data: any) {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(data))
+    }
+  }
+  
+  disconnect() {
+    if (this.ws) {
+      this.ws.close()
+      this.ws = null
+    }
+  }
+}
+```
+
+## Implementation Guidelines
+
+### 1. State Organization
+
+```
+frontend/
+├── stores/
+│   ├── auth.ts       # Authentication state
+│   ├── bot.ts        # Bot management state
+│   ├── conversation.ts # Conversation state
+│   └── types.ts      # Type definitions
+
+backend/
+├── core/
+│   └── state.py      # State management utilities
+├── bots/
+│   └── state.py      # Bot-specific state
+└── conversations/
+    └── state.py      # Conversation state
+```
+
+### 2. State Management Best Practices
+
+1. Single source of truth
+2. Immutable state updates
+3. Computed properties for derived state
+4. Action handlers for state mutations
+5. Error handling and loading states
+6. State persistence where needed
+7. Real-time state sync
+8. Type safety
+
+### 3. Performance Considerations
+
+1. Use selective updates
+2. Implement pagination
+3. Cache frequently accessed data
+4. Optimize WebSocket payloads
+5. Batch state updates
+6. Use computed properties
+7. Implement debouncing
+8. Monitor memory usage
+
+## Implementation Checklist
+
+- [ ] Set up Pinia stores
+- [ ] Configure Redis for backend state
+- [ ] Implement WebSocket sync
+- [ ] Add type definitions
+- [ ] Set up state persistence
+- [ ] Configure error handling
+- [ ] Add loading states
+- [ ] Implement real-time updates
+- [ ] Add state monitoring
+- [ ] Document state flow
+
+## Common Pitfalls
+
+1. State duplication
+2. Inconsistent updates
+3. Memory leaks
+4. Race conditions
+5. Missing error handling
+6. Poor type safety
+7. Unnecessary re-renders
+8. Websocket disconnects
+
+## Additional Resources
+
+1. [Pinia Documentation](mdc:https:/pinia.vuejs.org)
+2. [Redis State Management](mdc:https:/redis.io/docs/manual/patterns/distributed-locks)
+3. [Vue.js State Management](mdc:https:/vuejs.org/guide/scaling-up/state-management.html)
+4. [WebSocket Best Practices](mdc:https:/developer.mozilla.org/en-US/docs/Web/API/WebSocket) 

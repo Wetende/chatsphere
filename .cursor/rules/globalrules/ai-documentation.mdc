@@ -1,0 +1,25 @@
+# AI-Assisted Documentation Generation and Maintenance
+
+## Step 1: Define Documentation Scope
+- Use `@ai-docs-scope` to outline required documentation (e.g., API docs, user guides).
+- Draft a spec in `docs-plan.md` with sections, formats, and audiences.
+- Enhance the spec with Cursor AI suggestions.
+
+## Step 2: Generate Documentation
+- Draft initial content with Cursor AI based on the spec.
+- Generate code comments and API references for technical docs.
+- Create user guides with step-by-step instructions and examples.
+
+## Step 3: Review and Refine
+- Manually check AI-generated content for accuracy.
+- Use Cursor AI to ensure consistent tone and style.
+- Revise until it meets quality standards.
+
+## Step 4: Test Documentation Usability
+- Validate clarity using `@ai-tests`.
+- Simulate user scenarios to confirm helpfulness.
+- Refine based on AI feedback.
+
+## Step 5: Publish and Maintain
+- Publish in an accessible format (e.g., Markdown, HTML).
+- Automate updates with Cursor AI for ongoing maintenance.

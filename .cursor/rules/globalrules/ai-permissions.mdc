@@ -1,0 +1,27 @@
+ # Step 1: Define Permission Requirements
+- Follow the instructions in `@ai-permissions-design` to outline the permission model for your application.
+- Create a spec in `permissions.md` detailing roles, resources, and access levels (e.g., read, write, admin).
+- Use Cursor AI to review the spec for completeness and suggest additional roles or edge cases.
+
+# Step 2: Generate Permission Logic
+- Use Cursor AI to create the permission enforcement code.
+  - For Go, implement a middleware or function (e.g., `checkPermission(user, resource, action)`).
+  - For JavaScript/TypeScript, use a library like `casl` or write custom logic.
+- Include error handling for unauthorized access attempts.
+
+# Step 3: Integrate Permissions into Application
+- Apply the permission logic to relevant endpoints, functions, or database queries.
+- Ensure permissions are checked before critical operations (e.g., data modification).
+- Use Cursor AI to verify integration points and catch missed enforcement areas.
+
+# Step 4: Test the Permission System
+- Follow the instructions in `@ai-tests` to write comprehensive tests.
+- Generate tests with Cursor AI for:
+  - Valid access scenarios (e.g., admin updating data).
+  - Denied access scenarios (e.g., user attempting restricted actions).
+  - Edge cases (e.g., missing roles, expired sessions).
+- Run tests and iterate until the permission system is robust and secure.
+
+# Step 5: Monitor and Refine
+- Add logging to track permission denials and review them periodically.
+- Use Cursor AI to suggest refinements based on usage patterns or security gaps.

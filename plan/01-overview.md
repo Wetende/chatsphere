@@ -28,7 +28,7 @@ Our platform will empower users to create sophisticated chatbots in minutes with
 
 | Feature | ChatSphere | Chatbase |
 |---------|------------|----------|
-| Bot Creation Time | < 3 minutes | 5+ minutes |
+| Bot Creation Time | &lt; 3 minutes | 5+ minutes |
 | Language Support | 200+ languages | 150+ languages |
 | Data Sources | URLs, PDFs, text, live scraping | Limited sources |
 | Widget Customization | Extensive with live preview | Basic |
@@ -39,47 +39,40 @@ Our platform will empower users to create sophisticated chatbots in minutes with
 
 ## High-Level Architecture
 
-ChatSphere follows a layered architecture with a separated AI Agent Service:
+ChatSphere follows a layered architecture with integrated AI capabilities:
 
 ```
-┌─────────────┐    ┌─────────────┐   ┌─────────────┐
-│  Frontend   │ ◄─►│   Backend   │───►│ Agent Svc   │
-│  (Vue.js)   │    │  (Django)   │   │  (FastAPI)  │
-└─────────────┘    └──────┬──────┘   └──────┬──────┘
-       ▲                  │                  │
-       │                  │ HTTP Call        │ Pinecone API
-       │                  ▼                  ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│  User Data  │    │ App Data DB │    │  Vector DB  │
-│ (PostgreSQL)│    │ (PostgreSQL)│    │ (Pinecone)  │
-└─────────────┘    └─────────────┘    └─────────────┘
+┌─────────────┐    ┌─────────────┐
+│  Frontend   │ ◄─►│   Backend   │
+│  (React.js) │    │  (FastAPI)  │
+└─────────────┘    └──────┬──────┘
+       ▲                  │
+       │                  │ Pinecone API
+       │                  ▼
+┌─────────────┐    ┌─────────────┐
+│  User Data  │    │  Vector DB  │
+│ (TBD)       │    │ (Pinecone)  │
+└─────────────┘    └─────────────┘
 ```
 
 ### Key Components
 
 1. **Frontend Layer**
-   - Vue.js framework for reactive UI
+   - React.js framework for reactive UI
    - User dashboard, bot configuration, chat interface
 
-2. **Backend Layer (Django)**
+2. **Backend Layer (FastAPI)**
    - Main API for frontend interaction
    - User auth, bot/doc management
-   - Orchestrates calls to Agent Service
-   - Stores application data in PostgreSQL
+   - Integrated AI tasks (generation, retrieval)
+   - Stores application data 
 
-3. **Agent Service Layer (FastAPI)**
-   - Internal API for AI tasks
-   - Integrates with Google Gemini (LLM & Embeddings)
-   - Integrates with Pinecone (Vector Store)
-   - Uses LangChain for orchestration
-
-4. **Database Layer**
-   - PostgreSQL for relational application data (users, bots, etc.)
-   - Pinecone for vector embeddings
+3. **Database Layer**
+   - Vector storage in Pinecone
+   - Application database postgreSQL
    - Redis (optional) for caching/queues
 
-5. **Infrastructure**
-   - Docker containerization
+4. **Infrastructure**
    - Scalable cloud deployment (e.g., Kubernetes)
    - Load balancing
 
@@ -87,7 +80,7 @@ ChatSphere follows a layered architecture with a separated AI Agent Service:
 
 ### Chatbot Creation and Training
 - No-code chatbot creation interface
-- Multi-source knowledge base creation (Docs processed by Django, embedded by Agent)
+- Multi-source knowledge base creation (Docs processed and embedded via FastAPI)
 - Real-time training progress indicators
 
 ### Widget Customization
@@ -102,36 +95,33 @@ ChatSphere follows a layered architecture with a separated AI Agent Service:
 
 ### Integration Options
 - JavaScript snippet for web embedding
-- Webhook support (handled by Django)
-- API access (via Django backend)
+- Webhook support (handled by FastAPI)
+- API access (via FastAPI backend)
 
-### AI Features (Powered by Agent Service)
+### AI Features (Integrated in FastAPI)
 - Context-aware conversations using Pinecone retrieval
 - Multi-turn dialogue support via LangChain memory
-- Potential for entity recognition, sentiment analysis (added to Agent Service)
+- Potential for entity recognition, sentiment analysis
 - Multi-language support (handled by Gemini model)
-- **Flexible Agent Types**: The decoupled agent service allows for implementing various LangChain agent types (e.g., conversational, ReAct, tool-using) in the future, configured via the main backend.
+- **Flexible Agent Types**: The integrated agent capabilities allow for implementing various LangChain agent types (e.g., conversational, ReAct, tool-using) in the future.
 
 ## Technical Foundations
 
-- **Modern JavaScript Framework**: Vue.js 3
-- **Robust Backend**: Django 4.x with REST Framework
-- **AI Service**: FastAPI
-- **Database**: PostgreSQL 14+
+- **Modern JavaScript Framework**: React.js
+- **Robust Backend**: FastAPI
 - **Vector Storage**: Pinecone
 - **AI Integration**: Google Gemini API, LangChain
-- **Containerization**: Docker
 - **Authentication**: JWT-based auth
-- **Testing**: Jest/Vitest (Frontend), Pytest (Backend & Agent)
+- **Testing**: Jest (Frontend), Pytest (Backend)
 - **CI/CD**: GitHub Actions
 
 ## Success Metrics
 
 1. **User Acquisition**: Target of 1,000 users in first three months
 2. **Retention Rate**: 85%+ retention after 30 days
-3. **Chatbot Creation Time**: Average under 3 minutes (including embedding via agent)
+3. **Chatbot Creation Time**: Average under 3 minutes (including embedding)
 4. **Response Quality**: 90%+ satisfaction rate from end users
-5. **System Performance**: 99.9% uptime, <500ms average API response time (incl. agent call)
+5. **System Performance**: 99.9% uptime, &lt;500ms average API response time
 6. **Conversion Rate**: 10%+ free-to-paid conversion
 
 ## Next Steps

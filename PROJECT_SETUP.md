@@ -60,7 +60,7 @@ Refer to the main `README.md` for detailed steps on setting up the Django backen
 
 ## Vector Search Setup
 
-The application uses a separate FastAPI service (`chatsphere_agent`) which utilizes **Pinecone** for vector storage and search. This replaces the previous `pgvector` implementation.
+The application uses a separate FastAPI service (`agent`) which utilizes **Pinecone** for vector storage and search. This replaces the previous `pgvector` implementation.
 
 The FastAPI service handles:
 - Generating embeddings using Google Gemini models.
@@ -76,7 +76,7 @@ The project requires the following key packages:
    - psycopg2-binary (for Postgres connection)
    - httpx (for calling the agent service)
 
-2. **FastAPI Agent (`backend/chatsphere_agent/requirements.txt`):**
+2. **FastAPI Agent (`backend/agent/requirements.txt`):**
    - fastapi, uvicorn
    - langchain, langchain-google-genai, langchain-pinecone
    - pinecone-client

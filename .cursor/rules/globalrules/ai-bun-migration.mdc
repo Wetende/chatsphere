@@ -1,0 +1,19 @@
+# Step 1
+Follow the instructions in `@ai-bun-config` to install Bun and configure it as the package manager for your project.
+- Ensure the Bun version is compatible with your existing Node.js dependencies.
+- Update the project configuration to use Bun by replacing npm/yarn scripts with Bun equivalents (e.g., `bun run dev`, `bun build`).
+
+# Step 2
+Use Cursor AI to analyze the project and identify Node.js-specific code that needs adjustment for Bun compatibility.
+- Focus on areas like file system operations (e.g., replace `fs` with `Bun.file`).
+- Address any missing features or API differences by generating workarounds or using Bun updates.
+
+# Step 3
+Follow the instructions in `@ai-tests` to write tests verifying the Bun migration.
+- Generate tests with Cursor AI to check compatibility and performance.
+- Run the tests using `bun test` and iterate until all dependencies and scripts work correctly.
+
+# Step 4
+Use Cursor AI to optimize the migrated code for Bun's performance benefits.
+- Refactor performance-critical sections to leverage Bun's speed advantages.
+- Run performance benchmarks and iterate based on AI suggestions. 

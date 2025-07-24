@@ -1,0 +1,26 @@
+# Step 1: Establish Project Context
+- Create a `context.md` file at the root of your project.
+- Document key decisions, architecture choices, and business requirements.
+- Use Cursor AI to summarize existing codebase structure and patterns.
+
+# Step 2: Implement Context Tracking
+- Update `context.md` at the beginning of each development session.
+- Track all major decisions and their rationales.
+- Include links to relevant documentation or discussions.
+
+# Step 3: Review Context Before Changes
+- Before making significant changes, review the relevant sections of `context.md`.
+- Use Cursor AI to analyze how proposed changes align with existing patterns.
+- Identify potential conflicts or inconsistencies with established patterns.
+
+# Step 4: Test With Context Awareness
+- Follow the instructions in `@ai-tests` to ensure tests reflect context understanding.
+- Generate tests with Cursor AI that validate:
+  - Consistency with existing patterns.
+  - Adherence to documented requirements.
+  - Preservation of important business rules.
+
+# Step 5: Update Context Documentation
+- After implementing changes, update `context.md` with new decisions.
+- Use Cursor AI to suggest additions to context documentation.
+- Ensure all team members review updated context documentation. 

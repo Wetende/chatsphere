@@ -118,7 +118,7 @@ import json
 import kafka
 
 class EventCollector:
-    def __init__(self, kafka_config: Dict[str, Any]):
+    def __init__(self, kafka_config: Dict[str, str]):
         self.producer = kafka.KafkaProducer(
             bootstrap_servers=kafka_config['bootstrap_servers'],
             value_serializer=lambda v: json.dumps(v).encode('utf-8')
@@ -134,22 +134,6 @@ class EventCollector:
         
         self.producer.send('chatsphere-events', event)
         self.producer.flush()
-
-# Example usage:
-collector = EventCollector({
-    'bootstrap_servers': ['kafka:9092']
-})
-
-collector.collect_event(
-    event_type='message_sent',
-    user_id='user123',
-    data={
-        'message_id': 'msg456',
-        'channel_id': 'channel789',
-        'content_length': 150,
-        'has_attachments': False
-    }
-)
 ```
 
 ### 2. Data Processing
@@ -449,7 +433,6 @@ class ResponseQualityAnalyzer:
         }
     
     def _calculate_complexity(self, text: str) -> float:
-        # Implement complexity metrics (e.g., readability scores)
         words = text.split()
         sentences = text.split('.')
         
@@ -528,10 +511,10 @@ receivers:
 
 ```python
 # analytics/reporting/report_generator.py
-from typing import List, Dict, Any
+from typing import Dict, Any, List
+from datetime import datetime, timedelta
 import pandas as pd
 import plotly.graph_objects as go
-from datetime import datetime, timedelta
 
 class ReportGenerator:
     def __init__(self, db_connection):

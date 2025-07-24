@@ -7,7 +7,7 @@ This document outlines our comprehensive approach to security and compliance for
 ### 1. Authentication & Authorization
 
 ```python
-# security/auth/jwt_handler.py
+# app/utils/auth_utils.py
 from datetime import datetime, timedelta
 from typing import Dict, Optional
 import jwt
@@ -51,9 +51,9 @@ class JWTHandler:
         }
         return jwt.encode(new_payload, self.secret_key, algorithm='HS256')
 
-# security/auth/rbac.py
-from typing import List, Dict, Any
+# app/utils/rbac.py
 from enum import Enum
+from typing import List, Dict, Any
 
 class Permission(Enum):
     READ = "read"
@@ -112,7 +112,7 @@ class RBACManager:
 ### 2. Data Encryption
 
 ```python
-# security/encryption/data_encryption.py
+# app/utils/encryption.py
 from typing import Any, Optional
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -143,33 +143,12 @@ class DataEncryption:
     def rotate_key(self) -> None:
         new_key = Fernet.generate_key()
         self.cipher_suite = Fernet(new_key)
-        # TODO: Implement key rotation logic for existing data
-
-# security/encryption/field_encryption.py
-from django.db import models
-from django.conf import settings
-from typing import Any
-
-class EncryptedTextField(models.TextField):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.encryptor = DataEncryption(settings.ENCRYPTION_KEY)
-    
-    def get_prep_value(self, value: Any) -> Optional[str]:
-        if value is None:
-            return value
-        return self.encryptor.encrypt_message(str(value))
-    
-    def from_db_value(self, value: Any, *args) -> Optional[str]:
-        if value is None:
-            return value
-        return self.encryptor.decrypt_message(value)
 ```
 
 ### 3. API Security
 
 ```python
-# security/api/rate_limiter.py
+# app/utils/rate_limiter.py
 from typing import Dict, Optional
 import time
 import redis
@@ -184,9 +163,9 @@ class RateLimiter:
     def __init__(self, redis_url: str):
         self.redis = redis.from_url(redis_url)
         self.default_limits = {
-            'user': RateLimit(1000, 3600),      # 1000 requests per hour
-            'moderator': RateLimit(5000, 3600), # 5000 requests per hour
-            'admin': RateLimit(10000, 3600)     # 10000 requests per hour
+            'user': RateLimit(1000, 3600),
+            'moderator': RateLimit(5000, 3600),
+            'admin': RateLimit(10000, 3600)
         }
     
     def is_allowed(self, user_id: str, role: str) -> bool:
@@ -196,22 +175,19 @@ class RateLimiter:
         current = int(time.time())
         window_start = current - limit.window
         
-        # Clean old records
         self.redis.zremrangebyscore(key, 0, window_start)
         
-        # Count requests in current window
         request_count = self.redis.zcard(key)
         
         if request_count >= limit.requests:
             return False
         
-        # Record new request
         self.redis.zadd(key, {str(current): current})
         self.redis.expire(key, limit.window)
         
         return True
 
-# security/api/request_validation.py
+# app/utils/request_validation.py
 from typing import Dict, Any, Optional
 import json
 from jsonschema import validate, ValidationError
@@ -279,7 +255,6 @@ class PersonalDataHandler:
         self.storage.delete_user_messages(user_id)
         self.storage.delete_user_preferences(user_id)
         
-        # Log deletion for compliance
         self._log_deletion(user_id)
     
     def _log_deletion(self, user_id: str) -> None:
@@ -292,7 +267,6 @@ class PersonalDataHandler:
         self.storage.store_deletion_log(log)
     
     def _get_user_ip(self) -> str:
-        # Implementation depends on web framework
         pass
 
 # compliance/privacy/data_retention.py
@@ -361,11 +335,9 @@ class AuditLogger:
         self.logger.info(json.dumps(log_entry))
     
     def _get_user_ip(self) -> str:
-        # Implementation depends on web framework
         pass
     
     def _get_user_agent(self) -> str:
-        # Implementation depends on web framework
         pass
 
 # compliance/audit/audit_analyzer.py
@@ -620,8 +592,6 @@ class SecurityTester:
         }
     
     def _run_vulnerability_scan(self) -> Dict[str, Any]:
-        # Implement vulnerability scanning logic
-        # This is a placeholder
         return {
             'passed': True,
             'findings': []
@@ -645,7 +615,6 @@ class SecurityTester:
         }
     
     def _check_dependencies(self) -> Dict[str, Any]:
-        # Run dependency check using safety
         try:
             output = subprocess.check_output(
                 ['safety', 'check'],

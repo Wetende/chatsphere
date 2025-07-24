@@ -1,0 +1,26 @@
+# Step 1: Define Cross-Functional Requirements
+- Create a `cross-functional.md` document outlining accessibility, i18n, and responsiveness standards.
+- Define compliance requirements (WCAG, GDPR, etc.).
+- Use Cursor AI to analyze the existing codebase for compliance gaps.
+
+# Step 2: Configure Cross-Functional Tools
+- Set up tools for accessibility testing, i18n management, and responsive design verification.
+- Configure automated checks for compliance requirements.
+- Use Cursor AI to generate configuration for cross-functional tooling.
+
+# Step 3: Implement Cross-Functional Features
+- Apply accessibility patterns (ARIA attributes, keyboard navigation, etc.).
+- Implement internationalization and localization support.
+- Use Cursor AI to identify areas needing cross-functional improvements.
+
+# Step 4: Test Cross-Functional Compliance
+- Follow the instructions in `@ai-tests` to validate cross-functional requirements.
+- Generate tests with Cursor AI that validate:
+  - Accessibility compliance across devices.
+  - Internationalization works properly with different locales.
+  - Responsive design functions on various screen sizes.
+
+# Step 5: Monitor and Improve
+- Regularly audit for cross-functional compliance.
+- Use Cursor AI to suggest improvements in accessibility and other cross-functional areas.
+- Update `cross-functional.md` with new requirements and best practices. 

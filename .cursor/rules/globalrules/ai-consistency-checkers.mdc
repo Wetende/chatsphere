@@ -1,0 +1,26 @@
+# Step 1: Define Consistency Standards
+- Create a `consistency.md` document outlining naming conventions, patterns, and architectural principles.
+- Define metrics for measuring code consistency.
+- Use Cursor AI to analyze existing codebase for consistency issues.
+
+# Step 2: Configure Consistency Tools
+- Set up linters and static analyzers with custom rules for consistency validation.
+- Configure automated architecture conformance checks.
+- Use Cursor AI to generate custom rules for static analysis tools.
+
+# Step 3: Implement Consistency Checks
+- Create custom validators for project-specific consistency rules.
+- Implement data flow consistency checkers.
+- Use Cursor AI to identify inconsistencies in code patterns.
+
+# Step 4: Test Consistency Validation
+- Follow the instructions in `@ai-tests` to validate consistency checks.
+- Generate tests with Cursor AI that validate:
+  - Naming conventions are enforced consistently.
+  - Architectural boundaries are maintained.
+  - Similar functionality uses consistent approaches.
+
+# Step 5: Monitor and Enforce
+- Regularly audit the codebase for consistency.
+- Use Cursor AI to suggest consistency improvements.
+- Update `consistency.md` with refined rules and best practices. 

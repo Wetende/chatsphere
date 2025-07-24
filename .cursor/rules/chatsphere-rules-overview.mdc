@@ -1,0 +1,103 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# ChatSphere Project Rules
+
+This document provides an overview of all the development rules specific to the ChatSphere project. These rules build upon the global rules in the `globalrules` folder and technology-specific rules in the `technology rules` folder.
+
+## Purpose
+
+These project-specific rules ensure consistency, quality, and efficiency in the development of ChatSphere - a modern chatbot platform built with Vue.js, Django, and integrated AI capabilities.
+
+## How to Use These Rules
+
+1. For any development task, first consult the specific rule file in this folder
+2. Follow the step-by-step implementation guide
+3. Reference the global rules and technology-specific rules as mentioned
+4. Use the provided examples and templates
+5. Complete the checklist for each implementation
+
+## Available Rule Files
+
+### Data Management
+- [Creating Models](mdc:chatsphere-models.md) - Creating Django models for ChatSphere
+- [Implementing Caching](mdc:chatsphere-caching.md) - Caching strategies for performance
+- [Managing State](mdc:chatsphere-state.md) - State management in Vue.js frontend
+
+### API & Business Logic
+- [Building Controllers](mdc:chatsphere-controllers.md) - Building Django views and DRF viewsets
+- [Adding Pagination](mdc:chatsphere-pagination.md) - Pagination for API endpoints and frontend
+- [Managing Permissions](mdc:chatsphere-permissions.md) - Access control and permissions
+- [Handling Tasks](mdc:chatsphere-tasks.md) - Asynchronous task processing
+- [Designing Events](mdc:chatsphere-events.md) - Event system implementation
+
+### Quality Assurance
+- [Running Tests](mdc:chatsphere-tests.md) - Unit, integration, and e2e testing
+- [Performing QA](mdc:chatsphere-qa.md) - QA processes and tools
+- [Debugging Code](mdc:chatsphere-debugging.md) - Debugging procedures
+- [Optimizing Performance](mdc:chatsphere-performance.md) - Performance optimization
+- [Ensuring Code Quality](mdc:chatsphere-code-quality.md) - Code style and quality standards
+- [Conducting Code Reviews](mdc:chatsphere-code-review.md) - Code review process
+
+### Infrastructure & Deployment
+- [Setting Up CI/CD](mdc:chatsphere-cicd.md) - CI/CD pipeline configuration
+- [Managing Dependencies](mdc:chatsphere-dependencies.md) - Dependency management
+- [Version Control](mdc:chatsphere-version-control.md) - Git workflow and practices
+
+### Frontend & UI
+- [Designing UI](mdc:chatsphere-ui.md) - UI components and design system
+- [Implementing Vue Components](mdc:chatsphere-vue-components.md) - Vue.js component development
+
+### Other
+- [Documentation](mdc:chatsphere-documentation.md) - Documentation standards
+- [Security](mdc:chatsphere-security.md) - Security implementations
+- [Planning](mdc:chatsphere-planning.md) - Project planning and requirements
+- [Error Handling](mdc:chatsphere-error-handling.md) - Error handling strategies
+- [Cross-Functional Requirements](mdc:chatsphere-cross-functional.md) - Accessibility, i18n, etc.
+- [Knowledge Transfer](mdc:chatsphere-knowledge-transfer.md) - Knowledge sharing practices
+- [Progressive Implementation](mdc:chatsphere-progressive-implementation.md) - Feature flags and phased rollouts
+- [Consistency](mdc:chatsphere-consistency.md) - Ensuring code and design consistency
+- [Refactoring](mdc:chatsphere-refactoring.md) - Guidelines for code refactoring
+
+## Project Structure
+
+ChatSphere follows this high-level structure:
+
+```
+chatsphere/
+├── frontend/               # Vue.js frontend
+│   ├── src/
+│   │   ├── components/     # Reusable Vue components
+│   │   ├── views/          # Page components
+│   │   ├── store/          # Vuex/Pinia state management
+│   │   └── ...
+├── backend/                # Django backend
+│   ├── accounts/           # User authentication
+│   ├── bots/               # Bot management
+│   ├── chat/               # Chat functionality
+│   ├── documents/          # Document management
+│   └── ...
+├── projectrules/           # Project-specific rules (this folder)
+├── globalrules/            # Global development rules
+├── technology rules/       # Technology-specific rules
+└── ...
+```
+
+## Development Workflow
+
+1. **Feature Planning**: Use `chatsphere-planning.md`
+2. **Implementation**: Follow task-specific rule files
+3. **Testing**: Use `chatsphere-tests.md` and `chatsphere-qa.md`
+4. **Review**: Follow `chatsphere-code-review.md`
+5. **Deployment**: Use CI/CD as per `chatsphere-cicd.md`
+
+## Getting Started
+
+New team members should:
+
+1. Read this overview document first
+2. Review the global rules in `globalrules` folder
+3. Review the technology-specific rules relevant to their role
+4. Consult the specific rule files for any tasks they're assigned 

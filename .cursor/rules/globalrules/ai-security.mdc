@@ -1,0 +1,25 @@
+# AI-Assisted Security and Vulnerability Detection
+
+## Step 1: Define Security Requirements
+- Use `@ai-security-design` to list needs (e.g., encryption, auth).
+- Draft a spec in `security.md` with threats and mitigations.
+- Validate with Cursor AI suggestions.
+
+## Step 2: Generate Security Code
+- Implement features with Cursor AI (e.g., input validation).
+- For Go: Add secure headers or CSRF protection.
+- For JS/TS: Prevent XSS or secure cookies.
+
+## Step 3: Integrate Security Measures
+- Apply code to relevant areas (e.g., APIs).
+- Scan for vulnerabilities with Cursor AI.
+- Log security events (e.g., failed logins).
+
+## Step 4: Test Security Implementations
+- Write tests using `@ai-tests`.
+- Generate scenarios (e.g., SQL injection, XSS).
+- Iterate until secure.
+
+## Step 5: Document and Maintain
+- Detail measures in `security.md` with best practices.
+- Schedule audits with Cursor AI.

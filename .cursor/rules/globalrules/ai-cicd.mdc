@@ -1,0 +1,25 @@
+# AI-Assisted CI/CD Setup and Management
+
+## Step 1: Design CI/CD Pipeline
+- Use `@ai-cicd-design` to define stages (e.g., build, test, deploy).
+- Draft a spec in `cicd.md` with tools and needs.
+- Optimize with Cursor AI.
+
+## Step 2: Generate Pipeline Scripts
+- Create configs with Cursor AI (e.g., GitHub Actions).
+- Include linting, testing, and deployment steps.
+- Support multiple environments.
+
+## Step 3: Integrate with Codebase
+- Add configs to the repo.
+- Check syntax with Cursor AI.
+- Set up triggers for automation.
+
+## Step 4: Test the Pipeline
+- Validate with `@ai-tests`.
+- Generate test cases for success and failure.
+- Refine until reliable.
+
+## Step 5: Monitor and Optimize
+- Analyze performance with Cursor AI.
+- Document setup in `cicd.md` with troubleshooting tips.

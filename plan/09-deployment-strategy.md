@@ -33,7 +33,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - REDIS_URL=redis://redis:6379/0
-      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - db
       - redis
@@ -49,7 +49,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      - API_URL=http://backend:8000
+      - REACT_APP_API_URL=http://backend:8000
     depends_on:
       - backend
     restart: unless-stopped
@@ -98,7 +98,7 @@ version: '3.8'
 services:
   backend:
     environment:
-      - DJANGO_SETTINGS_MODULE=config.settings.production
+      - ENVIRONMENT=production
       - DEBUG=0
     deploy:
       resources:
@@ -170,14 +170,14 @@ server {
 
 # Generate secure passwords
 DB_PASSWORD=$(openssl rand -base64 32)
-DJANGO_SECRET_KEY=$(openssl rand -base64 32)
+SECRET_KEY=$(openssl rand -base64 32)
 
 # Create .env file
 cat << EOF > .env
 DB_NAME=chatsphere
 DB_USER=chatsphere_user
 DB_PASSWORD=$DB_PASSWORD
-DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
+SECRET_KEY=$SECRET_KEY
 EOF
 
 # Create necessary directories
@@ -199,7 +199,7 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
 # Run migrations
-docker-compose exec backend python manage.py migrate
+docker-compose exec backend alembic upgrade head
 
 # Check deployment
 docker-compose ps
@@ -309,7 +309,7 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 
 # Rollback database if needed
-docker-compose exec backend python manage.py migrate $VERSION
+docker-compose exec backend alembic downgrade -1
 ```
 
 ## Next Steps

@@ -1,0 +1,26 @@
+# Step 1: Establish Knowledge Transfer Framework
+- Create a `knowledge-transfer.md` document outlining documentation requirements and transfer processes.
+- Define standards for documenting architectural decisions and rationales.
+- Use Cursor AI to analyze existing documentation and identify knowledge gaps.
+
+# Step 2: Implement Knowledge Capture
+- Create an architectural decision record (ADR) system.
+- Develop a project glossary for consistent terminology.
+- Use Cursor AI to extract implicit knowledge from the codebase.
+
+# Step 3: Apply Knowledge Management
+- Document "why" decisions alongside "what" and "how" in code comments.
+- Create comprehensive handover documentation for key components.
+- Use Cursor AI to generate documentation templates and starter content.
+
+# Step 4: Test Knowledge Accessibility
+- Follow the instructions in `@ai-tests` to validate knowledge transfer effectiveness.
+- Generate tests with Cursor AI that validate:
+  - Documentation is understandable to new team members.
+  - Critical decisions are properly recorded.
+  - Key concepts are consistently explained.
+
+# Step 5: Review and Refine
+- Regularly review and update knowledge transfer documents.
+- Use Cursor AI to suggest improvements to knowledge documentation.
+- Update `knowledge-transfer.md` with new insights and approaches. 

@@ -1,0 +1,19 @@
+# Step 1
+Follow the instructions in `@ai-endpoints` to define the API endpoints for your controllers.
+- Write a spec in `endpoints.md` with details like HTTP methods, paths, and request/response formats.
+- Use Cursor AI to validate the spec and suggest improvements.
+
+# Step 2
+Generate the controller logic using Cursor AI.
+- Reference the spec in `endpoints.md` to ensure consistency.
+- Use `@codebase` to align the generated code with your project's framework (e.g., Express, Gin).
+
+# Step 3
+Integrate the generated controllers into your project.
+- Hook the controllers into the framework's routing system.
+- Add middleware for error handling and validation as needed.
+
+# Step 4
+Follow the instructions in `@ai-tests` to write tests for the controllers.
+- Generate unit and integration tests with Cursor AI.
+- Run the tests and iterate until all endpoints function correctly. 

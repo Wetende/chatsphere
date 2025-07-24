@@ -1,0 +1,26 @@
+# AI-Assisted Code Review and Best Practices
+
+## Step 1: Prepare Code for Review
+- Use `@ai-code-prep` to clean and document code.
+- Format and add comments with Cursor AI.
+- Create a pull request for review.
+
+## Step 2: Conduct AI-Assisted Review
+- Analyze with Cursor AI for:
+  - Best practices (e.g., DRY, SOLID).
+  - Security and performance issues.
+- Log findings in `code-review.md`.
+
+## Step 3: Implement Review Suggestions
+- Apply changes and test with `@ai-tests`.
+- Generate tests for new functionality.
+- Iterate until complete.
+
+## Step 4: Finalize and Merge
+- Check for issues with Cursor AI.
+- Merge and update documentation.
+- Share outcomes with the team.
+
+## Step 5: Continuous Improvement
+- Analyze past reviews with AI for process upgrades.
+- Update `code-review.md` with lessons learned.

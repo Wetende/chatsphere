@@ -15,15 +15,15 @@ The ChatSphere frontend will embody the following design principles:
 
 ## Technology Stack
 
-- **Framework**: Vue.js 3 with Composition API
-- **State Management**: Pinia
-- **Routing**: Vue Router 4
+- **Framework**: React.js with Hooks
+- **State Management**: Redux
+- **Routing**: React Router
 - **UI Framework**: Custom components with Tailwind CSS
 - **HTTP Client**: Axios with interceptors
-- **Form Validation**: Vuelidate
-- **Internationalization**: Vue I18n
-- **Testing**: Jest, Vue Test Utils
-- **Building**: Vite
+- **Form Validation**: Formik and Yup
+- **Internationalization**: i18next
+- **Testing**: Jest, React Testing Library
+- **Building**: Vite or Create React App
 
 ## Project Structure
 
@@ -32,24 +32,24 @@ frontend/
 ├── public/             # Static assets
 ├── src/
 │   ├── assets/         # Images, fonts, etc.
-│   ├── components/     # Reusable Vue components
+│   ├── components/     # Reusable React components
 │   │   ├── common/     # Generic UI components
 │   │   ├── dashboard/  # Dashboard-specific components
 │   │   ├── widget/     # Widget customization components
 │   │   ├── chatbot/    # Chatbot configuration components
 │   │   └── analytics/  # Analytics & reporting components
-│   ├── composables/    # Reusable composition functions
+│   ├── hooks/          # Custom React hooks
 │   ├── layouts/        # Page layouts
 │   ├── pages/          # Route pages
-│   ├── router/         # Vue Router configuration
+│   ├── router/         # React Router configuration
 │   ├── services/       # API services
-│   ├── stores/         # Pinia stores
+│   ├── store/          # Redux store and slices
 │   ├── styles/         # Global CSS styles
 │   ├── utils/          # Utility functions
-│   ├── App.vue         # Root component
-│   └── main.js         # Entry point
+│   ├── App.tsx         # Root component
+│   └── main.tsx        # Entry point
 ├── tests/              # Test files
-├── vite.config.js      # Vite configuration
+├── vite.config.ts      # Vite configuration
 └── package.json        # Dependencies
 ```
 
@@ -276,7 +276,7 @@ Key responsive design principles:
 3. **Rendering Performance**
    - Virtual scrolling for large lists
    - Debounced and throttled event handlers
-   - Optimized Vue components (avoid deep watchers)
+   - Optimized React components (useMemo, useCallback)
    - Memoization for expensive computations
 
 4. **Network Optimization**
@@ -332,23 +332,23 @@ Widget features:
 
 ## State Management
 
-Pinia will be used for state management with the following stores:
+Redux will be used for state management with the following slices:
 
-1. **User Store**
+1. **User Slice**
    - Authentication state
    - User profile
    - Permissions
 
-2. **Chatbot Store**
+2. **Chatbot Slice**
    - Chatbot configurations
    - Creation wizard state
    - Training status
 
-3. **Widget Store**
+3. **Widget Slice**
    - Widget customization settings
    - Preview state
 
-4. **Analytics Store**
+4. **Analytics Slice**
    - Conversation metrics
    - Performance data
    - Report configurations
@@ -362,7 +362,7 @@ API services will be organized by domain:
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: process.env.VUE_APP_API_URL,
+  baseURL: process.env.REACT_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -407,7 +407,7 @@ export const chatbotService = {
 ### Unit Testing
 - Test individual components
 - Test utility functions
-- Test store actions and mutations
+- Test reducers and actions
 
 ### Component Testing
 - Test component rendering
@@ -416,7 +416,7 @@ export const chatbotService = {
 
 ### Integration Testing
 - Test component compositions
-- Test store integrations
+- Test Redux integrations
 - Test API service integrations
 
 ### End-to-End Testing
