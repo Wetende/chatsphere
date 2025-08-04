@@ -29,49 +29,98 @@ tests/
 ### 1. Unit Testing
 
 ```python
-# tests/unit/models/test_bot.py
+# tests/unit/models/test_bot.py - FastAPI + AsyncSQLAlchemy Testing
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import pytest_asyncio
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from app.models.bot import Bot, Base
-from app.core.database import get_db
+from app.core.database import get_async_db
+import uuid
 
-@pytest.fixture
-def session():
-    engine = create_engine('sqlite:///:memory:')
-    Base.metadata.create_all(engine)
-    Session = sessionmaker(bind=engine)
-    return Session()
+@pytest_asyncio.fixture
+async def async_session():
+    engine = create_async_engine('sqlite+aiosqlite:///:memory:')
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    
+    AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession)
+    async with AsyncSessionLocal() as session:
+        yield session
 
-def test_bot_creation(session):
-    bot = Bot(name="Test Bot", language="en")
-    session.add(bot)
-    session.commit()
+@pytest.mark.asyncio
+async def test_bot_creation(async_session):
+    bot = Bot(
+        name="Test Bot", 
+        model_type="gemini-2.0-flash-exp",
+        owner_id=str(uuid.uuid4())
+    )
+    async_session.add(bot)
+    await async_session.commit()
+    await async_session.refresh(bot)
+    
     assert bot.name == "Test Bot"
-    assert bot.language == "en"
+    assert bot.model_type == "gemini-2.0-flash-exp"
     assert bot.is_active
+    assert bot.status == "active"
 ```
 
 ### 2. Integration Testing
 
 ```python
-# tests/integration/api/test_bot_api.py
+# tests/integration/api/test_bot_api.py - FastAPI Async Testing
 import pytest
-from fastapi.testclient import TestClient
+import pytest_asyncio
+from httpx import AsyncClient
+from fastapi import status
 from main import app
+from app.core.database import get_async_db
+from app.models.user import User
+from app.core.auth import create_access_token
 
-from app.core.database import get_db
+@pytest_asyncio.fixture
+async def async_client():
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        yield client
 
-client = TestClient(app)
+@pytest_asyncio.fixture
+async def authenticated_user_token():
+    # Create test user and return token
+    user_id = "test-user-id"
+    token = create_access_token(data={"sub": user_id})
+    return token
 
 @pytest.mark.asyncio
-async def test_create_bot(override_get_db):
-    response = client.post(
+async def test_create_bot(async_client: AsyncClient, authenticated_user_token: str):
+    headers = {"Authorization": f"Bearer {authenticated_user_token}"}
+    response = await async_client.post(
         "/api/v1/bots",
-        json={"name": "Test Bot", "language": "en"}
+        json={
+            "name": "Test Bot", 
+            "description": "A test chatbot",
+            "model_type": "gemini-2.0-flash-exp",
+            "temperature": 0.7
+        },
+        headers=headers
     )
-    assert response.status_code == 200
-    assert response.json()["name"] == "Test Bot"
+    assert response.status_code == status.HTTP_201_CREATED
+    data = response.json()
+    assert data["name"] == "Test Bot"
+    assert data["model_type"] == "gemini-2.0-flash-exp"
+    assert data["status"] == "active"
+
+@pytest.mark.asyncio
+async def test_get_bots_with_pagination(async_client: AsyncClient, authenticated_user_token: str):
+    headers = {"Authorization": f"Bearer {authenticated_user_token}"}
+    response = await async_client.get(
+        "/api/v1/bots?skip=0&limit=10",
+        headers=headers
+    )
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "bots" in data
+    assert "total" in data
+    assert "skip" in data
+    assert "limit" in data
 ```
 
 ### 3. End-to-End Testing

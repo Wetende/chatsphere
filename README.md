@@ -17,7 +17,7 @@ A comprehensive AI-powered chatbot platform that enables users to create, deploy
 
 - **Frontend**: React.js
 - **Backend**: FastAPI
-- **AI Integration**: Integrated using LangChain, Google Gemini, and Pinecone for vector storage.
+- **AI Integration**: Direct Google Gemini and Pinecone API integration following agentic patterns.
 - **Authentication**: JWT-based auth system
 - **Database**: PostgreSQL
 
@@ -53,7 +53,7 @@ The frontend folder is currently empty. When ready:
 
 ```bash
 cd frontend
-# Install dependencies (after setting up React)
+# Install dependencies (after setting up React.js)
 npm install
 # Start development server
 npm start

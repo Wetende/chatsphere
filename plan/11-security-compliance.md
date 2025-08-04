@@ -7,27 +7,34 @@ This document outlines our comprehensive approach to security and compliance for
 ### 1. Authentication & Authorization
 
 ```python
-# app/utils/auth_utils.py
+# app/core/auth.py - FastAPI JWT Authentication
 from datetime import datetime, timedelta
 from typing import Dict, Optional
 import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from cryptography.fernet import Fernet
+from app.core.database import get_async_db
+from app.models.user import User
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
+security = HTTPBearer()
 
 class JWTHandler:
     def __init__(self, secret_key: str, token_expiry: int = 3600):
         self.secret_key = secret_key
         self.token_expiry = token_expiry
-        self.encryption_key = Fernet.generate_key()
-        self.cipher_suite = Fernet(self.encryption_key)
+        self.algorithm = "HS256"
     
-    def generate_token(self, user_id: str, roles: list) -> str:
+    def generate_token(self, user_id: str, roles: list = None) -> str:
         payload = {
-            'user_id': user_id,
-            'roles': roles,
+            'sub': user_id,  # FastAPI standard
+            'roles': roles or [],
             'exp': datetime.utcnow() + timedelta(seconds=self.token_expiry),
             'iat': datetime.utcnow()
         }
-        return jwt.encode(payload, self.secret_key, algorithm='HS256')
+        return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
     
     def validate_token(self, token: str) -> Optional[Dict]:
         try:
@@ -49,7 +56,54 @@ class JWTHandler:
             'exp': datetime.utcnow() + timedelta(seconds=self.token_expiry),
             'iat': datetime.utcnow()
         }
-        return jwt.encode(new_payload, self.secret_key, algorithm='HS256')
+        return jwt.encode(new_payload, self.secret_key, algorithm=self.algorithm)
+
+# FastAPI Dependencies
+jwt_handler = JWTHandler(secret_key="your-secret-key")
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: AsyncSession = Depends(get_async_db)
+) -> User:
+    """FastAPI dependency to get current authenticated user"""
+    token = credentials.credentials
+    payload = jwt_handler.validate_token(token)
+    
+    if not payload:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token"
+        )
+    
+    user_id = payload.get('sub')
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token payload"
+        )
+    
+    # Get user from database
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    
+    if not user or not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found or inactive"
+        )
+    
+    return user
+
+async def get_current_active_user(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """Dependency that ensures user is active"""
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Inactive user"
+        )
+    return current_user
 
 # app/utils/rbac.py
 from enum import Enum

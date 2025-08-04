@@ -9,7 +9,8 @@ This backend follows a modular architecture that separates core application logi
 - **`app/`** - Core application logic (authentication, user management, bot management, conversations)
 - **`agent/`** - Isolated AI/agent logic (LLM integrations, embeddings, retrieval, chains)
 - **Clean separation** - AI components can be extracted as microservices if needed
-- **PostgreSQL** - Primary database with vector search capabilities (pgvector)
+- **PostgreSQL** - Primary database for application data
+- **Pinecone** - Vector database for embeddings and semantic search
 - **FastAPI** - Modern, fast web framework with automatic API documentation
 
 ## 📁 Project Structure

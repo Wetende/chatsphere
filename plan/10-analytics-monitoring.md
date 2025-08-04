@@ -111,20 +111,30 @@ spec:
 ### 1. Event Collection
 
 ```python
-# analytics/collectors/event_collector.py
+# analytics/collectors/event_collector.py - FastAPI Integration
 from typing import Dict, Any
 from datetime import datetime
 import json
-import kafka
+import asyncio
+from fastapi import BackgroundTasks
+from app.core.database import AsyncSessionLocal
+from app.models.analytics import AnalyticsEvent
+import logging
+
+logger = logging.getLogger(__name__)
 
 class EventCollector:
-    def __init__(self, kafka_config: Dict[str, str]):
-        self.producer = kafka.KafkaProducer(
-            bootstrap_servers=kafka_config['bootstrap_servers'],
-            value_serializer=lambda v: json.dumps(v).encode('utf-8')
-        )
+    def __init__(self):
+        self.background_tasks = BackgroundTasks()
     
-    def collect_event(self, event_type: str, user_id: str, data: Dict[str, Any]):
+    async def collect_event(
+        self, 
+        event_type: str, 
+        user_id: str, 
+        data: Dict[str, Any],
+        background_tasks: BackgroundTasks
+    ):
+        """Collect analytics event with FastAPI background tasks"""
         event = {
             'type': event_type,
             'user_id': user_id,
@@ -132,8 +142,72 @@ class EventCollector:
             'data': data
         }
         
-        self.producer.send('chatsphere-events', event)
-        self.producer.flush()
+        # Store event in background task
+        background_tasks.add_task(self._store_event, event)
+    
+    async def _store_event(self, event_data: Dict[str, Any]):
+        """Store event in database asynchronously"""
+        async with AsyncSessionLocal() as db:
+            try:
+                event = AnalyticsEvent(
+                    event_type=event_data['type'],
+                    user_id=event_data['user_id'],
+                    timestamp=datetime.fromisoformat(event_data['timestamp']),
+                    data=event_data['data']
+                )
+                db.add(event)
+                await db.commit()
+                logger.info(f"Stored analytics event: {event_data['type']}")
+            except Exception as e:
+                logger.error(f"Failed to store event: {e}")
+                await db.rollback()
+
+# FastAPI Middleware for automatic event collection
+from fastapi import Request, Response
+import time
+
+class AnalyticsMiddleware:
+    def __init__(self, app):
+        self.app = app
+        self.event_collector = EventCollector()
+    
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http":
+            request = Request(scope, receive)
+            start_time = time.time()
+            
+            # Call next middleware/route
+            response = await self.app(scope, receive, send)
+            
+            # Collect metrics
+            duration = time.time() - start_time
+            await self._collect_request_event(request, response, duration)
+            
+            return response
+        
+        return await self.app(scope, receive, send)
+    
+    async def _collect_request_event(self, request: Request, response: Response, duration: float):
+        """Collect HTTP request analytics"""
+        event_data = {
+            'method': request.method,
+            'path': str(request.url.path),
+            'status_code': getattr(response, 'status_code', 0),
+            'duration_ms': round(duration * 1000, 2),
+            'user_agent': request.headers.get('user-agent', ''),
+            'ip_address': request.client.host if request.client else None
+        }
+        
+        user_id = getattr(request.state, 'user_id', None)
+        if user_id:
+            # Store in background if we have a user context
+            background_tasks = BackgroundTasks()
+            await self.event_collector.collect_event(
+                'http_request', 
+                user_id, 
+                event_data,
+                background_tasks
+            )
 ```
 
 ### 2. Data Processing

@@ -13,13 +13,10 @@ python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-decouple==3.8
 
-# AI & Machine Learning
-langchain==0.0.340
-langchain-google-genai==0.0.6
-langchain-community==0.0.8
-sentence-transformers==2.2.2
-pinecone-client==2.2.4
-tiktoken==0.5.1
+# AI & Machine Learning (Direct Integration)
+google-generativeai==0.8.3
+pinecone-client==5.0.1
+tiktoken==0.7.0
 
 # HTTP Client
 httpx==0.25.2

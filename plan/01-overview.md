@@ -51,7 +51,7 @@ ChatSphere follows a layered architecture with integrated AI capabilities:
        │                  ▼
 ┌─────────────┐    ┌─────────────┐
 │  User Data  │    │  Vector DB  │
-│ (TBD)       │    │ (Pinecone)  │
+│ (PostgreSQL)│    │ (Pinecone)  │
 └─────────────┘    └─────────────┘
 ```
 
@@ -100,17 +100,17 @@ ChatSphere follows a layered architecture with integrated AI capabilities:
 
 ### AI Features (Integrated in FastAPI)
 - Context-aware conversations using Pinecone retrieval
-- Multi-turn dialogue support via LangChain memory
+- Multi-turn dialogue support via agentic memory patterns
 - Potential for entity recognition, sentiment analysis
 - Multi-language support (handled by Gemini model)
-- **Flexible Agent Types**: The integrated agent capabilities allow for implementing various LangChain agent types (e.g., conversational, ReAct, tool-using) in the future.
+- **Flexible Agent Types**: The integrated agent capabilities allow for implementing various agentic behaviors (conversational, RAG, tool-using) using direct API integration.
 
 ## Technical Foundations
 
 - **Modern JavaScript Framework**: React.js
 - **Robust Backend**: FastAPI
 - **Vector Storage**: Pinecone
-- **AI Integration**: Google Gemini API, LangChain
+- **AI Integration**: Google Gemini API (direct integration), Pinecone API
 - **Authentication**: JWT-based auth
 - **Testing**: Jest (Frontend), Pytest (Backend)
 - **CI/CD**: GitHub Actions

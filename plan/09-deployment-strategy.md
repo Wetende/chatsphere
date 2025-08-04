@@ -1,92 +1,105 @@
 # ChatSphere Deployment Strategy
 
-This document outlines the deployment strategy for the ChatSphere platform, starting with a Docker-based approach for initial deployment, with a clear path to Kubernetes when scale demands it.
+This document outlines the deployment strategy for the ChatSphere platform, focusing on local development without Docker, with production deployment using traditional VPS/cloud hosting approaches.
 
 ## Infrastructure Architecture
 
 ```
 infrastructure/
-├── docker/              # Docker configurations
-│   ├── docker-compose.yml     # Main compose file
-│   ├── docker-compose.prod.yml  # Production overrides
-│   ├── backend/         # Backend service
-│   ├── frontend/        # Frontend application
-│   └── ai/             # AI services
-├── nginx/              # Nginx configurations
-├── scripts/            # Deployment and maintenance scripts
-└── monitoring/         # Monitoring configurations
+├── local/              # Local development setup
+│   ├── scripts/        # Development scripts
+│   ├── config/         # Local configuration files
+│   └── database/       # Local database setup
+├── production/         # Production deployment
+│   ├── nginx/          # Nginx configurations
+│   ├── systemd/        # System service files
+│   ├── scripts/        # Deployment and maintenance scripts
+│   └── monitoring/     # Monitoring configurations
+└── staging/            # Staging environment
 ```
 
-## Initial Deployment Strategy (Docker)
+## Local Development Strategy (No Docker)
 
-### 1. Docker Compose Configuration
+### 1. Local Development Setup
 
-```yaml
-# docker-compose.yml
-version: '3.8'
+```bash
+# scripts/local/setup-dev.sh - Local Development Setup
+#!/bin/bash
 
-services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
-      - REDIS_URL=redis://redis:6379/0
-      - SECRET_KEY=${SECRET_KEY}
-    depends_on:
-      - db
-      - redis
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    restart: unless-stopped
+echo "Setting up ChatSphere local development environment..."
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    environment:
-      - REACT_APP_API_URL=http://backend:8000
-    depends_on:
-      - backend
-    restart: unless-stopped
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-  db:
-    image: postgres:13-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    restart: unless-stopped
+# Install backend dependencies
+cd backend
+pip install -r requirements.txt
+cd ..
 
-  redis:
-    image: redis:6-alpine
-    volumes:
-      - redis_data:/data
-    command: redis-server --appendonly yes
-    restart: unless-stopped
+# Install frontend dependencies  
+cd frontend
+npm install
+cd ..
 
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/ssl:/etc/nginx/ssl
-    depends_on:
-      - frontend
-      - backend
-    restart: unless-stopped
+# Setup local PostgreSQL database
+createdb chatsphere_dev
+createuser chatsphere_user
 
-volumes:
-  postgres_data:
-  redis_data:
+# Setup environment variables
+cat << EOF > .env
+# Database
+DATABASE_URL=postgresql://chatsphere_user:password@localhost:5432/chatsphere_dev
+
+# FastAPI
+SECRET_KEY=$(openssl rand -base64 32)
+ENVIRONMENT=development
+DEBUG=True
+
+# AI Services
+GOOGLE_AI_API_KEY=your_api_key_here
+PINECONE_API_KEY=your_pinecone_key_here
+PINECONE_INDEX_NAME=chatsphere-dev
+
+# Redis (optional for caching)
+REDIS_URL=redis://localhost:6379/0
+EOF
+
+echo "Development environment setup complete!"
+echo "Run 'source venv/bin/activate' to activate the environment"
+```
+
+```bash
+# scripts/local/start-dev.sh - Start Development Servers
+#!/bin/bash
+
+# Start backend (FastAPI)
+echo "Starting FastAPI backend..."
+cd backend
+source ../venv/bin/activate
+uvicorn main:app --reload --host 0.0.0.0 --port 8000 &
+BACKEND_PID=$!
+cd ..
+
+# Start frontend (React)
+echo "Starting React frontend..."
+cd frontend  
+npm start &
+FRONTEND_PID=$!
+cd ..
+
+echo "Development servers started!"
+echo "Backend: http://localhost:8000"
+echo "Frontend: http://localhost:3000"
+echo "API Docs: http://localhost:8000/docs"
+
+# Store PIDs for cleanup
+echo $BACKEND_PID > .backend.pid
+echo $FRONTEND_PID > .frontend.pid
+
+# Wait for interrupt
+trap "kill $BACKEND_PID $FRONTEND_PID; exit" INT
+wait
 ```
 
 ### 2. Production Configuration

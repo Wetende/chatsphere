@@ -1,0 +1,42 @@
+# Sub-PRD: User Authentication System
+
+## Overview
+This Sub-PRD outlines the user authentication and authorization system for ChatSphere, implementing JWT-based security with FastAPI dependencies.
+
+## User Stories
+- **As a new user**, I want to register with email and password so that I can create an account
+- **As a returning user**, I want to log in securely so that I can access my data
+- **As a user**, I want my session to persist so that I don't need to log in repeatedly
+- **As a user**, I want to reset my password if I forget it so that I can regain access
+- **As a user**, I want to update my profile information so that it stays current
+- **As a security-conscious user**, I want my password to be securely stored so that my account is protected
+
+## Functional Requirements
+- Implement **user registration** with email verification
+- Create **JWT-based login** with token refresh
+- Build **password reset** functionality via email
+- Develop **profile management** endpoints
+- Establish **role-based permissions** system
+- Create **session management** with secure token handling
+
+## Acceptance Criteria
+- User can register with email, username, and password
+- Email verification required before account activation
+- JWT tokens issued on successful login with 1-hour expiry
+- Refresh tokens valid for 30 days with rotation
+- Password reset sends secure email link
+- Profile updates require authentication
+- Role-based access controls protect admin endpoints
+- All authentication endpoints return proper HTTP status codes
+
+## Technical Specifications
+- **Framework**: FastAPI with `HTTPBearer` security scheme
+- **Password Hashing**: bcrypt with salt rounds
+- **JWT Implementation**: PyJWT with RS256 algorithm
+- **Database**: Async SQLAlchemy with User and SubscriptionPlan models
+- **Email**: SMTP with HTML templates for verification/reset
+- **Validation**: Pydantic schemas with comprehensive field validation
+- **Dependencies**: `get_current_user`, `get_current_active_user` for route protection
+
+## AI Coding Prompt
+Implement FastAPI authentication system with async SQLAlchemy models. Use HTTPBearer for JWT tokens and create proper dependencies for route protection. Include email verification and password reset with secure token generation. Routes in `app/routers/auth_router.py` with endpoints `/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/auth/refresh`, `/api/v1/auth/reset-password`.

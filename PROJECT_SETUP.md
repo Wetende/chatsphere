@@ -71,19 +71,18 @@ The FastAPI service handles:
 
 The project requires the following key packages:
 
-1. **Django Backend (`backend/requirements.txt`):**
-   - Django, djangorestframework, django-cors-headers, djangorestframework-simplejwt
-   - psycopg2-binary (for Postgres connection)
-   - httpx (for calling the agent service)
+1. **FastAPI Backend (`backend/requirements.txt`):**
+   - FastAPI, uvicorn, SQLAlchemy, psycopg2-binary
+   - Python-jose, passlib (for authentication)
+   - httpx (for external API calls)
 
-2. **FastAPI Agent (`backend/agent/requirements.txt`):**
-   - fastapi, uvicorn
-   - langchain, langchain-google-genai, langchain-pinecone
-   - pinecone-client
+2. **AI Agent (included in main backend):**
+   - langchain, langchain-google-genai, langchain-community
+   - pinecone-client, sentence-transformers
    - python-dotenv
 
 3. **Frontend (`frontend/package.json`):**
-   - Vue.js, Vue Router, Pinia
+   - React.js, React Router, Redux Toolkit
    - Axios
    - TailwindCSS
 
@@ -95,8 +94,8 @@ Refer to the main `README.md` for instructions on running via Docker or manually
 
 - Frontend: http://localhost:3000 (or your configured frontend port)
 - Backend API: http://localhost:8000/api/ (or your configured backend port)
-- Agent Service API (if exposed): http://localhost:8001/docs (or your configured agent port)
-- Admin Interface: http://localhost:8000/admin/
+- API Documentation: http://localhost:8000/docs (Swagger UI)
+- Alternative API Docs: http://localhost:8000/redoc (ReDoc)
 
 ## Testing Vector Search
 

@@ -80,7 +80,7 @@ ChatSphere follows a layered architecture with a distinct separation between the
   - Serves as the primary API gateway for clients.
   - **Orchestration**: When AI operations are needed (embedding, chat), it calls the integrated agent module.
   - Manages application data persistence in PostgreSQL.
-  - **Real-time Handling**: WebSocket implementation using FastAPI WebSockets.
+  - **Real-time Handling**: WebSocket implementation using FastAPI WebSockets with connection management and streaming responses.
 - **Key Modules**: `app/routers/`, `app/services/`, `app/models/`, `app/config.py`, `agent/` module.
 
 ### 3. Agent Module (Integrated in FastAPI)
@@ -88,9 +88,9 @@ ChatSphere follows a layered architecture with a distinct separation between the
 - **Framework**: FastAPI module
 - **Responsibilities**:
   - Handles internal AI tasks.
-  - Loads AI models (Gemini LLM, Google Embeddings).
-  - Interacts with the Pinecone API (via `pinecone-client` or LangChain integration) to store and retrieve vector embeddings.
-  - Executes LangChain agent logic for chat responses, incorporating retrieved context.
+  - Loads AI models (Gemini LLM, Google Embeddings) via direct API integration.
+  - Interacts with the Pinecone API via direct `pinecone-client` to store and retrieve vector embeddings.
+  - Executes agentic behavior patterns for chat responses, incorporating retrieved context.
   - Manages its own configuration (API keys, etc.) loaded from `.env`.
   - Handles different agent configurations based on parameters from core app.
 - **Key Modules**: `agent/main.py` (if separate), `agent/agent.py`, `agent/vector_store.py`, `agent/config.py`.
@@ -132,17 +132,17 @@ To enable flexible agent behavior, the `configuration` JSONB field on the `Bot` 
 
 #### Google AI (Gemini & Embeddings)
 - **Purpose**: LLM for chat, embedding model for vector generation.
-- **SDK**: `langchain-google-genai`.
-- **Integration Pattern**: Initialized within the Agent module, potentially using LangChain wrappers.
+- **SDK**: `google-generativeai` (direct integration).
+- **Integration Pattern**: Direct API calls within the Agent module using agentic patterns.
 
 #### Pinecone API
 - **Purpose**: Vector database for semantic search.
-- **SDK**: `pinecone-client` and/or `langchain-pinecone`.
-- **Integration Pattern**: Client initialized within the Agent module, used directly or via LangChain `PineconeVectorStore`.
+- **SDK**: `pinecone-client` (direct integration).
+- **Integration Pattern**: Direct client initialized within the Agent module for maximum control.
 
-#### LangChain
-- **Purpose**: Framework for orchestrating AI components (LLM, vector store, prompts, agents).
-- **Usage**: Primarily within the Agent module to structure chat logic, retrieval, and potentially embedding workflows. Enables the implementation of various agent types (conversational retrieval QA, ReAct, tool-using agents) within the decoupled Agent module.
+#### Agentic Development Patterns
+- **Purpose**: Intelligent behavior patterns without framework dependencies.
+- **Usage**: Direct API orchestration within the Agent module for chat logic, retrieval, and embedding workflows. Enables implementation of various agent behaviors (conversational, RAG, tool-using) using Claude Code best practices.
 
 ## Data Flow Diagrams
 

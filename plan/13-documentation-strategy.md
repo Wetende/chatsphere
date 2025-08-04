@@ -730,7 +730,7 @@ For details on how we'll handle project maintenance and updates, refer to the [M
    - Impact: Improved reliability for real-time features
 
 2. State Management Strategy (ADR-002)
-   - Decision: Use Pinia for Vue.js state management
+   - Decision: Use Redux Toolkit for React.js state management
    - Rationale: Better TypeScript support and composition API
    - Impact: More maintainable and type-safe state management
 
@@ -792,8 +792,8 @@ Types:
 #### External Resources
 
 Documentation:
-- Vue.js: https://vuejs.org/guide/introduction.html
-- Django REST Framework: https://www.django-rest-framework.org/
+- React.js: https://react.dev/learn
+- FastAPI: https://fastapi.tiangolo.com/
 - WebSocket Protocol: https://datatracker.ietf.org/doc/html/rfc6455
 
 Best Practices:

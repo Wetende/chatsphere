@@ -7,9 +7,9 @@ This directory contains the comprehensive implementation plan for ChatSphere, a 
 1. [Overview](./01-overview.md) - Project vision, core values, and high-level architecture
 2. [Project Phases](./02-project-phases.md) - Timeline, milestones, and delivery schedule
 3. [Technical Architecture](./03-technical-architecture.md) - Detailed system design and component interactions
-4. [Frontend Implementation](./04-frontend-implementation.md) - Vue.js implementation details
-5. [Backend Implementation](./05-backend-implementation.md) - Django and API development
-6. [AI Integration](./06-ai-integration.md) - Gemini, LangChain, and Pinecone implementation
+4. [Frontend Implementation](./04-frontend-implementation.md) - React.js implementation details
+5. [Backend Implementation](./05-backend-implementation.md) - FastAPI and API development
+6. [AI Integration](./06-ai-integration.md) - Direct Gemini and Pinecone API integration
 7. [Database Design](./07-database-design.md) - Data models and relationships (PostgreSQL & Pinecone)
 8. [Testing Strategy](./08-testing-strategy.md) - Test coverage and quality assurance (Consolidated)
 9. [Deployment Strategy](./09-deployment-strategy.md) - Docker configuration and deployment pipeline

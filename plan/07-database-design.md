@@ -1,4 +1,4 @@
-**Status:** Implementation based on this design is complete 
+**Status:** Design ready for implementation - nothing implemented yet 
 
 # ChatSphere Database Design
 
@@ -41,63 +41,87 @@ data_stores/
 ### 1. User Management (PostgreSQL)
 
 ```python
-# app/models/user.py
+# app/models/user.py - FastAPI + AsyncSQLAlchemy Models
 from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Float, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from .base import Base
+import uuid
 
 class SubscriptionPlan(Base):
     __tablename__ = "subscription_plans"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=func.uuid_generate_v4())
-    name = Column(String(100), unique=True, nullable=False)
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    name = Column(String(100), unique=True, index=True, nullable=False)
     price = Column(Float, nullable=False)
-    description = Column(String)
+    description = Column(String(500))
     features = Column(JSON, default=dict)
-    stripe_price_id = Column(String(100))
+    stripe_price_id = Column(String(100), unique=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=func.uuid_generate_v4())
-    username = Column(String(150), unique=True, nullable=False)
-    email = Column(String(255), unique=True, nullable=False)
-    hashed_password = Column(String(128), nullable=False)
-    first_name = Column(String(150), nullable=False)
-    last_name = Column(String(150), nullable=False)
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    username = Column(String(50), unique=True, index=True, nullable=False)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
     is_staff = Column(Boolean, default=False, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
-    date_joined = Column(DateTime(timezone=True), default=func.now())
+    is_verified = Column(Boolean, default=False, nullable=False)
+    date_joined = Column(DateTime(timezone=True), server_default=func.now())
+    last_login = Column(DateTime(timezone=True))
     subscription_status = Column(String(20), default='free', nullable=False)
     subscription_plan_id = Column(UUID(as_uuid=True), ForeignKey('subscription_plans.id'))
-    stripe_customer_id = Column(String(100))
-    subscription_plan = relationship("SubscriptionPlan")
+    stripe_customer_id = Column(String(100), unique=True)
+    
+    # Async SQLAlchemy relationships
+    subscription_plan = relationship("SubscriptionPlan", back_populates="users")
+    bots = relationship("Bot", back_populates="owner", cascade="all, delete-orphan")
+
+# Add back_populates to SubscriptionPlan
+SubscriptionPlan.users = relationship("User", back_populates="subscription_plan")
 ```
 
 ### 2. Chatbot Management (PostgreSQL)
 
 ```python
-# app/models/bot.py
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, JSON
+# app/models/bot.py - FastAPI + AsyncSQLAlchemy Models
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, JSON, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from .base import Base
+import uuid
 
 class Bot(Base):
     __tablename__ = "bots"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=func.uuid_generate_v4())
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
-    name = Column(String(255), nullable=False)
-    description = Column(String)
-    avatar = Column(String(200))
-    welcome_message = Column(String, default='Hi! How can I help you today?')
-    model_type = Column(String(50), default='gemini-2.0-flash', nullable=False)
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    owner_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False, index=True)
+    name = Column(String(100), nullable=False)
+    description = Column(String(500))
+    avatar = Column(String(255))
+    welcome_message = Column(String(200), default='Hi! How can I help you today?', nullable=False)
+    model_type = Column(String(50), default='gemini-2.0-flash-exp', nullable=False)
+    temperature = Column(Float, default=0.7, nullable=False)
+    system_prompt = Column(String(1000))
+    is_public = Column(Boolean, default=False, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    status = Column(String(20), default='active', nullable=False)  # active, inactive, training, error
     configuration = Column(JSON, default=dict)
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime(timezone=True), default=func.now())
-    updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
-    user = relationship("User", back_populates="bots")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    
+    # Async SQLAlchemy relationships
+    owner = relationship("User", back_populates="bots")
+    documents = relationship("Document", back_populates="bot", cascade="all, delete-orphan")
+    conversations = relationship("Conversation", back_populates="bot", cascade="all, delete-orphan")
 
 class Document(Base):
     __tablename__ = "documents"

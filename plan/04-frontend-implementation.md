@@ -15,15 +15,15 @@ The ChatSphere frontend will embody the following design principles:
 
 ## Technology Stack
 
-- **Framework**: React.js with Hooks
-- **State Management**: Redux
-- **Routing**: React Router
+- **Framework**: React.js 18+ with Hooks and TypeScript
+- **State Management**: Redux Toolkit with RTK Query
+- **Routing**: React Router v6
 - **UI Framework**: Custom components with Tailwind CSS
-- **HTTP Client**: Axios with interceptors
-- **Form Validation**: Formik and Yup
-- **Internationalization**: i18next
-- **Testing**: Jest, React Testing Library
-- **Building**: Vite or Create React App
+- **HTTP Client**: RTK Query (built-in) + Axios for non-RTK calls
+- **Form Validation**: React Hook Form with Zod
+- **Real-time**: WebSocket integration for streaming
+- **Testing**: Vitest, React Testing Library, Playwright E2E
+- **Building**: Vite for fast development and building
 
 ## Project Structure
 
