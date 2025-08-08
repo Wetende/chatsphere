@@ -35,6 +35,7 @@ class User(Base, TimestampMixin):
     subscription_status: Mapped[str] = mapped_column(String(20), default="free", nullable=False)
     subscription_plan_id: Mapped[Optional[PGUUID]] = mapped_column(PGUUID(as_uuid=True), ForeignKey("subscription_plans.id"))
     stripe_customer_id: Mapped[Optional[str]] = mapped_column(String(100), unique=True)
+    roles: Mapped[dict] = mapped_column(JSON, default=lambda: ["user"])  # list of roles
 
     subscription_plan = relationship("SubscriptionPlan", back_populates="users")
     bots = relationship("Bot", back_populates="owner", cascade="all, delete-orphan")

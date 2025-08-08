@@ -7,6 +7,8 @@ except Exception:  # pragma: no cover
     genai = None
 
 from agent.retrieval.pinecone_client import PineconeClient
+import httpx
+from bs4 import BeautifulSoup
 
 class VectorizationService:
     def __init__(self):
@@ -31,12 +33,23 @@ class VectorizationService:
         await self.vector_store.upsert_vectors(vectors=vectors, namespace=bot_id)
         return vector_ids
 
+    async def ingest_url(self, url: str) -> str:
+        try:
+            async with httpx.AsyncClient(timeout=20) as client:
+                resp = await client.get(url)
+                resp.raise_for_status()
+                soup = BeautifulSoup(resp.text, "html.parser")
+                # Simple text extraction
+                for script in soup(["script", "style"]):
+                    script.extract()
+                text = soup.get_text(separator=" ")
+                return " ".join(text.split())
+        except Exception:
+            return ""
+
     async def _embed_texts(self, texts: List[str]) -> List[List[float]]:
         if not genai or not self.api_key:
-            # Dev fallback: zero vectors of dimension 384
             return [[0.0] * 384 for _ in texts]
-        # The python SDK is async for generate_content but embed_content may not be; use run_in_executor if needed.
-        # For simplicity, call sync API here.
         results: List[List[float]] = []
         for t in texts:
             try:

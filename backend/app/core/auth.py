@@ -66,6 +66,10 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
     return current_user
 
+async def get_user_roles(current_user: User = Depends(get_current_user)) -> List[str]:
+    roles = current_user.roles if isinstance(current_user.roles, list) else []
+    return roles or ["user"]
+
 # Password utilities
 
 def hash_password(password: str) -> str:
