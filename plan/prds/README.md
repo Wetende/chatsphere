@@ -156,7 +156,7 @@ Each Sub-PRD follows a consistent structure:
 All Sub-PRDs are specifically designed for:
 - ✅ **FastAPI backend** with async/await patterns
 - ✅ **React.js frontend** with modern tooling
-- ✅ **Direct AI integration** (no LangChain or frameworks)
+- ✅ **Direct AI integration** (no LangChain or similar orchestration frameworks)
 - ✅ **Local development** without Docker
 - ✅ **Async SQLAlchemy** with PostgreSQL
 - ✅ **Agentic development patterns** following Claude Code best practices

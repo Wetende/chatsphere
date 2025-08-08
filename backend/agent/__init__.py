@@ -2,7 +2,12 @@
 ChatSphere Agent Package
 
 This package contains all AI/agent-specific logic including:
-- LangChain chains and tools
+"""
+Agent module for AI functionality.
+
+Guiding principle: keep it simple. We integrate AI via direct API calls (e.g., Google
+Generative AI, Pinecone) without orchestration frameworks such as LangChain.
+"""
 - Document ingestion and processing
 - Vector embeddings and retrieval
 - LLM generation and responses

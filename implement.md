@@ -10,7 +10,6 @@ This document provides a comprehensive, sequential implementation plan for ChatS
 ## Current Architecture
 
 **Tech Stack:**
-- **Frontend**: React.js (To be implemented)
 - **Backend**: FastAPI (Core implemented, AI integration needed)
 - **Database**: PostgreSQL (Application data)
 - **Vector Storage**: Pinecone (Direct API integration)
@@ -25,7 +24,6 @@ This document provides a comprehensive, sequential implementation plan for ChatS
 - **AI Integration**: Needs complete rewrite for direct API integration
 - **Database**: Basic SQLAlchemy setup exists, needs completion
 - **Authentication**: Planned but not implemented
-- **Frontend**: Empty folder - needs complete implementation
 
 ### 🔄 What Exists (Minimal Foundation)
 **Backend Components:**
@@ -36,39 +34,42 @@ This document provides a comprehensive, sequential implementation plan for ChatS
 - ❌ Authentication and security (not implemented)
 - ❌ API documentation (basic FastAPI auto-docs only)
 
-**Frontend Components:**
-- ❌ React.js application (empty folder)
-- ❌ User interface components
-- ❌ Dashboard and bot management UI
-- ❌ Chat interface
+<!-- Frontend work intentionally deferred; backend-first implementation -->
 
-### 🎯 Next Steps
+### 🎯 Next Steps (Backend-First)
 
-#### Phase 1: Frontend Setup
-- [ ] 1.1 Initialize React.js application
-- [ ] 1.2 Set up project structure and routing
-- [ ] 1.3 Configure state management (Redux Toolkit)
-- [ ] 1.4 Set up styling framework (TailwindCSS)
-- [ ] 1.5 Create authentication components
+#### Phase 1: Backend Foundations
+- [ ] Project structure finalization (`app/`, `agent/`, `main.py`) per `plan/03-technical-architecture.md`
+- [ ] Settings and env management
+- [ ] Async SQLAlchemy base, engine, session, Alembic init
 
-#### Phase 2: Core UI Implementation
-- [ ] 2.1 User authentication pages (login/register)
-- [ ] 2.2 Dashboard layout and navigation
-- [ ] 2.3 Bot creation and management interface
-- [ ] 2.4 Document upload and training UI
-- [ ] 2.5 Chat interface components
+#### Phase 2: Authentication & Security
+- [ ] JWT auth, password hashing, dependencies per `plan/prds/Component-UserAuthentication.md`
+- [ ] RBAC, security headers, rate limiting per `plan/prds/Component-SecurityCompliance.md`
 
-#### Phase 3: Advanced Features
-- [ ] 3.1 Analytics dashboard
-- [ ] 3.2 Bot customization interface
-- [ ] 3.3 Conversation management
-- [ ] 3.4 User settings and preferences
+#### Phase 3: Bot Management
+- [ ] Models, schemas, CRUD routers, services per `plan/prds/Component-BotManagement.md`
 
-#### Phase 4: Testing and Polish
-- [ ] 4.1 Unit and integration tests
-- [ ] 4.2 E2E testing
-- [ ] 4.3 Performance optimization
-- [ ] 4.4 Error handling and UX improvements
+#### Phase 4: Document Processing
+- [ ] Uploads, extraction, chunking, status tracking per `plan/prds/Component-DocumentProcessing.md`
+
+#### Phase 5: AI Integration
+- [ ] Direct Gemini + Pinecone orchestration per `plan/06-ai-integration.md` and `plan/prds/Component-AIIntegration.md`
+
+#### Phase 6: Chat System
+- [ ] HTTP + streaming + WebSocket chat per `plan/prds/Component-ChatSystem.md`
+
+#### Phase 7: API Docs & DX
+- [ ] OpenAPI, SDKs, portal per `plan/prds/Component-APIDocs.md`
+
+#### Phase 8: Monitoring, Analytics, Performance
+- [ ] Metrics, logs, tracing, analytics per related PRDs
+
+#### Phase 9: Testing & QA
+- [ ] Unit, integration, E2E, performance per `plan/prds/Component-TestingQA.md`
+
+#### Phase 10: Deployment & DevOps
+- [ ] CI/CD and deploy per `plan/prds/Component-DeploymentDevOps.md`
 
 ## Current Technical Architecture
 
@@ -83,7 +84,7 @@ backend/
 │   ├── services/       # Business logic
 │   └── utils/          # Utilities
 ├── agent/              # AI/ML logic (integrated)
-│   ├── chains/         # LangChain chains
+│   ├── chains/         # Chat/RAG pipelines (direct API integration; no LangChain)
 │   ├── generation/     # LLM generation
 │   ├── ingestion/      # Document processing
 │   ├── models/         # AI-specific models
@@ -107,6 +108,7 @@ backend/
 ### Development Environment
 - **No Docker**: Local development setup
 - **FastAPI**: Single service architecture (planned)
+- **Async SQLAlchemy**: Use AsyncSession for DB access per FastAPI guidance
 - **Environment Variables**: Configuration via .env
 - **Uvicorn**: ASGI server for development
 
@@ -114,16 +116,33 @@ backend/
 
 Following the comprehensive roadmap, we need to implement everything sequentially:
 
-1. **Authentication UI**: Login/register pages
-2. **Dashboard**: Bot management interface  
-3. **Chat Interface**: Real-time chat with bots
-4. **Document Upload**: Training data management
-5. **Analytics**: Usage tracking and metrics
+1. **Backend Foundations** (align with `plan/03-technical-architecture.md` and `plan/05-backend-implementation.md`):
+   - Core FastAPI app, async DB, auth scaffolding
+2. **Authentication & Security** (PRDs):
+   - `plan/prds/Component-UserAuthentication.md`
+   - `plan/prds/Component-SecurityCompliance.md`
+3. **Bot Management** (PRD):
+   - `plan/prds/Component-BotManagement.md`
+4. **Document Processing & AI Integration** (PRDs; align with `plan/06-ai-integration.md`):
+   - `plan/prds/Component-DocumentProcessing.md`
+   - `plan/prds/Component-AIIntegration.md`
+5. **Chat System** (PRD):
+   - `plan/prds/Component-ChatSystem.md`
+6. **API Docs & Developer Experience** (PRD):
+   - `plan/prds/Component-APIDocs.md`
+7. **Monitoring, Analytics, Performance** (PRDs):
+   - `plan/prds/Component-MonitoringAnalytics.md`
+   - `plan/prds/Component-PerformanceOptimization.md`
+8. **Testing & QA** (PRD):
+   - `plan/prds/Component-TestingQA.md`
+9. **Deployment & DevOps** (PRD):
+   - `plan/prds/Component-DeploymentDevOps.md`
 
 ## Development Notes
 
 - Backend API is accessible at `http://localhost:8000`
 - API documentation at `http://localhost:8000/docs`
 - Database migrations handled by Alembic
+- Async SQLAlchemy throughout (sessions, queries, transactions)
 - AI features integrated directly into main FastAPI app
 - No microservices - unified FastAPI application 

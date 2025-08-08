@@ -33,11 +33,12 @@ This Sub-PRD outlines the real-time chat system for ChatSphere, implementing Web
 ## Technical Specifications
 - **WebSocket**: FastAPI WebSocket with connection management
 - **Streaming**: Async generators for real-time text delivery
-- **Persistence**: Conversation and Message models in PostgreSQL
+- **Persistence**: Conversation and Message models in PostgreSQL via Async SQLAlchemy
 - **Context**: Session management with conversation threading
 - **Widget**: Lightweight JavaScript for website embedding
 - **Connection Pool**: Efficient WebSocket connection handling
 - **Error Handling**: Reconnection logic and fallback mechanisms
+- **Endpoints**: `/api/v1/chat/ws/{bot_id}` (WebSocket), `/api/v1/chat` (HTTP), `/api/v1/chat/stream` (HTTP streaming)
 
 ## AI Coding Prompt
-Implement WebSocket chat system with FastAPI WebSocket endpoints. Create conversation and message persistence with async SQLAlchemy. Build streaming response system using async generators. Include connection management and error handling. Routes in `app/routers/chat_router.py` with WebSocket endpoint `/api/v1/chat/ws/{bot_id}` and HTTP endpoints for conversation management. Ensure proper user authorization and message validation.
+Implement WebSocket chat system with FastAPI WebSocket endpoints. Create conversation and message persistence with Async SQLAlchemy. Build streaming response system using async generators. Include connection management and error handling. Routes in `agent/routing/chat_router.py` for chat, and `app/routers/conversations_router.py` for conversation management. Ensure proper user authorization and message validation.

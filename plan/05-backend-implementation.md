@@ -8,7 +8,7 @@ This document outlines the detailed backend implementation strategy for the Chat
 - **Authentication**: JWT with FastAPI dependencies
 - **Task Queue**: FastAPI Background Tasks + Celery with Redis
 - **Caching**: Redis for embeddings and responses
-- **ORM**: SQLAlchemy 2.0 with PostgreSQL
+- **ORM**: Async SQLAlchemy 2.0 with PostgreSQL
 - **HTTP Client**: httpx for external API calls
 - **AI Integration**: Direct Google AI API integration (no frameworks)
 - **Vector Storage**: Direct Pinecone API integration

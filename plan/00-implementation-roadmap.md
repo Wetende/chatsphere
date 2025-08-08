@@ -4,7 +4,7 @@ This document provides a comprehensive, sequential implementation plan for ChatS
 
 ## 🎯 Implementation Philosophy
 
-**Direct API Integration**: No AI frameworks (LangChain, etc.) - pure API calls for maximum control
+**Direct API Integration**: No AI orchestration frameworks (e.g., LangChain) — pure API calls for maximum control
 **Agentic Patterns**: Following Claude Code principles for intelligent development
 **Sequential Development**: Clear phases with defined deliverables
 **Quality First**: High code quality, testing, and documentation standards
@@ -18,7 +18,7 @@ This document provides a comprehensive, sequential implementation plan for ChatS
 
 **Tasks:**
 - [ ] Create `backend/agent/claude_instructions.md` (CLAUDE.md for AI development)
-- [ ] Remove all LangChain dependencies from `requirements.txt`
+- [ ] Ensure there are no LangChain dependencies anywhere
 - [ ] Audit and clean existing agent code
 - [ ] Set up direct Google AI environment variables
 - [ ] Configure development scripts for agentic workflows

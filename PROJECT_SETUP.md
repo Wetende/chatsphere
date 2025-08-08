@@ -48,19 +48,18 @@ docker-compose up -d --build
 
 This will start:
 - PostgreSQL database
-- Django backend service
-- FastAPI agent service
-- Vue.js frontend service
+- FastAPI backend service
+- React.js frontend service
 
 Refer to the main `README.md` for more Docker details.
 
 ### 4. Manual Setup (Alternative)
 
-Refer to the main `README.md` for detailed steps on setting up the Django backend, FastAPI agent, and Vue.js frontend manually without Docker.
+Refer to the main `README.md` for detailed steps on setting up the FastAPI backend and React.js frontend manually without Docker.
 
 ## Vector Search Setup
 
-The application uses a separate FastAPI service (`agent`) which utilizes **Pinecone** for vector storage and search. This replaces the previous `pgvector` implementation.
+The application uses an internal agent module within the FastAPI backend which utilizes **Pinecone** for vector storage and search. This replaces the previous `pgvector` implementation and avoids extra services.
 
 The FastAPI service handles:
 - Generating embeddings using Google Gemini models.
@@ -76,9 +75,8 @@ The project requires the following key packages:
    - Python-jose, passlib (for authentication)
    - httpx (for external API calls)
 
-2. **AI Agent (included in main backend):**
-   - langchain, langchain-google-genai, langchain-community
-   - pinecone-client, sentence-transformers
+2. **AI (direct integration within backend):**
+   - google-generativeai, pinecone-client
    - python-dotenv
 
 3. **Frontend (`frontend/package.json`):**
@@ -93,7 +91,7 @@ Refer to the main `README.md` for instructions on running via Docker or manually
 ### Accessing the Application
 
 - Frontend: http://localhost:3000 (or your configured frontend port)
-- Backend API: http://localhost:8000/api/ (or your configured backend port)
+- Backend API: http://localhost:8000/api/v1/ (or your configured backend port)
 - API Documentation: http://localhost:8000/docs (Swagger UI)
 - Alternative API Docs: http://localhost:8000/redoc (ReDoc)
 
@@ -102,8 +100,8 @@ Refer to the main `README.md` for instructions on running via Docker or manually
 Vector search is now handled internally by the agent service when you chat with a bot.
 
 1. Create a bot in the application.
-2. Upload documents or text through the training interface (this will trigger calls to the agent service's `/embed_and_store` endpoint).
-3. Start a chat with the bot (this will trigger calls to the agent service's `/chat` endpoint, which performs the similarity search).
+2. Upload documents or text through the training interface (this triggers backend ingestion endpoints under `/api/v1/ingestion`).
+3. Start a chat with the bot (use the backend chat endpoints under `/api/v1/chat`, which perform retrieval + generation).
 4. Ask questions related to the uploaded content.
 
 ## Troubleshooting
@@ -119,18 +117,15 @@ Vector search is now handled internally by the agent service when you chat with 
 - Ensure your Google API key is correctly set in the `.env` file.
 - Check the agent service logs for API authentication or rate limit errors.
 
-### Agent Service Communication Issues
+### AI Integration Communication Issues
 
-- Ensure the agent service is running.
-- Verify the `AGENT_SERVICE_URL` in the Django backend's environment is correct.
-- Check backend logs for errors when calling the agent service.
-- Check agent service logs for errors when receiving requests from the backend.
+- Ensure the backend is running.
+- Check backend logs for errors in AI requests (embedding, retrieval, generation).
+- Verify environment variables for Google and Pinecone are set correctly in `.env`.
 
 ## Additional Resources
 
 - [Pinecone Documentation](https://docs.pinecone.io/)
 - [Google AI for Developers](https://ai.google.dev/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [LangChain Documentation](https://python.langchain.com/)
-- [Django Documentation](https://docs.djangoproject.com/)
-- [Vue.js Documentation](https://vuejs.org/guide/introduction.html) 
+- [React Documentation](https://react.dev/)

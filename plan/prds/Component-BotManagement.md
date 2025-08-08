@@ -38,6 +38,7 @@ This Sub-PRD outlines the bot management system for ChatSphere, providing CRUD o
 - **Database**: Async SQLAlchemy with proper indexes and relationships
 - **Validation**: Pydantic models with field constraints and custom validators
 - **Error Handling**: Proper HTTP exceptions with meaningful messages
+- **Responses**: Use `response_model` and appropriate `status_code`
 
 ## AI Coding Prompt
 Generate FastAPI router for bot management with async SQLAlchemy operations. Implement proper user authorization ensuring users can only access their own bots. Use BotService class for business logic separation. Routes in `app/routers/bots_router.py` with endpoints `/api/v1/bots` (GET, POST) and `/api/v1/bots/{bot_id}` (GET, PUT, DELETE). Ensure atomic updates with proper transaction handling.

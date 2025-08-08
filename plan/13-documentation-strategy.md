@@ -267,7 +267,7 @@ The component uses CSS modules for styling. Override styles by targeting these c
 
 ## Overview
 
-ChatSphere is built using a microservices architecture with the following key components:
+ChatSphere uses a modular single-application architecture (FastAPI monolith) with clearly separated modules. High-level components:
 
 ```mermaid
 graph TD
@@ -286,6 +286,8 @@ graph TD
 ```
 
 ## Services
+
+Note: The following "services" are logical modules within a single FastAPI application (not separate microservices). They are documented separately to keep concerns clear, but they run within one deployable app.
 
 ### Message Service
 

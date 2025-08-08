@@ -30,13 +30,19 @@ This Sub-PRD outlines the user authentication and authorization system for ChatS
 - All authentication endpoints return proper HTTP status codes
 
 ## Technical Specifications
-- **Framework**: FastAPI with `HTTPBearer` security scheme
-- **Password Hashing**: bcrypt with salt rounds
-- **JWT Implementation**: PyJWT with RS256 algorithm
-- **Database**: Async SQLAlchemy with User and SubscriptionPlan models
+- **Framework**: FastAPI with `HTTPBearer` security scheme and `Depends`
+- **Password Hashing**: bcrypt with appropriate work factor
+- **JWT Implementation**: `python-jose` with RS256 (asymmetric) or HS256 (symmetric for dev)
+- **Database**: Async SQLAlchemy models with proper relationships and indexes
 - **Email**: SMTP with HTML templates for verification/reset
-- **Validation**: Pydantic schemas with comprehensive field validation
+- **Validation**: Pydantic schemas with field constraints and custom validators
 - **Dependencies**: `get_current_user`, `get_current_active_user` for route protection
+- **Responses**: Use `response_model` on all endpoints and consistent error schema
+- **Status Codes**: 201 for register, 200 for login/refresh, 204 for logout
 
 ## AI Coding Prompt
-Implement FastAPI authentication system with async SQLAlchemy models. Use HTTPBearer for JWT tokens and create proper dependencies for route protection. Include email verification and password reset with secure token generation. Routes in `app/routers/auth_router.py` with endpoints `/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/auth/refresh`, `/api/v1/auth/reset-password`.
+Implement FastAPI authentication system (initially with sync SQLAlchemy session helper). Use HTTPBearer for JWT tokens and create proper dependencies for route protection. Include email verification and password reset with secure token generation. Add `response_model` types for token and user responses. Routes in `app/routers/auth_router.py` under `/api/v1/auth`:
+- `POST /register` (201)
+- `POST /login` (200)
+- `POST /refresh` (200)
+- `POST /reset-password` (200)

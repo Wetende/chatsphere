@@ -18,7 +18,7 @@ This backend follows a modular architecture that separates core application logi
 ```
 backend/
 ├── agent/                # Isolated AI/agent logic (extractable)
-│   ├── chains/          # LangChain chains (RAG, conversation chains)
+│   ├── chains/          # Chat/RAG pipelines (direct API integration; no LangChain)
 │   ├── generation/      # LLM generation logic and factories
 │   ├── ingestion/       # Document processing, chunking, embedding
 │   ├── models/          # Pydantic models for AI requests/responses
@@ -78,7 +78,7 @@ backend/
 - **Alembic** - Database migration tool
 
 ### AI & Machine Learning
-- **LangChain** - Framework for developing LLM applications
+Note: We intentionally avoid orchestration frameworks like LangChain. All AI is integrated via direct API calls for simplicity, control, and performance.
 - **Google Gemini** - Advanced language model for chat generation
 - **Pinecone** - Vector database for semantic search
 - **Sentence Transformers** - Text embedding models

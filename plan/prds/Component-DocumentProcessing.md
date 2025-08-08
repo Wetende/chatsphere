@@ -33,11 +33,15 @@ This Sub-PRD outlines the document processing system for ChatSphere, handling fi
 ## Technical Specifications
 - **File Processing**: PyPDF2, python-docx for text extraction
 - **Chunking**: Custom algorithms with semantic boundary detection
-- **Background Tasks**: FastAPI BackgroundTasks and Celery for heavy processing
+- **Background Tasks**: FastAPI BackgroundTasks (MVP); consider Celery later for horizontal scale
 - **Storage**: Document metadata in PostgreSQL, embeddings in Pinecone
 - **Progress**: WebSocket updates or status endpoint for polling
 - **Validation**: File type, size, and content validation
 - **Error Handling**: Comprehensive error tracking and user feedback
+- **Endpoints**: `/api/v1/ingestion/upload` (POST), `/api/v1/ingestion/status/{job_id}` (GET)
 
 ## AI Coding Prompt
-Implement document processing service with async file handling and background processing. Create intelligent chunking algorithms that preserve semantic meaning. Use FastAPI BackgroundTasks for processing coordination and WebSocket for real-time updates. Routes in `app/routers/documents_router.py` with endpoints `/api/v1/bots/{bot_id}/documents` for upload and management. Ensure proper error handling and status tracking.
+Implement document processing service with file validation and background processing (BackgroundTasks). Create chunking algorithms that preserve semantic meaning. Provide WebSocket or polling-based progress updates. Implement routes in `agent/routing/ingestion_router.py`:
+- `POST /api/v1/ingestion/upload`
+- `GET /api/v1/ingestion/status/{job_id}`
+Ensure proper error handling and status tracking.

@@ -83,9 +83,9 @@ ChatSphere follows a layered architecture with a distinct separation between the
   - **Real-time Handling**: WebSocket implementation using FastAPI WebSockets with connection management and streaming responses.
 - **Key Modules**: `app/routers/`, `app/services/`, `app/models/`, `app/config.py`, `agent/` module.
 
-### 3. Agent Module (Integrated in FastAPI)
+- ### 3. Agent Module (Integrated in FastAPI)
 
-- **Framework**: FastAPI module
+- **Integration**: Internal Python module within the FastAPI app (not a separate service)
 - **Responsibilities**:
   - Handles internal AI tasks.
   - Loads AI models (Gemini LLM, Google Embeddings) via direct API integration.
@@ -93,11 +93,12 @@ ChatSphere follows a layered architecture with a distinct separation between the
   - Executes agentic behavior patterns for chat responses, incorporating retrieved context.
   - Manages its own configuration (API keys, etc.) loaded from `.env`.
   - Handles different agent configurations based on parameters from core app.
-- **Key Modules**: `agent/main.py` (if separate), `agent/agent.py`, `agent/vector_store.py`, `agent/config.py`.
-- **Endpoints (Examples)**:
-    - `/health` (GET)
-    - `/embed_and_store` (POST)
-    - `/chat` (POST)
+- **Key Modules**: `agent/agent.py`, `agent/vector_store.py`, `agent/config.py`.
+- **Endpoints (mounted within main app under `/api/v1`)**:
+    - `/chat` (POST, stream variant at `/chat/stream`)
+    - `/ingestion/upload` (POST file upload)
+    - `/ingestion/url` (POST)
+    - `/ingestion/status/{job_id}` (GET)
 
 ### Bot Configuration Schema (`Bot.configuration` field in PostgreSQL)
 
