@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 import os
 from dotenv import load_dotenv
 
-from app.core.database import engine
+# from app.core.database import async_engine  # not used directly in main
 from app.core.lifespan import lifespan
 from app.routers import auth_router, bots_router, conversations_router
 from agent.routing import chat_router, ingestion_router
