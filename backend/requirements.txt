@@ -7,6 +7,8 @@ python-multipart==0.0.6
 sqlalchemy==2.0.23
 psycopg2-binary==2.9.9
 alembic==1.12.1
+aiosqlite==0.20.0
+asyncpg==0.29.0
 
 # Authentication & Security
 python-jose[cryptography]==3.3.0
@@ -25,6 +27,15 @@ aiofiles==23.2.1
 # Validation & Serialization
 pydantic==2.5.0
 pydantic-settings==2.1.0
+
+# Monitoring & Metrics
+prometheus-fastapi-instrumentator==6.1.0
+
+# Document Processing
+PyPDF2==3.0.1
+python-magic==0.4.27
+python-docx==1.1.0
+beautifulsoup4==4.12.3
 
 # Development & Testing
 pytest==7.4.3

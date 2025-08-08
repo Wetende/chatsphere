@@ -17,3 +17,43 @@ description: Always-on backend architecture rules, scoped via nested rules under
 - Observability: Structured logs/metrics/tracing per [plan/10-analytics-monitoring.md](mdc:plan/10-analytics-monitoring.md); propagate correlation IDs.
 - PRD alignment: Endpoint contracts/behavior must match PRDs. If discrepancies arise, propose PRD update or align code.
 - AI policy: No LangChain or similar orchestration frameworks; integrate providers directly from agent/ modules.
+
+
+## Project Structure
+
+```
+backend/
+├── agent/                # Isolated AI/agent logic (extractable)
+│   ├── agents/          # Agentic behavior patterns (e.g., rag_agent.py, conversation_agent.py)
+│   ├── generation/       # LLM generation (e.g., agent_factory.py, chain_factory.py)
+│   ├── ingestion/        # Document processing/embedding (e.g., chunkers.py, parsers.py, vectorization.py)
+│   ├── models/           # Pydantic models for AI requests (e.g., chat.py, embed.py)
+│   ├── retrieval/        # Vector retrieval (e.g., pinecone_retriever.py, unified_retriever.py)
+│   ├── routing/          # AI-specific routers (e.g., chat_router.py, ingestion_router.py)
+│   ├── tools/            # Custom tools (e.g., sql_tool.py)
+│   ├── tests/            # AI tests (e.g., test_chain_factory.py)
+│   ├── config.py         # AI configs (e.g., Google API keys, model settings)
+│   └── main.py           # Optional standalone entry for agent
+├── app/                  # Core application logic
+│   ├── __init__.py
+│   ├── config.py         # App configs (e.g., FastAPI settings, PostgreSQL URL, env vars)
+│   ├── core/             # Shared utilities (e.g., dependencies.py, lifespan.py, database.py for SQLAlchemy session)
+│   ├── models/           # SQLAlchemy models (e.g., user.py, bot.py, conversation.py)
+│   ├── routers/          # API routers (e.g., auth_router.py, bots_router.py)
+│   ├── schemas/          # Pydantic schemas (e.g., user_schema.py, bot_schema.py)
+│   ├── services/         # Business logic (e.g., bot_service.py calling agent/ and DB)
+│   ├── utils/            # Helpers (e.g., auth_utils.py, error_handlers.py)
+│   └── tests/            # Core tests (e.g., test_routers.py, test_models.py)
+├── database/              # PostgreSQL-specific (e.g., init scripts, if not in root postgres/)
+│   ├── init.sql          # Initial DB setup script (e.g., create extensions like pgvector)
+│   └── schema.sql        # Optional schema definitions (though Alembic will handle most)
+├── migrations/           # Alembic migrations for PostgreSQL
+│   ├── env.py            # Alembic environment config
+│   ├── script.py.mako    # Migration script template
+│   └── versions/          # Generated migration files (e.g., 0001_initial.py)
+├── documents/            # Uploaded user docs (e.g., test_file.txt)
+├── main.py               # Main FastAPI app entry (mounts routers, integrates agent, sets up DB)
+├── alembic.ini           # Alembic config file for migrations
+├── requirements.txt      # Deps (e.g., fastapi, uvicorn, google-generativeai, pinecone-client, sqlalchemy, psycopg2, alembic)
+└── .env                  # Env vars (e.g., DATABASE_URL=postgresql://user:pass@localhost/db)
+```

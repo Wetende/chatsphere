@@ -1,45 +1,39 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.pool import StaticPool
-from typing import Generator
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from typing import AsyncGenerator
 import os
 from dotenv import load_dotenv
+from app.models.base import Base
 
 load_dotenv()
 
-# Database URL from environment
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost:5432/chatsphere")
+# Database URL from environment (async)
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:password@localhost:5432/chatsphere")
 
-# Create SQLAlchemy engine
-engine = create_engine(
+# Create async SQLAlchemy engine
+async_engine = create_async_engine(
     DATABASE_URL,
+    echo=os.getenv("ENVIRONMENT") == "development",
     pool_pre_ping=True,
-    pool_recycle=300,
-    echo=os.getenv("ENVIRONMENT") == "development"
 )
 
-# Create SessionLocal class
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Create async session maker
+AsyncSessionLocal = async_sessionmaker(
+    async_engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+)
 
-# Create Base class for models
-Base = declarative_base()
+async def get_async_db() -> AsyncGenerator[AsyncSession, None]:
+    """Async dependency to provide a database session per-request."""
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
 
-def get_db() -> Generator[Session, None, None]:
-    """
-    Dependency function to get database session.
-    Used with FastAPI's Depends() for dependency injection.
-    """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-def create_tables():
-    """Create all database tables"""
-    Base.metadata.create_all(bind=engine)
-
-def drop_tables():
-    """Drop all database tables"""
-    Base.metadata.drop_all(bind=engine) 
+async def create_all_tables_async() -> None:
+    """Create all tables asynchronously using the async engine."""
+    # Import models to register metadata
+    from app.models import user, bot  # noqa: F401
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all) 

@@ -1,9 +1,0 @@
----
-alwaysApply: true
-description: Database folder rules (init scripts, extensions) aligned with DB design plan.
----
-
-## Database Folder Rules (backend/database)
-
-- Keep init scripts minimal and idempotent; prefer Alembic for schema management.
-- Align extensions and initial setup with [plan/07-database-design.md](mdc:plan/07-database-design.md).
