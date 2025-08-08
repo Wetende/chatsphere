@@ -1,0 +1,12 @@
+---
+alwaysApply: true
+description: Router-specific rules. Keep routers thin, typed, PRD-aligned, and documented.
+---
+
+## Router Rules (backend/app/routers)
+
+- Define `APIRouter` with clear prefixes, PRD-aligned tags, and useful `responses`.
+- Use `response_model` for every route; schemas live in app/schemas.
+- Inject DB/auth/settings via dependencies; delegate to services for business logic.
+- Add pagination/filtering/limits on list endpoints.
+- Document callbacks/webhooks as OpenAPI callbacks (document, don’t execute).

@@ -1,0 +1,19 @@
+---
+alwaysApply: true
+description: Always-on backend architecture rules, scoped via nested rules under backend/. Follow plan docs and PRDs.
+---
+
+## Backend Architecture Rules
+
+- Authoritative sources: [plan/03-technical-architecture.md](mdc:plan/03-technical-architecture.md), [plan/05-backend-implementation.md](mdc:plan/05-backend-implementation.md), [plan/06-ai-integration.md](mdc:plan/06-ai-integration.md), [plan/07-database-design.md](mdc:plan/07-database-design.md), PRDs in [plan/prds/](mdc:plan/prds).
+- FastAPI baseline: follow Tutorial and Advanced (`https://fastapi.tiangolo.com/tutorial/`, `https://fastapi.tiangolo.com/advanced/`).
+- Layering & boundaries:
+  - Routers (app/routers) handle HTTP only; delegate to services (app/services).
+  - Services orchestrate domain logic; use sessions from app/core/database.py; access app/models.
+  - Keep AI in agent/**; expose interfaces for app/services; no router→agent imports.
+- Data & migrations: All schema changes must have Alembic migrations (backend/migrations); keep atomic and reversible; enforce indices/constraints per DB plan.
+- Security & compliance: Implement per PRDs and [plan/11-security-compliance.md](mdc:plan/11-security-compliance.md); secrets via config/env only; validate inputs at boundaries.
+- Scalability & performance: Non-blocking requests; background jobs for heavy work; pagination/limits; caching with clear invalidation.
+- Observability: Structured logs/metrics/tracing per [plan/10-analytics-monitoring.md](mdc:plan/10-analytics-monitoring.md); propagate correlation IDs.
+- PRD alignment: Endpoint contracts/behavior must match PRDs. If discrepancies arise, propose PRD update or align code.
+- AI policy: No LangChain or similar orchestration frameworks; integrate providers directly from agent/ modules.

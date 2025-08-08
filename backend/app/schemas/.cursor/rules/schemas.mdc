@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+description: Pydantic schema rules. Typed contracts for requests/responses and DTOs.
+---
+
+## Schema Rules (backend/app/schemas)
+
+- Define strict typed Pydantic models with validation; include examples as needed.
+- Keep response and request models version-safe; avoid breaking changes without versioned routes.
+- Ensure `response_model` references are up-to-date in routers.

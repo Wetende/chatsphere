@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+description: Core infra rules (DB session, config, lifespan, dependencies).
+---
+
+## Core Rules (backend/app/core)
+
+- Provide per-request DB session dependency from `database.py` (async engine/session if configured).
+- Configure settings and lifespan per FastAPI Advanced; avoid global state.
+- Centralize reusable dependencies here.

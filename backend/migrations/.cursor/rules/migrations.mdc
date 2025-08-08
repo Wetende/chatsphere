@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+description: Alembic migrations rules for schema and safe data migrations.
+---
+
+## Migrations Rules (backend/migrations)
+
+- Every schema change must ship with an Alembic migration (atomic, reversible).
+- Enforce indices, constraints, and naming per [plan/07-database-design.md](mdc:plan/07-database-design.md).
+- Avoid business logic; restrict to schema ops and necessary data backfills with clear comments.
+- Test migrations locally against representative data; include safe backfills for non-null columns.

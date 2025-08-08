@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+description: Service layer rules for domain orchestration, transactions, and integration boundaries.
+---
+
+## Service Rules (backend/app/services)
+
+- Encapsulate business logic; own transaction boundaries; no HTTP concerns.
+- Interact with ORM via sessions from app/core/database.py.
+- Interact with agent via explicit interfaces; no router imports or HTTP concerns.
+- Enforce PRD-driven behavior and error semantics; convert to domain errors for routers to map.

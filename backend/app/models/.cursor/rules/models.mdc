@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+description: ORM model rules. Data constraints, indices, and migrations discipline.
+---
+
+## Model Rules (backend/app/models)
+
+- Define SQLAlchemy models only; no HTTP or service logic.
+- Apply constraints and indices per [plan/07-database-design.md](mdc:plan/07-database-design.md).
+- Any schema change must include an Alembic migration in backend/migrations.

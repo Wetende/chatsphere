@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+description: Utility rules. Centralized error mapping, helpers, and cross-cutting utilities.
+---
+
+## Utils Rules (backend/app/utils)
+
+- Implement typed error mappers and reusable helpers.
+- Keep pure and side-effect minimal; no DB/session creation here.

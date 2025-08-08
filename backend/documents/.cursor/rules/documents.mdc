@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+description: Documents folder rules (uploaded files). Security and processing notes.
+---
+
+## Documents Folder Rules (backend/documents)
+
+- Do not commit secrets or PII. Validate file types and sizes in upload paths.
+- Processing should occur through services (e.g., DocumentService) and agent ingestion per plan.

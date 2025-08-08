@@ -1,0 +1,12 @@
+---
+alwaysApply: true
+description: Agent layer rules. AI isolation and direct provider integration per plan AI integration.
+---
+
+## Agent Rules (backend/agent)
+
+- Follow [plan/06-ai-integration.md](mdc:plan/06-ai-integration.md) and AI-related PRDs in [plan/prds/](mdc:plan/prds).
+- No LangChain or heavy orchestration; integrate providers directly with thin adapters.
+- Separate concerns: `ingestion/`, `retrieval/`, `generation/`, `routing/`, `tools/`, `models/`.
+- Expose clear interfaces to app/services; avoid importing routers or app internals.
+- Offload heavy work to async/background tasks; add observability per monitoring plan.

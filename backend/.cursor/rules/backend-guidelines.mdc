@@ -1,0 +1,14 @@
+---
+alwaysApply: true
+description: Always-on backend development rules for ChatSphere backend, based on plan docs and PRDs.
+---
+
+## Backend Development Rules
+
+- Follow plan docs: [05-backend-implementation.md](mdc:plan/05-backend-implementation.md), [03-technical-architecture.md](mdc:plan/03-technical-architecture.md), [06-ai-integration.md](mdc:plan/06-ai-integration.md), [07-database-design.md](mdc:plan/07-database-design.md), [11-security-compliance.md](mdc:plan/11-security-compliance.md), [08-testing-strategy.md](mdc:plan/08-testing-strategy.md), [12-testing-strategy.md](mdc:plan/12-testing-strategy.md). Follow PRDs in [plan/prds/](mdc:plan/prds).
+- FastAPI Tutorial/Advanced: use DI, `response_model`, tags, and examples; document callbacks; consider client generation patterns.
+- Keep routers thin; push logic into services; isolate persistence and agent calls; models in app/models, schemas in app/schemas.
+- Migrations: required for every schema change; manage under backend/migrations.
+- Testing: routers (contracts), services (logic), ORM access; align with testing strategy.
+- Performance/maintainability: small cohesive functions; pagination/filtering; background tasks for heavy work.
+- Observability: log structured events and errors per monitoring plan.
