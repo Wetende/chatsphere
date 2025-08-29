@@ -1,4 +1,12 @@
-# ChatSphere Backend Implementation
+# ChatSphere Backend Implementation - DEPRECATED
+
+⚠️ **DEPRECATED**: This document describes the old layered architecture approach. 
+
+**Please refer to the new implementation:**
+- [Backend Implementation - Onion Architecture](./05-backend-implementation-onion.md)
+- [Updated AI Integration PRD](./prds/Component-AIIntegration.md)
+
+---
 
 This document outlines the detailed backend implementation strategy for the ChatSphere platform, focusing on creating a scalable, maintainable, and high-performance server-side architecture using FastAPI and SQLAlchemy. It also details the integration with an internal agent module for AI functionalities.
 

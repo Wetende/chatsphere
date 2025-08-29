@@ -95,3 +95,27 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Google for Gemini language models
 - Pinecone for vector database services
 - All the open-source libraries that made this project possible 
+
+
+
+backend/
+├── domain/                          # 🎯 Core Business Logic (Innermost)
+│   ├── entities/                   # ✅ User, Bot, Conversation entities
+│   ├── value_objects/              # ✅ Email, UserId, Username, BotId
+│   ├── repositories/               # ✅ Interfaces: User, Bot, Conversation
+│   └── exceptions/                 # ✅ Domain-specific exceptions
+├── application/                     # 🔄 Use Cases & Application Logic  
+│   ├── interfaces/                 # ✅ Email, Password, AI, UnitOfWork
+│   ├── use_cases/                  # ✅ CreateUser, AuthUser, CreateBot, SendMessage
+│   ├── dtos/                       # ✅ Data transfer objects
+│   └── exceptions/                 # ✅ Application exceptions
+├── infrastructure/                  # 🔌 External Concerns
+│   ├── config/                     # ✅ Settings with safe defaults
+│   ├── repositories/               # ✅ SQLAlchemy implementations
+│   ├── external_services/          # ✅ SMTP, Bcrypt, Gemini stubs
+│   └── database/                   # ✅ Unit of Work implementation
+├── presentation/                    # 🌐 HTTP/API Layer (Outermost)
+│   ├── api/                        # ✅ FastAPI routers (Auth, Bot, Conversation, User)
+│   └── middleware/                 # ✅ Logging, RateLimit, Auth, ErrorHandling
+├── composition_root.py             # ✅ Dependency injection container
+└── main.py                         # ✅ FastAPI application entry point

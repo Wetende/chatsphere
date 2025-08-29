@@ -1,67 +1,43 @@
 # ChatSphere Backend
 
-A high-performance FastAPI backend for the ChatSphere AI-powered chatbot platform, designed with clean architecture principles and separation of concerns.
+A high-performance FastAPI backend for the ChatSphere AI-powered chatbot platform, built with **Onion Architecture** principles for maximum testability, maintainability, and separation of concerns.
 
-## 🏗️ Architecture Overview
+## 🏗️ Onion Architecture Overview
 
-This backend follows a modular architecture that separates core application logic from AI/agent-specific functionality:
+This backend implements **Onion Architecture** (also known as **Hexagonal Architecture** or **Ports & Adapters**), where the domain logic is at the center and dependencies point inward:
 
-- **`app/`** - Core application logic (authentication, user management, bot management, conversations)
-- **`agent/`** - Isolated AI/agent logic (LLM integrations, embeddings, retrieval, chains)
-- **Clean separation** - AI components can be extracted as microservices if needed
-- **PostgreSQL** - Primary database for application data
-- **Pinecone** - Vector database for embeddings and semantic search
-- **FastAPI** - Modern, fast web framework with automatic API documentation
+- **🎯 Domain Layer** (Innermost) - Pure business logic, entities, and repository interfaces
+- **🔄 Application Layer** - Use cases, application services, and DTOs
+- **🔌 Infrastructure Layer** - External concerns (database, APIs, frameworks)
+- **🌐 Presentation Layer** (Outermost) - HTTP/API layer with FastAPI routers
+
+### Key Benefits:
+- **Testability** - Domain logic is isolated and easily testable
+- **Maintainability** - Clear separation of concerns and dependency inversion
+- **Flexibility** - Easy to swap implementations (e.g., database, external APIs)
+- **Scalability** - Clean architecture supports growth and refactoring
 
 ## 📁 Project Structure
 
 ```
 backend/
-├── agent/                # Isolated AI/agent logic (extractable)
-│   ├── chains/          # Chat/RAG pipelines (direct API integration; no LangChain)
-│   ├── generation/      # LLM generation logic and factories
-│   ├── ingestion/       # Document processing, chunking, embedding
-│   ├── models/          # Pydantic models for AI requests/responses
-│   ├── retrieval/       # Vector retrieval (Pinecone, local vectors)
-│   ├── routing/         # AI-specific FastAPI routers
-│   ├── tools/           # Custom AI tools (SQL, web search, etc.)
-│   ├── tests/           # AI component tests
-│   ├── config.py        # AI configurations (API keys, model settings)
-│   └── main.py          # Optional standalone agent entry point
-├── app/                 # Core application logic
-│   ├── core/           # Shared utilities and dependencies
-│   │   ├── database.py  # SQLAlchemy session management
-│   │   ├── dependencies.py # FastAPI dependencies
-│   │   └── lifespan.py  # App lifecycle management
-│   ├── models/         # SQLAlchemy ORM models
-│   │   ├── user.py     # User model
-│   │   ├── bot.py      # Bot model
-│   │   └── conversation.py # Conversation models
-│   ├── routers/        # FastAPI routers for API endpoints
-│   │   ├── auth_router.py    # Authentication endpoints
-│   │   ├── bots_router.py    # Bot management endpoints
-│   │   └── conversations_router.py # Conversation endpoints
-│   ├── schemas/        # Pydantic schemas for request/response validation
-│   ├── services/       # Business logic layer
-│   │   ├── bot_service.py    # Bot business logic
-│   │   └── user_service.py   # User business logic
-│   ├── utils/          # Utility functions
-│   │   ├── auth_utils.py     # Authentication utilities
-│   │   └── error_handlers.py # Error handling
-│   ├── tests/          # Core application tests
-│   └── config.py       # App configurations
-├── database/           # Database-specific files
-│   ├── init.sql        # Initial DB setup (pgvector extension)
-│   └── schema.sql      # Optional schema definitions
-├── migrations/         # Alembic database migrations
-│   ├── versions/       # Migration files
-│   ├── env.py         # Alembic environment config
-│   └── script.py.mako # Migration template
-├── documents/          # Uploaded user documents storage
-├── main.py            # Main FastAPI application entry point
-├── alembic.ini        # Alembic configuration
-├── requirements.txt   # Python dependencies
-└── .env              # Environment variables
+├── domain/                    # 🎯 Core Business Logic (Innermost Layer)
+│   ├── entities/             # Pure business objects (User, Bot, Conversation)
+│   ├── value_objects/        # Immutable value types (Email, UserId)
+│   └── repositories/         # Repository interfaces (contracts)
+├── application/              # 🔄 Use Cases & Application Logic
+│   ├── use_cases/           # Business use cases (CreateUser, etc.)
+│   └── dtos/                # Data Transfer Objects (request/response models)
+├── infrastructure/          # 🔌 External Concerns (Database, APIs)
+│   └── repositories/        # Repository implementations (SQLAlchemy)
+├── presentation/            # 🌐 HTTP/API Layer (Outermost Layer)
+│   └── api/                # FastAPI routers and HTTP concerns
+├── composition_root.py      # 🔧 Dependency Injection Container
+├── main.py                 # 🚀 FastAPI Application Entry Point
+├── alembic.ini            # Database migration configuration
+├── requirements.txt       # Python dependencies
+├── ONION_ARCHITECTURE_SUMMARY.md # Architecture documentation
+└── documents/             # Uploaded user documents storage
 ```
 
 ## 🚀 Tech Stack
@@ -168,14 +144,20 @@ Note: We intentionally avoid orchestration frameworks like LangChain. All AI is 
 ## 🧪 Testing
 
 ```bash
-# Run all tests
+# Run all tests (organized by layer)
 pytest
 
+# Run tests by layer
+pytest domain/tests/        # Domain layer tests (entities, value objects)
+pytest application/tests/   # Application layer tests (use cases, DTOs)
+pytest infrastructure/tests/ # Infrastructure layer tests (repositories)
+pytest presentation/tests/   # Presentation layer tests (routers)
+
 # Run with coverage
-pytest --cov=app --cov=agent
+pytest --cov=domain --cov=application --cov=infrastructure --cov=presentation
 
 # Run specific test module
-pytest app/tests/test_routers.py
+pytest domain/tests/test_entities.py
 ```
 
 ## 📦 Deployment
@@ -208,10 +190,10 @@ docker run -p 8000:8000 chatsphere-backend
 - `ENVIRONMENT` - deployment environment (development/production)
 
 ### AI Configuration
-- Model selection and parameters in `agent/config.py`
-- Embedding model configuration
-- Vector database settings
-- Rate limiting and timeout settings
+- Model selection and parameters in `infrastructure/config/`
+- Embedding model configuration (Infrastructure layer)
+- Vector database settings (Infrastructure layer)
+- Rate limiting and timeout settings (Application/Infrastructure layers)
 
 ## 📈 Performance Considerations
 
