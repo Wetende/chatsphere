@@ -151,7 +151,7 @@ class AuthenticateUserUseCase:
                 # Generate JWT tokens
                 try:
                     access_token = self.auth_service.generate_access_token(
-                        user_id=str(user.id),
+                        user_id=str(user.id.value),
                         email=str(user.email),
                         additional_claims={
                             "username": str(user.username),
@@ -159,7 +159,7 @@ class AuthenticateUserUseCase:
                         }
                     )
                     
-                    refresh_token = self.auth_service.generate_refresh_token(str(user.id))
+                    refresh_token = self.auth_service.generate_refresh_token(str(user.id.value))
                     
                     # Get token expiration
                     expires_at = self.auth_service.get_token_expiration(access_token)
@@ -184,7 +184,7 @@ class AuthenticateUserUseCase:
                     success=True,
                     access_token=access_token,
                     refresh_token=refresh_token,
-                    user_id=str(user.id),
+                    user_id=user.id.value,
                     expires_at=expires_at,
                     message="Authentication successful"
                 )

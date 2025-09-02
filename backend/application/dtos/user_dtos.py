@@ -39,11 +39,11 @@ class CreateUserRequestDTO:
         pass
 
 
-@dataclass  
+@dataclass
 class CreateUserResponseDTO:
     """Response DTO for user creation result."""
     
-    user_id: str
+    user_id: int
     email: str
     username: str
     is_verified: bool
@@ -67,7 +67,7 @@ class AuthenticateUserResponseDTO:
     success: bool
     access_token: Optional[str] = None
     refresh_token: Optional[str] = None
-    user_id: Optional[str] = None
+    user_id: Optional[int] = None
     expires_at: Optional[datetime] = None
     message: Optional[str] = None
 
@@ -85,7 +85,7 @@ class UpdateUserProfileRequestDTO:
 class UserProfileResponseDTO:
     """Response DTO for user profile information."""
     
-    user_id: str
+    user_id: int
     email: str
     username: str
     first_name: str

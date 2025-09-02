@@ -10,6 +10,7 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+from sqlalchemy import Text
 
 # revision identifiers, used by Alembic.
 revision: str = 'e391a7a5627e'
@@ -101,7 +102,7 @@ def upgrade() -> None:
     sa.Column('message_count', sa.Integer(), server_default='0', nullable=False),
     sa.Column('total_tokens_used', sa.Integer(), server_default='0', nullable=False),
     sa.Column('context_summary', sa.Text(), nullable=True),
-    sa.Column('settings', postgresql.JSONB(astext_type=Text()), nullable=True),
+    sa.Column('settings', sa.Text(), nullable=True),
     sa.Column('rating', sa.Float(), nullable=True),
     sa.Column('feedback', sa.Text(), nullable=True),
     sa.Column('id', sa.UUID(), nullable=False),
@@ -126,7 +127,7 @@ def upgrade() -> None:
     sa.Column('processing_time_ms', sa.Integer(), nullable=True),
     sa.Column('model_name', sa.String(length=100), nullable=True),
     sa.Column('temperature', sa.Float(), nullable=True),
-    sa.Column('message_metadata', postgresql.JSONB(astext_type=Text()), nullable=True),
+    sa.Column('message_metadata', sa.Text(), nullable=True),
     sa.Column('error_message', sa.Text(), nullable=True),
     sa.Column('is_helpful', sa.Boolean(), nullable=True),
     sa.Column('user_feedback', sa.Text(), nullable=True),

@@ -1,6 +1,6 @@
-# ChatSphere Frontend Sub-PRDs
+# KyroChat Frontend Sub-PRDs
 
-This directory contains detailed Sub-Product Requirements Documents (Sub-PRDs) for ChatSphere frontend implementation, organized by phases and components.
+This directory contains detailed Sub-Product Requirements Documents (Sub-PRDs) for KyroChat frontend implementation, organized by phases and components.
 
 ## Phase-Based Sub-PRDs
 
@@ -134,4 +134,4 @@ This directory contains detailed Sub-Product Requirements Documents (Sub-PRDs) f
 - ✅ **Offline Support** - PWA with service worker
 - ✅ **Developer Experience** - Hot reload, good error messages
 
-All Sub-PRDs are ready for frontend development teams to implement the ChatSphere user interface! 🚀
+All Sub-PRDs are ready for frontend development teams to implement the KyroChat user interface! 🚀

@@ -1,6 +1,6 @@
-# ChatSphere Documentation Strategy
+# KyroChat Documentation Strategy
 
-This document outlines our comprehensive approach to documentation and knowledge sharing for the ChatSphere platform.
+This document outlines our comprehensive approach to documentation and knowledge sharing for the KyroChat platform.
 
 ## Documentation Structure
 
@@ -10,10 +10,10 @@ This document outlines our comprehensive approach to documentation and knowledge
 # docs/api/openapi.yaml
 openapi: 3.0.0
 info:
-  title: ChatSphere API
+  title: KyroChat API
   version: 1.0.0
   description: |
-    The ChatSphere API provides a comprehensive set of endpoints for building
+    The KyroChat API provides a comprehensive set of endpoints for building
     real-time chat applications with advanced features like message threading,
     reactions, and AI-powered interactions.
 
@@ -156,7 +156,7 @@ reactions, and threading.
 ## Usage
 
 ```tsx
-import { Message } from '@chatsphere/components';
+import { Message } from '@kyrochat/components';
 
 function ChatView() {
   return (
@@ -267,7 +267,7 @@ The component uses CSS modules for styling. Override styles by targeting these c
 
 ## Overview
 
-ChatSphere uses a modular single-application architecture (FastAPI monolith) with clearly separated modules. High-level components:
+KyroChat uses a modular single-application architecture (FastAPI monolith) with clearly separated modules. High-level components:
 
 ```mermaid
 graph TD
@@ -368,13 +368,13 @@ Provides AI-powered features like smart responses and content analysis.
 ### 4. User Documentation
 
 ```markdown
-# ChatSphere User Guide
+# KyroChat User Guide
 
 ## Getting Started
 
 ### 1. Account Creation
 
-1. Visit [chatsphere.com/signup](https://chatsphere.com/signup)
+1. Visit [kyrochat.com/signup](https://kyrochat.com/signup)
 2. Enter your email and password
 3. Verify your email address
 4. Complete your profile
@@ -489,8 +489,8 @@ Provides AI-powered features like smart responses and content analysis.
 
 1. Clone repository:
    ```bash
-   git clone https://github.com/chatsphere/chatsphere.git
-   cd chatsphere
+   git clone https://github.com/kyrochat/kyrochat.git
+   cd kyrochat
    ```
 
 2. Set up backend:

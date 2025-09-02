@@ -1,6 +1,6 @@
-# ChatSphere Sub-PRDs
+# KyroChat Sub-PRDs
 
-This directory contains detailed Sub-Product Requirements Documents (Sub-PRDs) for ChatSphere implementation, organized by phases and components.
+This directory contains detailed Sub-Product Requirements Documents (Sub-PRDs) for KyroChat implementation, organized by phases and components.
 
 ## Phase-Based Sub-PRDs
 

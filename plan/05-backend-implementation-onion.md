@@ -1,7 +1,7 @@
 """
-# ChatSphere Backend Implementation - Onion Architecture
+# KyroChat Backend Implementation - Onion Architecture
 
-This document outlines the detailed backend implementation strategy for ChatSphere using onion architecture principles, ensuring clean separation of concerns, testability, and maintainability.
+This document outlines the detailed backend implementation strategy for KyroChat using onion architecture principles, ensuring clean separation of concerns, testability, and maintainability.
 
 ## Onion Architecture Overview
 
@@ -611,7 +611,7 @@ async def get_create_bot_use_case() -> CreateBotUseCase:
     return composition_root.get_create_bot_use_case()
 
 # FastAPI app with onion architecture
-app = FastAPI(title="ChatSphere API - Onion Architecture")
+app = FastAPI(title="KyroChat API - Onion Architecture")
 
 # Include routers
 app.include_router(chat_router, prefix="/api/v1")
@@ -674,5 +674,5 @@ app.include_router(user_router, prefix="/api/v1")
 4. Update routers to delegate to use cases instead of services
 5. Configure composition root for dependency injection
 
-This onion architecture implementation provides a solid foundation for ChatSphere that is testable, maintainable, and scalable while maintaining clean separation of concerns.
+This onion architecture implementation provides a solid foundation for KyroChat that is testable, maintainable, and scalable while maintaining clean separation of concerns.
 """

@@ -1,7 +1,7 @@
 # Sub-PRD: Comprehensive Testing and Quality Assurance
 
 ## Overview
-This Sub-PRD outlines the comprehensive testing strategy and quality assurance framework for ChatSphere, covering unit tests, integration tests, end-to-end tests, and automated quality checks.
+This Sub-PRD outlines the comprehensive testing strategy and quality assurance framework for KyroChat, covering unit tests, integration tests, end-to-end tests, and automated quality checks.
 
 ## User Stories
 - **As a developer**, I want comprehensive test coverage so that I can refactor code confidently

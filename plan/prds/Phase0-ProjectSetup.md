@@ -1,7 +1,7 @@
 # Sub-PRD: Phase 0 - Project Setup and Foundation
 
 ## Overview
-This Sub-PRD outlines the foundation setup for ChatSphere, establishing development environment, project structure, and core architecture without Docker.
+This Sub-PRD outlines the foundation setup for KyroChat, establishing development environment, project structure, and core architecture without Docker.
 
 ## User Stories
 - **As a developer**, I want to set up the development environment quickly so that I can start building features immediately

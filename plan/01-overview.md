@@ -1,8 +1,8 @@
-# ChatSphere Overview
+# KyroChat Overview
 
 ## Project Vision
 
-ChatSphere aims to revolutionize how businesses create, deploy, and manage AI-powered chatbots. By offering a platform that outperforms Chatbase in speed, functionality, customization, and user experience, ChatSphere will become the preferred solution for businesses seeking to enhance customer engagement through intelligent chat interfaces.
+KyroChat aims to revolutionize how businesses create, deploy, and manage AI-powered chatbots. By offering a platform that outperforms Chatbase in speed, functionality, customization, and user experience, KyroChat will become the preferred solution for businesses seeking to enhance customer engagement through intelligent chat interfaces.
 
 Our platform will empower users to create sophisticated chatbots in minutes without coding expertise, while offering advanced customization and integration options for technical users.
 
@@ -26,7 +26,7 @@ Our platform will empower users to create sophisticated chatbots in minutes with
 
 ## Competitive Advantages
 
-| Feature | ChatSphere | Chatbase |
+| Feature | KyroChat | Chatbase |
 |---------|------------|----------|
 | Bot Creation Time | &lt; 3 minutes | 5+ minutes |
 | Language Support | 200+ languages | 150+ languages |
@@ -39,7 +39,7 @@ Our platform will empower users to create sophisticated chatbots in minutes with
 
 ## High-Level Architecture
 
-ChatSphere follows a layered architecture with integrated AI capabilities:
+KyroChat follows a layered architecture with integrated AI capabilities:
 
 ```
 ┌─────────────┐    ┌─────────────┐

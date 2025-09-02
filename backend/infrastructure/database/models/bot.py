@@ -1,15 +1,13 @@
 """
 Bot SQLAlchemy Model
 
-Database model for AI bots in the ChatSphere application.
+Database model for AI bots in the KyroChat application.
 Represents the bot table with configuration and metadata.
 """
 
-import uuid
 from typing import Optional
 
 from sqlalchemy import String, Boolean, Text, ForeignKey, Index, Integer
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -36,8 +34,8 @@ class BotModel(BaseModel):
     )
     
     # Owner relationship
-    owner_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+    owner_id: Mapped[int] = mapped_column(
+        Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True

@@ -1,10 +1,10 @@
 # Sub-PRD: API Documentation and Developer Experience
 
 ## Overview
-This Sub-PRD outlines the API documentation and developer experience framework for ChatSphere, including comprehensive API docs, SDK development, and developer tools for easy integration.
+This Sub-PRD outlines the API documentation and developer experience framework for KyroChat, including comprehensive API docs, SDK development, and developer tools for easy integration.
 
 ## User Stories
-- **As an API user**, I want comprehensive documentation so that I can integrate with ChatSphere easily
+- **As an API user**, I want comprehensive documentation so that I can integrate with KyroChat easily
 - **As a developer**, I want interactive API documentation so that I can test endpoints directly
 - **As a third-party developer**, I want SDKs in multiple languages so that integration is simplified
 - **As a developer**, I want code examples so that I can implement features quickly

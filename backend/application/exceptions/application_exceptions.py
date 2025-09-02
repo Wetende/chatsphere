@@ -47,3 +47,23 @@ class BusinessRuleViolationException(ApplicationException):
 class ExternalServiceException(ApplicationException):
     """Exception raised when external service operations fail."""
     pass
+
+
+class UserNotFoundException(ApplicationException):
+    """Exception raised when user is not found."""
+    pass
+
+
+class AuthorizationException(ApplicationException):
+    """Exception raised for unauthorized access."""
+    pass
+
+
+class BotNotFoundException(ApplicationException):
+    """Exception raised when bot is not found."""
+    pass
+
+
+class EmailServiceException(ApplicationException):
+    """Exception raised when email service operations fail."""
+    pass

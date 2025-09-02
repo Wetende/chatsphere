@@ -152,3 +152,34 @@ class DeleteBotResponseDTO:
     bot_id: str
     message: str
     conversations_deleted: int
+
+
+@dataclass
+class BotResponseDTO:
+    """Response DTO for single bot details."""
+    bot_id: int
+    name: str
+    description: Optional[str]
+    owner_id: int
+    model_name: str
+    temperature: float
+    system_prompt: Optional[str]
+    is_public: bool
+    is_active: bool
+    status: str
+    welcome_message: str
+    configuration: dict
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
+    is_owner: bool = False
+
+
+@dataclass
+class BotListResponseDTO:
+    """Response DTO for paginated bot lists."""
+    bots: List[BotResponseDTO]
+    total_count: int
+    page: int
+    page_size: int
+    has_next: bool
+    has_previous: bool

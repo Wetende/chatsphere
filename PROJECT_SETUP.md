@@ -1,6 +1,6 @@
-# ChatSphere Project Setup
+# KyroChat Project Setup
 
-This document provides setup instructions for the ChatSphere project.
+This document provides setup instructions for the KyroChat project.
 
 ## Prerequisites
 
@@ -14,8 +14,8 @@ This document provides setup instructions for the ChatSphere project.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/chatsphere.git
-cd chatsphere
+git clone https://github.com/yourusername/kyrochat.git
+cd kyrochat
 ```
 
 ### 2. Environment Variables

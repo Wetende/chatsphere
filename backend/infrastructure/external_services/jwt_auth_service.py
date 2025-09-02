@@ -37,7 +37,7 @@ class JWTAuthService(IAuthService):
         algorithm: str = "HS256",
         access_token_expire_minutes: int = 30,
         refresh_token_expire_days: int = 7,
-        issuer: str = "chatsphere-api"
+        issuer: str = "kyrochat-api"
     ):
         """
         Initialize JWT authentication service.
@@ -86,7 +86,7 @@ class JWTAuthService(IAuthService):
                 "iat": now,  # Issued at
                 "exp": expire,  # Expiration
                 "iss": self.issuer,  # Issuer
-                "aud": "chatsphere-users"  # Audience
+                "aud": "kyrochat-users"  # Audience
             }
             
             # Add any additional claims
@@ -125,7 +125,7 @@ class JWTAuthService(IAuthService):
                 "iat": now,
                 "exp": expire,
                 "iss": self.issuer,
-                "aud": "chatsphere-users"
+                "aud": "kyrochat-users"
             }
             
             token = jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
@@ -157,7 +157,7 @@ class JWTAuthService(IAuthService):
                 token,
                 self.secret_key,
                 algorithms=[self.algorithm],
-                audience="chatsphere-users",
+                audience="kyrochat-users",
                 issuer=self.issuer
             )
             

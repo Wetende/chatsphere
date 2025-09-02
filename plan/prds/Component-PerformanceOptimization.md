@@ -1,7 +1,7 @@
 # Sub-PRD: Performance Optimization and Scalability
 
 ## Overview
-This Sub-PRD outlines performance optimization and scalability strategies for ChatSphere, ensuring the platform can handle high traffic loads while maintaining fast response times and efficient resource usage.
+This Sub-PRD outlines performance optimization and scalability strategies for KyroChat, ensuring the platform can handle high traffic loads while maintaining fast response times and efficient resource usage.
 
 ## User Stories
 - **As a user**, I want fast page loading so that I can access features quickly

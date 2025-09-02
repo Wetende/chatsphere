@@ -1,10 +1,10 @@
-# ChatSphere Project Phases
+# KyroChat Project Phases
 
-This document outlines the implementation timeline, key milestones, and delivery schedule for the ChatSphere platform.
+This document outlines the implementation timeline, key milestones, and delivery schedule for the KyroChat platform.
 
 ## Development Approach
 
-ChatSphere will be developed using an iterative, phased approach:
+KyroChat will be developed using an iterative, phased approach:
 
 1. Each phase delivers a specific set of features and functionality
 2. Phases build upon previous phases incrementally

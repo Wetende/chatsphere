@@ -1,16 +1,15 @@
 """
 Conversation SQLAlchemy Model
 
-Database model for conversations and messages in the ChatSphere application.
+Database model for conversations and messages in the KyroChat application.
 Represents conversations between users and AI bots.
 """
 
-import uuid
 from typing import Optional
 from enum import Enum
 
 from sqlalchemy import String, Text, ForeignKey, Index, Integer, Float
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -39,15 +38,15 @@ class ConversationModel(BaseModel):
     )
     
     # Relationships
-    user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+    user_id: Mapped[int] = mapped_column(
+        Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
     
-    bot_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+    bot_id: Mapped[int] = mapped_column(
+        Integer,
         ForeignKey("bots.id", ondelete="CASCADE"),
         nullable=False,
         index=True
@@ -166,8 +165,8 @@ class MessageModel(BaseModel):
     )
     
     # Conversation relationship
-    conversation_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+    conversation_id: Mapped[int] = mapped_column(
+        Integer,
         ForeignKey("conversations.id", ondelete="CASCADE"),
         nullable=False,
         index=True

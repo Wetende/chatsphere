@@ -1,6 +1,6 @@
-# ChatSphere Testing Strategy
+# KyroChat Testing Strategy
 
-This document outlines the comprehensive testing strategy for the ChatSphere platform, ensuring reliability, performance, and security across all components.
+This document outlines the comprehensive testing strategy for the KyroChat platform, ensuring reliability, performance, and security across all components.
 
 ## Testing Architecture
 

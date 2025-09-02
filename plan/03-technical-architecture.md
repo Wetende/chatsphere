@@ -1,10 +1,10 @@
-# ChatSphere Technical Architecture
+# KyroChat Technical Architecture
 
-This document outlines the detailed technical architecture, system design, and component interactions for the ChatSphere platform.
+This document outlines the detailed technical architecture, system design, and component interactions for the KyroChat platform.
 
 ## System Architecture Overview
 
-ChatSphere follows a layered architecture with a distinct separation between the core backend (FastAPI) and the AI processing module (integrated in FastAPI).
+KyroChat follows a layered architecture with a distinct separation between the core backend (FastAPI) and the AI processing module (integrated in FastAPI).
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
@@ -235,7 +235,7 @@ To enable flexible agent behavior, the `configuration` JSONB field on the `Bot` 
 
 ## API Documentation
 
-The ChatSphere API follows RESTful design principles and uses OpenAPI 3.0 for documentation:
+The KyroChat API follows RESTful design principles and uses OpenAPI 3.0 for documentation:
 
 - All endpoints return JSON responses
 - Standard HTTP status codes are used

@@ -1,8 +1,8 @@
 **Status:** Design ready for implementation - nothing implemented yet 
 
-# ChatSphere Database Design
+# KyroChat Database Design
 
-This document outlines the database design and data storage strategy for ChatSphere, focusing on scalability, performance, and data integrity.
+This document outlines the database design and data storage strategy for KyroChat, focusing on scalability, performance, and data integrity.
 
 ## Technology Stack
 
@@ -174,7 +174,7 @@ class Message(Base):
 
 Pinecone configuration happens in the Pinecone console and via the client initialization in the agent module.
 
-- **Index Name**: Defined by `PINECONE_INDEX_NAME` (e.g., `chatsphere-embeddings`).
+- **Index Name**: Defined by `PINECONE_INDEX_NAME` (e.g., `kyrochat-embeddings`).
 - **Dimension**: Must match the output dimension of the Google embedding model used (e.g., **768** for `models/embedding-001`).
 - **Metric**: Typically `cosine` or `dotproduct`.
 - **Metadata Indexing**: Configure Pinecone to index relevant metadata fields for filtering during search.

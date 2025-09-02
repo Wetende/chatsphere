@@ -1,7 +1,7 @@
 # Sub-PRD: Frontend Phase 2 - Bot Creation Flow
 
 ## Overview
-This Sub-PRD outlines the chatbot creation wizard and training interface for ChatSphere frontend, providing users with an intuitive flow to create and configure their chatbots.
+This Sub-PRD outlines the chatbot creation wizard and training interface for KyroChat frontend, providing users with an intuitive flow to create and configure their chatbots.
 
 ## User Stories
 - **As a user**, I want a guided bot creation wizard so that I can easily set up my chatbot

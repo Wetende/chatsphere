@@ -1,77 +1,38 @@
 """
 Conversation Data Transfer Objects
 
-DTOs for conversation and message operations in the application layer.
+DTOs for conversation-related operations in the application layer.
 Facilitates data transfer between presentation and application layers.
 
 Key Features:
 - Request/response DTOs for conversation operations
-- Message DTOs for chat functionality  
-- AI integration data structures
+- Message handling and formatting
 - Validation and serialization
+- Clear separation from domain entities
+- API contract definitions
 """
 
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Any
+from typing import Optional, List
 from datetime import datetime
-from enum import Enum
-
-
-class MessageRole(str, Enum):
-    """Message role enumeration."""
-    USER = "user"
-    ASSISTANT = "assistant"
-    SYSTEM = "system"
 
 
 @dataclass
 class MessageDTO:
-    """DTO for a single message."""
-    id: Optional[str] = None
-    content: str = ""
-    role: MessageRole = MessageRole.USER
-    tokens_used: Optional[int] = None
-    processing_time_ms: Optional[int] = None
-    model_name: Optional[str] = None
-    temperature: Optional[float] = None
-    metadata: Optional[Dict[str, Any]] = None
-    error_message: Optional[str] = None
-    is_helpful: Optional[bool] = None
-    user_feedback: Optional[str] = None
-    created_at: Optional[datetime] = None
-
-
-@dataclass
-class SendMessageRequestDTO:
-    """Request DTO for sending a message."""
-    conversation_id: Optional[str] = None  # None for new conversation
-    bot_id: str = ""
-    message: str = ""
-    stream_response: bool = False
-    include_context: bool = True
-    max_tokens: Optional[int] = None
-    temperature: Optional[float] = None
-
-
-@dataclass
-class SendMessageResponseDTO:
-    """Response DTO for sending a message."""
-    conversation_id: str
-    message_id: str
-    bot_response: str
-    tokens_used: int
-    processing_time_ms: int
-    model_name: str
-    temperature: float
-    conversation_title: Optional[str] = None
-    is_new_conversation: bool = False
-    message: str = "Message sent successfully"
+    """DTO for individual messages."""
+    message_id: int
+    conversation_id: int
+    content: str
+    is_from_user: bool
+    timestamp: datetime
+    metadata: Optional[dict] = None
 
 
 @dataclass
 class CreateConversationRequestDTO:
     """Request DTO for creating a new conversation."""
-    bot_id: str
+    bot_id: int
+    user_id: int
     title: Optional[str] = None
     initial_message: Optional[str] = None
 
@@ -79,85 +40,73 @@ class CreateConversationRequestDTO:
 @dataclass
 class CreateConversationResponseDTO:
     """Response DTO for conversation creation."""
-    conversation_id: str
-    bot_id: str
+    conversation_id: int
+    bot_id: int
     title: str
-    is_active: bool
     created_at: datetime
-    message: str = "Conversation created successfully"
+    message: str
 
 
 @dataclass
-class ConversationSummaryDTO:
-    """DTO for conversation summary in lists."""
-    conversation_id: str
-    title: str
-    bot_id: str
-    bot_name: str
-    message_count: int
-    created_at: datetime
-    last_message: Optional[str] = None
-    last_message_time: Optional[datetime] = None
-    is_pinned: bool = False
+class SendMessageRequestDTO:
+    """Request DTO for sending a message."""
+    conversation_id: int
+    user_id: int
+    message_content: str
+    message_type: str = "text"  # text, image, file, etc.
 
 
 @dataclass
-class ConversationDetailsDTO:
-    """DTO for detailed conversation information."""
-    conversation_id: str
-    title: str
-    bot_id: str
+class SendMessageResponseDTO:
+    """Response DTO for sending a message."""
+    message_id: int
+    conversation_id: int
+    user_message: MessageDTO
+    bot_response: MessageDTO
+    conversation_active: bool
+
+
+@dataclass
+class ConversationDTO:
+    """DTO for conversation details."""
+    conversation_id: int
+    bot_id: int
     bot_name: str
-    bot_avatar_url: Optional[str]
-    user_id: str
-    is_active: bool
-    is_pinned: bool
+    user_id: int
+    title: str
     message_count: int
-    total_tokens_used: int
-    created_at: datetime
-    rating: Optional[float] = None
-    feedback: Optional[str] = None
-    settings: Optional[Dict[str, Any]] = None
-    updated_at: Optional[datetime] = None
+    is_active: bool
+    is_archived: bool
+    started_at: datetime
+    last_message_at: Optional[datetime]
+    ended_at: Optional[datetime]
+
+
+@dataclass
+class ConversationWithMessagesDTO:
+    """DTO for conversation with message history."""
+    conversation: ConversationDTO
+    messages: List[MessageDTO]
+    total_messages: int
+    has_more: bool
 
 
 @dataclass
 class ListConversationsRequestDTO:
     """Request DTO for listing conversations."""
-    user_id: str
-    bot_id: Optional[str] = None
-    is_active: Optional[bool] = True
-    is_pinned: Optional[bool] = None
+    user_id: int
+    bot_id: Optional[int] = None
+    is_active: Optional[bool] = None
     limit: int = 20
     offset: int = 0
-    sort_by: str = "updated_at"  # updated_at, created_at, title
+    sort_by: str = "last_message_at"  # last_message_at, started_at, title
     sort_order: str = "desc"  # asc, desc
 
 
 @dataclass
 class ListConversationsResponseDTO:
     """Response DTO for listing conversations."""
-    conversations: List[ConversationSummaryDTO]
-    total_count: int
-    limit: int
-    offset: int
-    has_more: bool
-
-
-@dataclass
-class GetConversationMessagesRequestDTO:
-    """Request DTO for getting conversation messages."""
-    conversation_id: str
-    limit: int = 50
-    offset: int = 0
-    include_metadata: bool = False
-
-
-@dataclass
-class GetConversationMessagesResponseDTO:
-    """Response DTO for conversation messages."""
-    conversation_id: str
-    messages: List[MessageDTO]
+    conversations: List[ConversationDTO]
     total_count: int
     limit: int
     offset: int
@@ -166,61 +115,56 @@ class GetConversationMessagesResponseDTO:
 
 @dataclass
 class UpdateConversationRequestDTO:
-    """Request DTO for updating conversation."""
+    """Request DTO for updating a conversation."""
+    conversation_id: int
+    user_id: int
     title: Optional[str] = None
-    is_pinned: Optional[bool] = None
-    rating: Optional[float] = None
-    feedback: Optional[str] = None
-    settings: Optional[Dict[str, Any]] = None
+    is_archived: Optional[bool] = None
 
 
 @dataclass
 class UpdateConversationResponseDTO:
     """Response DTO for conversation update."""
-    conversation_id: str
+    conversation_id: int
     title: str
-    is_pinned: bool
+    is_archived: bool
     updated_at: datetime
-    message: str = "Conversation updated successfully"
+    message: str
 
 
 @dataclass
 class DeleteConversationRequestDTO:
-    """Request DTO for deleting conversation."""
-    conversation_id: str
-    confirmation: bool = False
+    """Request DTO for deleting a conversation."""
+    conversation_id: int
+    user_id: int
+    soft_delete: bool = True  # Soft delete by default
 
 
 @dataclass
 class DeleteConversationResponseDTO:
     """Response DTO for conversation deletion."""
-    conversation_id: str
-    message: str = "Conversation deleted successfully"
-    messages_deleted: int = 0
+    conversation_id: int
+    deleted_at: datetime
+    message: str
+    messages_deleted: int
 
 
 @dataclass
-class StreamingMessageChunk:
-    """DTO for streaming message chunks."""
-    conversation_id: str
-    message_id: str
-    chunk: str
-    is_complete: bool = False
-    tokens_used: Optional[int] = None
-    processing_time_ms: Optional[int] = None
-    error: Optional[str] = None
+class GetConversationHistoryRequestDTO:
+    """Request DTO for retrieving conversation history."""
+    conversation_id: int
+    user_id: int
+    limit: int = 50
+    offset: int = 0
+    message_type: Optional[str] = None  # Filter by message type
 
 
 @dataclass
-class MessageFeedbackRequestDTO:
-    """Request DTO for message feedback."""
-    message_id: str
-    is_helpful: bool
-    feedback: Optional[str] = None
-
-
-@dataclass
-class MessageFeedbackResponseDTO:
-    """Response DTO for message feedback."""
-    message_id: str
-    message: str = "Feedback recorded successfully"
+class GetConversationHistoryResponseDTO:
+    """Response DTO for conversation history."""
+    conversation_id: int
+    messages: List[MessageDTO]
+    total_messages: int
+    limit: int
+    offset: int
+    has_more: bool

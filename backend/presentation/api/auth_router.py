@@ -1,42 +1,68 @@
 """
-Presentation - Auth Router
+Authentication API Router
 
-FastAPI router handling authentication endpoints (login, refresh, logout).
-Delegates to application use cases and returns HTTP-friendly responses.
+FastAPI router for authentication operations including login, password reset,
+and email verification endpoints. Delegates to application use cases.
 
-Endpoints:
-- POST /auth/login: Authenticate user with email/password
-- POST /auth/refresh: Refresh access token using refresh token
-- POST /auth/logout: Invalidate user tokens (future implementation)
+Endpoints (GET and POST only as requested):
+- POST /auth/login: User authentication
+- POST /auth/register: User registration
+- POST /auth/forgot-password: Password reset initiation
+- POST /auth/reset-password: Password reset confirmation
+- GET /auth/verify-email: Email verification
+- POST /auth/resend-verification: Resend verification email
 
 Key Features:
-- Request/response validation with Pydantic
-- JWT token handling
 - Comprehensive error handling
-- Rate limiting for security
 - OpenAPI documentation
+- Request/response validation with Pydantic
+- Security best practices (no user enumeration)
+- Rate limiting considerations
 """
 
 import logging
-from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import BaseModel, EmailStr, Field
 
-from application.use_cases.user.authenticate_user_use_case import (
-    AuthenticateUserUseCase,
-    AuthenticateUserRequest,
-    AuthenticateUserResponse
+from application.use_cases.user.create_user_use_case import (
+    CreateUserUseCase
 )
-from application.interfaces.auth_service import (
-    IAuthService,
-    TokenValidationError,
-    TokenGenerationError
+from application.dtos.user_dtos import CreateUserRequestDTO
+from application.use_cases.user.authenticate_user_use_case import (
+    AuthenticateUserUseCase
+)
+from application.dtos.user_dtos import AuthenticateUserRequestDTO
+from application.use_cases.user.reset_password_use_case import (
+    ResetPasswordUseCase,
+    ResetPasswordRequest
+)
+from application.use_cases.user.confirm_password_reset_use_case import (
+    ConfirmPasswordResetUseCase,
+    ConfirmPasswordResetRequest
+)
+from application.use_cases.user.verify_email_use_case import (
+    VerifyEmailUseCase,
+    VerifyEmailRequest,
+    ResendVerificationEmailUseCase,
+    ResendVerificationEmailRequest
 )
 from application.exceptions.application_exceptions import (
-    AuthenticationFailedException,
-    ValidationException
+    UserNotFoundException,
+    AuthorizationException,
+    ValidationException,
+    UserAlreadyExistsException
+)
+
+# Import dependency providers from composition root
+from composition_root import (
+    get_create_user_use_case,
+    get_authenticate_user_use_case,
+    get_reset_password_use_case,
+    get_confirm_password_reset_use_case,
+    get_verify_email_use_case,
+    get_resend_verification_email_use_case
 )
 
 logger = logging.getLogger(__name__)
@@ -55,232 +81,440 @@ router = APIRouter(
 
 
 # Request/Response Models
-class LoginRequest(BaseModel):
-    """Login request model."""
+class RegisterRequest(BaseModel):
+    """User registration request model."""
     email: EmailStr = Field(..., description="User email address")
-    password: str = Field(..., min_length=1, description="User password")
-    remember_me: bool = Field(False, description="Extended session duration")
+    username: str = Field(..., min_length=3, max_length=50, description="Username")
+    password: str = Field(..., min_length=8, description="Password (minimum 8 characters)")
+    first_name: str = Field(..., min_length=1, max_length=50, description="First name")
+    last_name: str = Field(..., min_length=1, max_length=50, description="Last name")
+
+
+class RegisterResponse(BaseModel):
+    """User registration response model."""
+    success: bool = Field(..., description="Registration success status")
+    user_id: int = Field(..., description="Created user ID")
+    message: str = Field(..., description="Success message")
+
+
+class LoginRequest(BaseModel):
+    """User login request model."""
+    email: EmailStr = Field(..., description="User email address")
+    password: str = Field(..., description="User password")
+    remember_me: bool = Field(False, description="Remember login session")
 
 
 class LoginResponse(BaseModel):
-    """Login response model."""
+    """User login response model."""
+    success: bool = Field(..., description="Login success status")
     access_token: str = Field(..., description="JWT access token")
-    refresh_token: str = Field(..., description="JWT refresh token")
-    token_type: str = Field("bearer", description="Token type")
-    expires_at: Optional[datetime] = Field(None, description="Token expiration time")
-    user_id: str = Field(..., description="User identifier")
-    message: str = Field(..., description="Response message")
+    refresh_token: Optional[str] = Field(None, description="JWT refresh token")
+    expires_at: str = Field(..., description="Token expiration timestamp")
+    user_id: int = Field(..., description="Authenticated user ID")
 
 
-class RefreshTokenRequest(BaseModel):
-    """Refresh token request model."""
-    refresh_token: str = Field(..., description="Valid refresh token")
+class ForgotPasswordRequest(BaseModel):
+    """Forgot password request model."""
+    email: EmailStr = Field(..., description="User email address")
 
 
-class RefreshTokenResponse(BaseModel):
-    """Refresh token response model."""
-    access_token: str = Field(..., description="New JWT access token")
-    token_type: str = Field("bearer", description="Token type")
-    expires_at: Optional[datetime] = Field(None, description="Token expiration time")
+class ResetPasswordRequest(BaseModel):
+    """Reset password request model."""
+    reset_token: str = Field(..., description="Password reset token")
+    new_password: str = Field(..., min_length=8, description="New password (minimum 8 characters)")
+    confirm_password: str = Field(..., description="Confirm new password")
 
 
-class LogoutRequest(BaseModel):
-    """Logout request model."""
-    refresh_token: Optional[str] = Field(None, description="Refresh token to invalidate")
+class ResendVerificationRequest(BaseModel):
+    """Resend verification email request model."""
+    email: EmailStr = Field(..., description="User email address")
 
 
-# Import dependency providers from composition root
-from ...composition_root import (
-    get_authenticate_user_use_case as get_auth_use_case,
-    get_auth_service as get_auth_svc
+@router.post(
+    "/register",
+    response_model=RegisterResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Register new user account",
+    description="Create a new user account with email verification",
+    responses={
+        201: {"description": "User registered successfully"},
+        400: {"description": "Validation error"},
+        409: {"description": "Email or username already exists"}
+    }
 )
+async def register(
+    request: RegisterRequest,
+    create_user_use_case: CreateUserUseCase = Depends(get_create_user_use_case)
+) -> RegisterResponse:
+    """
+    Register a new user account.
+    
+    Business Logic:
+    - Validates user input data
+    - Checks email and username uniqueness
+    - Creates new user account with secure password hashing
+    - Sends email verification link
+    - Returns registration confirmation
+    
+    Args:
+        request: User registration data
+        create_user_use_case: Injected create user use case
+        
+    Returns:
+        User registration response with user ID
+        
+    Raises:
+        HTTPException: If validation fails or user already exists
+    """
+    try:
+        # Create user creation request
+        create_request = CreateUserRequestDTO(
+            email=request.email,
+            username=request.username,
+            password=request.password,
+            first_name=request.first_name,
+            last_name=request.last_name
+        )
+        
+        # Execute create user use case
+        response = await create_user_use_case.execute(create_request)
+        
+        return RegisterResponse(
+            success=True,
+            user_id=response.user_id,
+            message=response.message
+        )
+        
+    except UserAlreadyExistsException as e:
+        logger.warning(f"Registration failed - user exists: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e)
+        )
+    except ValidationException as e:
+        logger.warning(f"Registration validation error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(f"Unexpected registration error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to register user"
+        )
 
 
 @router.post(
     "/login",
     response_model=LoginResponse,
     status_code=status.HTTP_200_OK,
-    summary="Authenticate user",
-    description="Login with email and password to receive JWT tokens",
+    summary="User authentication",
+    description="Authenticate user and return access tokens",
     responses={
-        200: {"description": "Login successful, tokens returned"},
-        400: {"description": "Invalid input data"},
+        200: {"description": "Authentication successful"},
         401: {"description": "Invalid credentials"},
-        429: {"description": "Too many login attempts"}
+        400: {"description": "Validation error"}
     }
 )
 async def login(
     request: LoginRequest,
-    authenticate_use_case: AuthenticateUserUseCase = Depends(get_auth_use_case)
+    authenticate_user_use_case: AuthenticateUserUseCase = Depends(get_authenticate_user_use_case)
 ) -> LoginResponse:
     """
-    Authenticate user with email and password.
+    Authenticate user and return access tokens.
     
     Business Logic:
-    - Validates email/password credentials
-    - Checks account status (active, verified)
+    - Validates user credentials
     - Generates JWT access and refresh tokens
     - Updates last login timestamp
-    - Returns tokens and user information
+    - Returns authentication tokens
     
     Args:
-        request: Login credentials
-        authenticate_use_case: Injected authentication use case
+        request: User login data
+        authenticate_user_use_case: Injected authenticate user use case
         
     Returns:
-        Login response with JWT tokens
+        Authentication response with tokens
         
     Raises:
-        HTTPException: If authentication fails or validation errors
+        HTTPException: If authentication fails
     """
     try:
-        # Convert HTTP request to application request
-        auth_request = AuthenticateUserRequest(
+        # Create authentication request
+        auth_request = AuthenticateUserRequestDTO(
             email=request.email,
             password=request.password,
             remember_me=request.remember_me
         )
         
         # Execute authentication use case
-        auth_response = await authenticate_use_case.execute(auth_request)
+        response = await authenticate_user_use_case.execute(auth_request)
         
-        if not auth_response.success:
+        if not response.success:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=auth_response.message or "Authentication failed"
+                detail="Invalid email or password"
             )
         
-        # Convert application response to HTTP response
         return LoginResponse(
-            access_token=auth_response.access_token,
-            refresh_token=auth_response.refresh_token,
-            token_type="bearer",
-            expires_at=auth_response.expires_at,
-            user_id=auth_response.user_id,
-            message=auth_response.message or "Login successful"
+            success=response.success,
+            access_token=response.access_token,
+            refresh_token=response.refresh_token,
+            expires_at=response.expires_at.isoformat(),
+            user_id=response.user_id
         )
         
-    except AuthenticationFailedException as e:
-        logger.warning(f"Authentication failed: {e.message}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=e.message
-        )
     except ValidationException as e:
-        logger.warning(f"Login validation error: {e.message}")
+        logger.warning(f"Login validation error: {e}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=e.message
+            detail=str(e)
         )
     except Exception as e:
         logger.error(f"Unexpected login error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Login failed due to internal error"
+            detail="Failed to authenticate user"
         )
 
 
 @router.post(
-    "/refresh",
-    response_model=RefreshTokenResponse,
+    "/forgot-password",
     status_code=status.HTTP_200_OK,
-    summary="Refresh access token",
-    description="Get a new access token using a valid refresh token",
+    summary="Request password reset",
+    description="Request password reset email for account recovery",
     responses={
-        200: {"description": "Token refreshed successfully"},
-        401: {"description": "Invalid or expired refresh token"},
-        429: {"description": "Too many refresh attempts"}
+        200: {"description": "Password reset email sent (if account exists)"},
+        400: {"description": "Validation error"}
     }
 )
-async def refresh_token(
-    request: RefreshTokenRequest,
-    auth_service: IAuthService = Depends(get_auth_svc)
-) -> RefreshTokenResponse:
+async def forgot_password(
+    request: ForgotPasswordRequest,
+    reset_password_use_case: ResetPasswordUseCase = Depends(get_reset_password_use_case)
+) -> dict:
     """
-    Refresh access token using a valid refresh token.
+    Request password reset email.
     
     Business Logic:
-    - Validates refresh token signature and expiration
-    - Extracts user information from refresh token
-    - Generates new access token with current user data
-    - Returns new access token
+    - Validates email format
+    - Generates secure reset token if user exists
+    - Sends password reset email
+    - Returns consistent response (no user enumeration)
     
     Args:
-        request: Refresh token request
-        auth_service: Injected auth service
+        request: Forgot password request data
+        reset_password_use_case: Injected reset password use case
         
     Returns:
-        New access token response
-        
-    Raises:
-        HTTPException: If refresh token is invalid or expired
+        Password reset request confirmation
     """
     try:
-        # Generate new access token from refresh token
-        new_access_token = auth_service.refresh_access_token(request.refresh_token)
+        # Create reset password request
+        reset_request = ResetPasswordRequest(email=request.email)
         
-        # Get expiration time of new token
-        expires_at = auth_service.get_token_expiration(new_access_token)
+        # Execute reset password use case
+        response = await reset_password_use_case.execute(reset_request)
         
-        return RefreshTokenResponse(
-            access_token=new_access_token,
-            token_type="bearer",
-            expires_at=expires_at
-        )
+        return {
+            "success": response.success,
+            "message": response.message
+        }
         
-    except TokenValidationError as e:
-        logger.warning(f"Token refresh failed: {e}")
+    except ValidationException as e:
+        logger.warning(f"Forgot password validation error: {e}")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired refresh token"
-        )
-    except TokenGenerationError as e:
-        logger.error(f"Token generation error during refresh: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to generate new access token"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
         )
     except Exception as e:
-        logger.error(f"Unexpected refresh error: {e}")
+        logger.error(f"Unexpected forgot password error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Token refresh failed due to internal error"
+            detail="Failed to process password reset request"
         )
 
 
 @router.post(
-    "/logout",
+    "/reset-password",
     status_code=status.HTTP_200_OK,
-    summary="Logout user",
-    description="Invalidate user tokens (placeholder for future token blacklisting)",
+    summary="Confirm password reset",
+    description="Reset password using verification token",
     responses={
-        200: {"description": "Logout successful"},
-        400: {"description": "Invalid request"}
+        200: {"description": "Password reset successfully"},
+        400: {"description": "Invalid token or validation error"}
     }
 )
-async def logout(request: LogoutRequest) -> dict:
+async def reset_password(
+    request: ResetPasswordRequest,
+    confirm_password_reset_use_case: ConfirmPasswordResetUseCase = Depends(get_confirm_password_reset_use_case)
+) -> dict:
     """
-    Logout user by invalidating tokens.
+    Confirm password reset with new password.
     
-    Note: This is a placeholder implementation. In a production system,
-    you would typically:
-    - Add refresh tokens to a blacklist/revocation list
-    - Clear any server-side session data
-    - Log the logout event for security auditing
+    Business Logic:
+    - Validates reset token and expiration
+    - Validates new password requirements
+    - Updates user password with secure hashing
+    - Invalidates reset token
+    - Returns reset confirmation
     
     Args:
-        request: Logout request with optional refresh token
+        request: Password reset confirmation data
+        confirm_password_reset_use_case: Injected confirm password reset use case
         
     Returns:
-        Logout confirmation message
+        Password reset confirmation
+        
+    Raises:
+        HTTPException: If token is invalid or validation fails
     """
-    # Placeholder implementation
-    # In a real system, you would blacklist the refresh token
-    
-    logger.info("User logout requested")
-    
-    return {
-        "message": "Logout successful",
-        "details": "Tokens have been invalidated"
-    }
+    try:
+        # Create confirm password reset request
+        confirm_request = ConfirmPasswordResetRequest(
+            reset_token=request.reset_token,
+            new_password=request.new_password,
+            confirm_password=request.confirm_password
+        )
+        
+        # Execute confirm password reset use case
+        response = await confirm_password_reset_use_case.execute(confirm_request)
+        
+        return {
+            "success": response.success,
+            "message": response.message
+        }
+        
+    except ValidationException as e:
+        logger.warning(f"Password reset confirmation validation error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(f"Unexpected password reset confirmation error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to reset password"
+        )
 
+
+@router.get(
+    "/verify-email",
+    status_code=status.HTTP_200_OK,
+    summary="Verify email address",
+    description="Verify user email address using verification token",
+    responses={
+        200: {"description": "Email verified successfully"},
+        400: {"description": "Invalid token or validation error"}
+    }
+)
+async def verify_email(
+    user_id: int = Query(..., description="User ID"),
+    token: str = Query(..., description="Email verification token"),
+    verify_email_use_case: VerifyEmailUseCase = Depends(get_verify_email_use_case)
+) -> dict:
+    """
+    Verify user email address.
+    
+    Business Logic:
+    - Validates verification token
+    - Marks user email as verified
+    - Clears verification token
+    - Returns verification confirmation
+    
+    Args:
+        user_id: User ID from verification link
+        token: Email verification token
+        verify_email_use_case: Injected verify email use case
+        
+    Returns:
+        Email verification confirmation
+        
+    Raises:
+        HTTPException: If token is invalid or validation fails
+    """
+    try:
+        # Create verify email request
+        verify_request = VerifyEmailRequest(
+            user_id=user_id,
+            verification_token=token
+        )
+        
+        # Execute verify email use case
+        response = await verify_email_use_case.execute(verify_request)
+        
+        return {
+            "success": response.success,
+            "message": response.message,
+            "already_verified": response.already_verified
+        }
+        
+    except (ValidationException, UserNotFoundException) as e:
+        logger.warning(f"Email verification validation error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(f"Unexpected email verification error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to verify email"
+        )
+
+
+@router.post(
+    "/resend-verification",
+    status_code=status.HTTP_200_OK,
+    summary="Resend verification email",
+    description="Resend email verification link to user",
+    responses={
+        200: {"description": "Verification email sent (if account exists)"},
+        400: {"description": "Validation error"}
+    }
+)
+async def resend_verification(
+    request: ResendVerificationRequest,
+    resend_verification_use_case: ResendVerificationEmailUseCase = Depends(get_resend_verification_email_use_case)
+) -> dict:
+    """
+    Resend email verification link.
+    
+    Business Logic:
+    - Validates email format
+    - Generates new verification token if user exists and is unverified
+    - Sends verification email
+    - Returns consistent response (no user enumeration)
+    
+    Args:
+        request: Resend verification request data
+        resend_verification_use_case: Injected resend verification use case
+        
+    Returns:
+        Verification email sent confirmation
+    """
+    try:
+        # Create resend verification request
+        resend_request = ResendVerificationEmailRequest(email=request.email)
+        
+        # Execute resend verification use case
+        response = await resend_verification_use_case.execute(resend_request)
+        
+        return {
+            "success": response.success,
+            "message": response.message
+        }
+        
+    except ValidationException as e:
+        logger.warning(f"Resend verification validation error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(f"Unexpected resend verification error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to resend verification email"
+        )

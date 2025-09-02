@@ -1,6 +1,6 @@
-# ChatSphere Analytics & Monitoring Strategy
+# KyroChat Analytics & Monitoring Strategy
 
-This document outlines our comprehensive approach to analytics and monitoring for the ChatSphere platform, ensuring optimal performance, reliability, and user experience.
+This document outlines our comprehensive approach to analytics and monitoring for the KyroChat platform, ensuring optimal performance, reliability, and user experience.
 
 ## Monitoring Infrastructure
 
@@ -11,11 +11,11 @@ This document outlines our comprehensive approach to analytics and monitoring fo
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: chatsphere-metrics
+  name: kyrochat-metrics
 spec:
   selector:
     matchLabels:
-      app: chatsphere
+      app: kyrochat
   endpoints:
   - port: metrics
     interval: 15s
@@ -25,10 +25,10 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: chatsphere-alerts
+  name: kyrochat-alerts
 spec:
   groups:
-  - name: chatsphere
+  - name: kyrochat
     rules:
     - alert: HighLatency
       expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 2
@@ -67,7 +67,7 @@ spec:
   host elasticsearch-master
   port 9200
   logstash_format true
-  logstash_prefix chatsphere
+  logstash_prefix kyrochat
   <buffer>
     @type file
     path /var/log/fluentd-buffers/kubernetes.system.buffer
@@ -90,7 +90,7 @@ spec:
 apiVersion: jaegertracing.io/v1
 kind: Jaeger
 metadata:
-  name: chatsphere-jaeger
+  name: kyrochat-jaeger
 spec:
   strategy: production
   storage:
@@ -103,7 +103,7 @@ spec:
     annotations:
       kubernetes.io/ingress-class: nginx
     hosts:
-    - jaeger.chatsphere.com
+    - jaeger.kyrochat.com
 ```
 
 ## Analytics Pipeline
@@ -220,14 +220,14 @@ from pyspark.sql.types import *
 
 def process_events():
     spark = SparkSession.builder \
-        .appName("ChatSphere Analytics") \
+        .appName("KyroChat Analytics") \
         .getOrCreate()
     
     # Read from Kafka
     events = spark.readStream \
         .format("kafka") \
         .option("kafka.bootstrap.servers", "kafka:9092") \
-        .option("subscribe", "chatsphere-events") \
+        .option("subscribe", "kyrochat-events") \
         .load()
     
     # Parse events
@@ -549,7 +549,7 @@ route:
 receivers:
 - name: 'slack-notifications'
   slack_configs:
-  - channel: '#chatsphere-alerts'
+  - channel: '#kyrochat-alerts'
     send_resolved: true
     title: '{{ template "slack.default.title" . }}'
     text: '{{ template "slack.default.text" . }}'

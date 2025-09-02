@@ -1,7 +1,7 @@
 """
 Bot Entity - Chatbot Business Logic
 
-Pure domain entity representing a ChatSphere chatbot.
+Pure domain entity representing a KyroChat chatbot.
 Contains all business rules and behavior related to bot management.
 
 Business Rules:

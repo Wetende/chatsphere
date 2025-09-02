@@ -1,7 +1,7 @@
 # Sub-PRD: Phase 1 - Core Platform
 
 ## Overview
-This Sub-PRD outlines the core platform implementation for ChatSphere, focusing on user authentication, basic bot creation, and direct AI integration without frameworks.
+This Sub-PRD outlines the core platform implementation for KyroChat, focusing on user authentication, basic bot creation, and direct AI integration without frameworks.
 
 ## User Stories
 - **As a new user**, I want to register for an account so that I can create and manage my own chatbots

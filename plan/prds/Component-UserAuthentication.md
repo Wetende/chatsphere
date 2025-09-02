@@ -1,7 +1,7 @@
 # Sub-PRD: User Authentication System
 
 ## Overview
-This Sub-PRD outlines the user authentication and authorization system for ChatSphere, implementing JWT-based security with FastAPI dependencies.
+This Sub-PRD outlines the user authentication and authorization system for KyroChat, implementing JWT-based security with FastAPI dependencies.
 
 ## User Stories
 - **As a new user**, I want to register with email and password so that I can create an account

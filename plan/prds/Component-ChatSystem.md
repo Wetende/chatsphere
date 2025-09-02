@@ -1,7 +1,7 @@
 # Sub-PRD: Real-time Chat System
 
 ## Overview
-This Sub-PRD outlines the real-time chat system for ChatSphere, implementing WebSocket connections for streaming conversations with bots using FastAPI WebSocket support.
+This Sub-PRD outlines the real-time chat system for KyroChat, implementing WebSocket connections for streaming conversations with bots using FastAPI WebSocket support.
 
 ## User Stories
 - **As a user**, I want to chat with my bot in real-time so that the experience feels natural

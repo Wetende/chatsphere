@@ -7,12 +7,10 @@ Provides base functionality for all database models including:
 - Common SQLAlchemy configurations
 """
 
-import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
-from sqlalchemy import String, DateTime, func
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Integer, DateTime, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -26,17 +24,17 @@ class BaseModel(Base):
     Abstract base model with common fields.
     
     Provides:
-    - UUID primary key
+    - Integer primary key with auto-increment
     - Audit timestamps (created_at, updated_at)
     - Common functionality
     """
     __abstract__ = True
     
-    # Primary key
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+    # Primary key - auto-incrementing integer
+    id: Mapped[int] = mapped_column(
+        Integer,
         primary_key=True,
-        default=uuid.uuid4,
+        autoincrement=True,
         nullable=False
     )
     

@@ -1,6 +1,6 @@
-# ChatSphere Backend
+# KyroChat Backend
 
-A high-performance FastAPI backend for the ChatSphere AI-powered chatbot platform, built with **Onion Architecture** principles for maximum testability, maintainability, and separation of concerns.
+A high-performance FastAPI backend for the KyroChat AI-powered chatbot platform, built with **Onion Architecture** principles for maximum testability, maintainability, and separation of concerns.
 
 ## 🏗️ Onion Architecture Overview
 
@@ -164,7 +164,7 @@ pytest domain/tests/test_entities.py
 
 ### Production Environment Variables
 ```env
-DATABASE_URL=postgresql://user:password@localhost/chatsphere
+DATABASE_URL=postgresql://user:password@localhost/kyrochat
 SECRET_KEY=your-secret-key
 GOOGLE_API_KEY=your-google-api-key
 PINECONE_API_KEY=your-pinecone-api-key
@@ -174,10 +174,10 @@ ENVIRONMENT=production
 ### Docker Deployment
 ```bash
 # Build image
-docker build -t chatsphere-backend .
+docker build -t kyrochat-backend .
 
 # Run container
-docker run -p 8000:8000 chatsphere-backend
+docker run -p 8000:8000 kyrochat-backend
 ```
 
 ## 🔧 Configuration

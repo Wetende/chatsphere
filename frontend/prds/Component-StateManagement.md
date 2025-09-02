@@ -1,7 +1,7 @@
 # Sub-PRD: State Management and API Integration
 
 ## Overview
-This Sub-PRD outlines the state management architecture and API integration for ChatSphere frontend using Redux Toolkit with RTK Query for efficient data management.
+This Sub-PRD outlines the state management architecture and API integration for KyroChat frontend using Redux Toolkit with RTK Query for efficient data management.
 
 ## User Stories
 - **As a developer**, I want predictable state management so that application state is maintainable

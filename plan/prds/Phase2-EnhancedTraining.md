@@ -1,7 +1,7 @@
 # Sub-PRD: Phase 2 - Enhanced Training and Customization
 
 ## Overview
-This Sub-PRD outlines enhanced training capabilities for ChatSphere, expanding data sources, improving customization, and adding basic analytics.
+This Sub-PRD outlines enhanced training capabilities for KyroChat, expanding data sources, improving customization, and adding basic analytics.
 
 ## User Stories
 - **As a user**, I want to upload PDF documents so that my bot can learn from complex formatted content

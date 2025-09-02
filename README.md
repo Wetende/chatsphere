@@ -1,4 +1,4 @@
-# ChatSphere
+# KyroChat
 
 A comprehensive AI-powered chatbot platform that enables users to create, deploy, and manage intelligent chatbots without writing code.
 

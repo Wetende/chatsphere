@@ -1,7 +1,7 @@
 # Sub-PRD: Monitoring, Analytics, and Observability
 
 ## Overview
-This Sub-PRD outlines the comprehensive monitoring, analytics, and observability framework for ChatSphere, providing insights into system performance, user behavior, and business metrics.
+This Sub-PRD outlines the comprehensive monitoring, analytics, and observability framework for KyroChat, providing insights into system performance, user behavior, and business metrics.
 
 ## User Stories
 - **As a system administrator**, I want real-time monitoring so that I can detect issues immediately

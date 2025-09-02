@@ -1,7 +1,7 @@
 """
 User Entity - Core User Business Logic
 
-Pure domain entity representing a ChatSphere user.
+Pure domain entity representing a KyroChat user.
 Contains all business rules and behavior related to user management.
 
 Business Rules:
@@ -76,7 +76,17 @@ class User:
         last_name: str
     ) -> 'User':
         """Factory method for creating new users with business rules."""
-        pass  # Implementation would go here
+        return cls(
+            id=UserId(0),  # New user starts with ID 0, will get auto-assigned
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            is_active=True,
+            is_verified=False,
+            subscription_status="free",
+            created_at=datetime.now()
+        )
     
     def verify_email(self) -> None:
         """Mark user as verified following business rules."""

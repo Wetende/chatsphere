@@ -1,10 +1,10 @@
-# ChatSphere Frontend Implementation
+# KyroChat Frontend Implementation
 
-This document outlines the frontend implementation strategy for the ChatSphere platform, with design inspiration from BrightData's clean, modern, and functional UI.
+This document outlines the frontend implementation strategy for the KyroChat platform, with design inspiration from BrightData's clean, modern, and functional UI.
 
 ## Design Philosophy
 
-The ChatSphere frontend will embody the following design principles:
+The KyroChat frontend will embody the following design principles:
 
 1. **Clean and Modern**: Minimalist design with ample whitespace
 2. **Intuitive Navigation**: Clear hierarchy and logical flow
@@ -305,9 +305,9 @@ The embedded chat widget will be implemented as a standalone, self-contained Jav
 (function(w, d, s, o) {
   const j = d.createElement(s);
   j.async = true;
-  j.src = 'https://widget.chatsphere.ai/js/chatsphere.min.js';
+  j.src = 'https://widget.kyrochat.ai/js/kyrochat.min.js';
   j.onload = function() {
-    w.ChatSphere.init({
+    w.KyroChat.init({
       botId: o.botId,
       theme: o.theme || 'light',
       position: o.position || 'bottom-right',

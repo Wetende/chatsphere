@@ -1,7 +1,7 @@
 # Sub-PRD: Direct AI Integration System (Onion Architecture)
 
 ## Overview
-This Sub-PRD outlines the direct AI integration system for ChatSphere using onion architecture principles, implementing Google Gemini and Pinecone API integration without frameworks, following agentic patterns with clean separation of concerns.
+This Sub-PRD outlines the direct AI integration system for KyroChat using onion architecture principles, implementing Google Gemini and Pinecone API integration without frameworks, following agentic patterns with clean separation of concerns.
 
 ## User Stories
 - **As a user**, I want my bot to generate intelligent responses so that it can help visitors effectively

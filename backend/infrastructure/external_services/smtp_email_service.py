@@ -184,7 +184,7 @@ class SmtpEmailService(IEmailService):
             to_email=to_email,
             template_name="welcome",
             template_data=template_data,
-            subject="Welcome to ChatSphere!"
+            subject="Welcome to KyroChat!"
         )
 
     async def send_password_reset_email(self, to_email: str, reset_token: str) -> bool:

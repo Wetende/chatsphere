@@ -1,7 +1,7 @@
 # Sub-PRD: Frontend Phase 4 - Polish and Optimization
 
 ## Overview
-This Sub-PRD outlines the final polish and optimization phase for ChatSphere frontend, focusing on performance, accessibility, animations, and production readiness.
+This Sub-PRD outlines the final polish and optimization phase for KyroChat frontend, focusing on performance, accessibility, animations, and production readiness.
 
 ## User Stories
 - **As a user**, I want fast page loading so that I have a smooth experience

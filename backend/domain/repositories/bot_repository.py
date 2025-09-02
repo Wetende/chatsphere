@@ -22,11 +22,11 @@ class IBotRepository(ABC):
     """Interface for `Bot` persistence operations."""
 
     @abstractmethod
-    async def get_by_id(self, bot_id: str) -> Optional[Bot]:
+    async def get_by_id(self, bot_id: int) -> Optional[Bot]:
         """Return a `Bot` by its identifier, or None if not found."""
 
     @abstractmethod
-    async def get_by_owner(self, owner_id: str, limit: int = 50, offset: int = 0) -> Sequence[Bot]:
+    async def get_by_owner(self, owner_id: int, limit: int = 50, offset: int = 0) -> Sequence[Bot]:
         """Return bots owned by a specific user, with pagination."""
 
     @abstractmethod
@@ -38,7 +38,7 @@ class IBotRepository(ABC):
         """Persist changes to an existing `Bot` and return it."""
 
     @abstractmethod
-    async def delete(self, bot_id: str) -> None:
+    async def delete(self, bot_id: int) -> None:
         """Delete a `Bot` by id. No-op if not found."""
 
 

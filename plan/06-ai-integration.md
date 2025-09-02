@@ -1,6 +1,6 @@
-# ChatSphere AI Integration
+# KyroChat AI Integration
 
-This document outlines the AI integration strategy for ChatSphere, following modern agentic development practices inspired by Claude Code best practices. We build direct AI integrations without frameworks for maximum control and performance.
+This document outlines the AI integration strategy for KyroChat, following modern agentic development practices inspired by Claude Code best practices. We build direct AI integrations without frameworks for maximum control and performance.
 
 ## Technology Stack
 

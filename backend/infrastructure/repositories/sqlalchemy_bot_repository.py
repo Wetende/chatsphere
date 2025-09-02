@@ -18,10 +18,10 @@ class SqlAlchemyBotRepository(IBotRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
     
-    async def get_by_id(self, bot_id: str) -> Optional[Bot]:
+    async def get_by_id(self, bot_id: int) -> Optional[Bot]:
         return None
     
-    async def get_by_owner(self, owner_id: str, limit: int = 50, offset: int = 0) -> Sequence[Bot]:
+    async def get_by_owner(self, owner_id: int, limit: int = 50, offset: int = 0) -> Sequence[Bot]:
         return []
     
     async def add(self, bot: Bot) -> Bot:
@@ -30,7 +30,7 @@ class SqlAlchemyBotRepository(IBotRepository):
     async def update(self, bot: Bot) -> Bot:
         return bot
     
-    async def delete(self, bot_id: str) -> None:
+    async def delete(self, bot_id: int) -> None:
         pass
 
 

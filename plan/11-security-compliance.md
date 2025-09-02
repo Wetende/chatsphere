@@ -1,6 +1,6 @@
-# ChatSphere Security & Compliance Strategy
+# KyroChat Security & Compliance Strategy
 
-This document outlines our comprehensive approach to security and compliance for the ChatSphere platform, ensuring data protection, privacy, and regulatory compliance.
+This document outlines our comprehensive approach to security and compliance for the KyroChat platform, ensuring data protection, privacy, and regulatory compliance.
 
 ## Security Architecture
 
@@ -179,7 +179,7 @@ class DataEncryption:
         self.kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
-            salt=b'chatsphere_salt',
+            salt=b'kyrochat_salt',
             iterations=100000
         )
         self.key = base64.urlsafe_b64encode(self.kdf.derive(self.master_key))

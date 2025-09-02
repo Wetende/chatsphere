@@ -1,7 +1,7 @@
 # Sub-PRD: Dashboard and Analytics Interface
 
 ## Overview
-This Sub-PRD outlines the dashboard and analytics interface for ChatSphere frontend, providing users with comprehensive insights into their chatbot performance and usage metrics.
+This Sub-PRD outlines the dashboard and analytics interface for KyroChat frontend, providing users with comprehensive insights into their chatbot performance and usage metrics.
 
 ## User Stories
 - **As a user**, I want a dashboard overview so that I can quickly see my bot's status and performance

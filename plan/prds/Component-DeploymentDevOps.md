@@ -1,7 +1,7 @@
 # Sub-PRD: Deployment and DevOps Infrastructure
 
 ## Overview
-This Sub-PRD outlines the deployment and DevOps infrastructure for ChatSphere, including production deployment, monitoring, scaling, and continuous integration without Docker for local development.
+This Sub-PRD outlines the deployment and DevOps infrastructure for KyroChat, including production deployment, monitoring, scaling, and continuous integration without Docker for local development.
 
 ## User Stories
 - **As a DevOps engineer**, I want automated deployment pipelines so that releases are consistent and reliable

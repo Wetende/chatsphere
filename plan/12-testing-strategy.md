@@ -1,6 +1,6 @@
-# ChatSphere Testing Strategy
+# KyroChat Testing Strategy
 
-This document outlines our comprehensive approach to testing and quality assurance for the ChatSphere platform.
+This document outlines our comprehensive approach to testing and quality assurance for the KyroChat platform.
 
 ## Testing Framework
 
@@ -396,7 +396,7 @@ class TestSearchPerformance:
 
 ```yaml
 # .github/workflows/test.yml
-name: ChatSphere Tests
+name: KyroChat Tests
 
 on:
   push:
@@ -414,7 +414,7 @@ jobs:
         env:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
-          POSTGRES_DB: chatsphere_test
+          POSTGRES_DB: kyrochat_test
         ports:
           - 5432:5432
         options: >-

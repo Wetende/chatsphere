@@ -1,7 +1,7 @@
 # Sub-PRD: Phase 4 - Polish and Launch Preparation
 
 ## Overview
-This Sub-PRD outlines the final polish and launch preparation for ChatSphere, focusing on testing, optimization, documentation, and production readiness.
+This Sub-PRD outlines the final polish and launch preparation for KyroChat, focusing on testing, optimization, documentation, and production readiness.
 
 ## User Stories
 - **As a user**, I want a fast and responsive platform so that I have a smooth experience

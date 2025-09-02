@@ -112,7 +112,7 @@ class CreateUserUseCase:
             
             # Return response DTO
             return CreateUserResponseDTO(
-                user_id=str(saved_user.id),
+                user_id=saved_user.id.value,
                 email=str(saved_user.email),
                 username=str(saved_user.username),
                 is_verified=saved_user.is_verified,

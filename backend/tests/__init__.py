@@ -1,12 +1,12 @@
 """
-Integration Tests for ChatSphere Backend
+Integration Tests for KyroChat Backend
 
 Comprehensive test suite for the onion architecture implementation.
 Tests cover all layers and integration points.
 
 Test Categories:
 - Unit tests for domain logic
-- Integration tests for repositories  
+- Integration tests for repositories
 - End-to-end tests for use cases
 - API tests for presentation layer
 - Performance and load tests

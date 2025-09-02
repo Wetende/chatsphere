@@ -23,11 +23,11 @@ class IConversationRepository(ABC):
     """Interface for `Conversation` persistence operations."""
 
     @abstractmethod
-    async def get_by_id(self, conversation_id: str) -> Optional[Conversation]:
+    async def get_by_id(self, conversation_id: int) -> Optional[Conversation]:
         """Return a conversation by id, or None if not found."""
 
     @abstractmethod
-    async def list_by_user(self, user_id: str, limit: int = 50, offset: int = 0) -> Sequence[Conversation]:
+    async def list_by_user(self, user_id: int, limit: int = 50, offset: int = 0) -> Sequence[Conversation]:
         """Return conversations for a user, with pagination."""
 
     @abstractmethod
@@ -39,7 +39,7 @@ class IConversationRepository(ABC):
         """Persist changes to a conversation and return it."""
 
     @abstractmethod
-    async def delete(self, conversation_id: str) -> None:
+    async def delete(self, conversation_id: int) -> None:
         """Delete a conversation by id. No-op if not found."""
 
 

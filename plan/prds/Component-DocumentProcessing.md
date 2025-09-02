@@ -1,7 +1,7 @@
 # Sub-PRD: Document Processing Pipeline
 
 ## Overview
-This Sub-PRD outlines the document processing system for ChatSphere, handling file uploads, text extraction, chunking, and embedding generation for bot training.
+This Sub-PRD outlines the document processing system for KyroChat, handling file uploads, text extraction, chunking, and embedding generation for bot training.
 
 ## User Stories
 - **As a user**, I want to upload text files to train my bot so that it can answer questions about my content

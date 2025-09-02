@@ -1,6 +1,6 @@
-# ChatSphere Deployment Strategy
+# KyroChat Deployment Strategy
 
-This document outlines the deployment strategy for the ChatSphere platform, focusing on local development without Docker, with production deployment using traditional VPS/cloud hosting approaches.
+This document outlines the deployment strategy for the KyroChat platform, focusing on local development without Docker, with production deployment using traditional VPS/cloud hosting approaches.
 
 ## Infrastructure Architecture
 
@@ -26,7 +26,7 @@ infrastructure/
 # scripts/local/setup-dev.sh - Local Development Setup
 #!/bin/bash
 
-echo "Setting up ChatSphere local development environment..."
+echo "Setting up KyroChat local development environment..."
 
 # Create virtual environment
 python -m venv venv
@@ -43,13 +43,13 @@ npm install
 cd ..
 
 # Setup local PostgreSQL database
-createdb chatsphere_dev
-createuser chatsphere_user
+createdb kyrochat_dev
+createuser kyrochat_user
 
 # Setup environment variables
 cat << EOF > .env
 # Database
-DATABASE_URL=postgresql://chatsphere_user:password@localhost:5432/chatsphere_dev
+DATABASE_URL=postgresql://kyrochat_user:password@localhost:5432/kyrochat_dev
 
 # FastAPI
 SECRET_KEY=$(openssl rand -base64 32)
@@ -59,7 +59,7 @@ DEBUG=True
 # AI Services
 GOOGLE_AI_API_KEY=your_api_key_here
 PINECONE_API_KEY=your_pinecone_key_here
-PINECONE_INDEX_NAME=chatsphere-dev
+PINECONE_INDEX_NAME=kyrochat-dev
 
 # Redis (optional for caching)
 REDIS_URL=redis://localhost:6379/0
@@ -150,7 +150,7 @@ upstream frontend {
 
 server {
     listen 80;
-    server_name chatsphere.com;
+    server_name kyrochat.com;
 
     location / {
         proxy_pass http://frontend;
@@ -187,8 +187,8 @@ SECRET_KEY=$(openssl rand -base64 32)
 
 # Create .env file
 cat << EOF > .env
-DB_NAME=chatsphere
-DB_USER=chatsphere_user
+DB_NAME=kyrochat
+DB_USER=kyrochat_user
 DB_PASSWORD=$DB_PASSWORD
 SECRET_KEY=$SECRET_KEY
 EOF

@@ -98,13 +98,29 @@ class IEmailService(ABC):
         pass
 
     @abstractmethod
-    async def send_password_reset_email(self, to_email: str, reset_token: str) -> bool:
+    async def send_password_reset_email(self, email, reset_token: str, user_name: str) -> bool:
         """
         Send a password reset email.
 
         Args:
-            to_email: User's email address
+            email: User's email address (Email value object)
             reset_token: Password reset token
+            user_name: User's name for personalization
+
+        Returns:
+            True if email was sent successfully, False otherwise
+        """
+        pass
+
+    @abstractmethod
+    async def send_verification_email(self, email, verification_token: str, user_name: str = None) -> bool:
+        """
+        Send an email verification email.
+
+        Args:
+            email: User's email address (Email value object)
+            verification_token: Email verification token
+            user_name: User's name for personalization
 
         Returns:
             True if email was sent successfully, False otherwise

@@ -1,7 +1,7 @@
 """
 User SQLAlchemy Model
 
-Database model for users in the ChatSphere application.
+Database model for users in the KyroChat application.
 Represents the user table with all necessary fields and constraints.
 """
 

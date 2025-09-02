@@ -1,4 +1,4 @@
-# ChatSphere Backend Implementation - DEPRECATED
+# KyroChat Backend Implementation - DEPRECATED
 
 ⚠️ **DEPRECATED**: This document describes the old layered architecture approach. 
 
@@ -8,7 +8,7 @@
 
 ---
 
-This document outlines the detailed backend implementation strategy for the ChatSphere platform, focusing on creating a scalable, maintainable, and high-performance server-side architecture using FastAPI and SQLAlchemy. It also details the integration with an internal agent module for AI functionalities.
+This document outlines the detailed backend implementation strategy for the KyroChat platform, focusing on creating a scalable, maintainable, and high-performance server-side architecture using FastAPI and SQLAlchemy. It also details the integration with an internal agent module for AI functionalities.
 
 ## Technology Stack
 
@@ -301,7 +301,7 @@ from sqlalchemy.orm import declarative_base
 from typing import AsyncGenerator
 import os
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost/chatsphere")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost/kyrochat")
 
 # Create async engine
 engine = create_async_engine(

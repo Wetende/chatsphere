@@ -1,7 +1,7 @@
 # Sub-PRD: Embeddable Chat Widget
 
 ## Overview
-This Sub-PRD outlines the embeddable chat widget for ChatSphere, a standalone JavaScript package that can be integrated into any website for real-time chat functionality.
+This Sub-PRD outlines the embeddable chat widget for KyroChat, a standalone JavaScript package that can be integrated into any website for real-time chat functionality.
 
 ## User Stories
 - **As a website owner**, I want to embed a chat widget so that visitors can interact with my bot

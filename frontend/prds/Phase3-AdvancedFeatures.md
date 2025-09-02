@@ -1,7 +1,7 @@
 # Sub-PRD: Frontend Phase 3 - Advanced Features
 
 ## Overview
-This Sub-PRD outlines advanced frontend features for ChatSphere, including comprehensive analytics, advanced widget customization, and integration management interfaces.
+This Sub-PRD outlines advanced frontend features for KyroChat, including comprehensive analytics, advanced widget customization, and integration management interfaces.
 
 ## User Stories
 - **As a user**, I want detailed analytics about my bot's performance so that I can optimize its effectiveness

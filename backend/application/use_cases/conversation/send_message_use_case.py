@@ -35,8 +35,7 @@ from application.interfaces.ai_service import IAIService
 from application.interfaces.unit_of_work import IUnitOfWork
 from application.dtos.conversation_dtos import (
     SendMessageRequestDTO, 
-    SendMessageResponseDTO,
-    MessageRole
+    SendMessageResponseDTO
 )
 from application.exceptions.application_exceptions import (
     ValidationException,

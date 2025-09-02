@@ -128,7 +128,7 @@ class Settings(BaseSettings):
     # Core application settings
     debug: bool = Field(False, env="DEBUG")
     environment: str = Field("development", env="ENVIRONMENT")
-    service_name: str = Field("chatsphere-api", env="SERVICE_NAME")
+    service_name: str = Field("kyrochat-api", env="SERVICE_NAME")
     service_version: str = Field("1.0.0", env="SERVICE_VERSION")
 
     # CORS settings

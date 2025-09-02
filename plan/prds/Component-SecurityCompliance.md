@@ -1,7 +1,7 @@
 # Sub-PRD: Security and Compliance Framework
 
 ## Overview
-This Sub-PRD outlines the comprehensive security and compliance framework for ChatSphere, including authentication, authorization, data protection, and security monitoring following industry best practices.
+This Sub-PRD outlines the comprehensive security and compliance framework for KyroChat, including authentication, authorization, data protection, and security monitoring following industry best practices.
 
 ## User Stories
 - **As a user**, I want secure authentication so that my account and data are protected

@@ -1,7 +1,7 @@
 # Sub-PRD: Phase 3 - Advanced Features and Integrations
 
 ## Overview
-This Sub-PRD outlines advanced features for ChatSphere, including webhooks, comprehensive analytics, multi-language support, and performance optimizations.
+This Sub-PRD outlines advanced features for KyroChat, including webhooks, comprehensive analytics, multi-language support, and performance optimizations.
 
 ## User Stories
 - **As a developer**, I want to integrate webhooks so that my systems can respond to bot events automatically

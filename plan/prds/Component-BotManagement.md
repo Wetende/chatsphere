@@ -1,7 +1,7 @@
 # Sub-PRD: Bot Management System
 
 ## Overview
-This Sub-PRD outlines the bot management system for ChatSphere, providing CRUD operations for chatbots with async FastAPI endpoints and proper user authorization.
+This Sub-PRD outlines the bot management system for KyroChat, providing CRUD operations for chatbots with async FastAPI endpoints and proper user authorization.
 
 ## User Stories
 - **As a user**, I want to create a new chatbot so that I can customize it for my specific needs

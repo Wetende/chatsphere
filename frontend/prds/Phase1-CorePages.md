@@ -1,10 +1,10 @@
 # Sub-PRD: Frontend Phase 1 - Core Pages and Components
 
 ## Overview
-This Sub-PRD outlines the implementation of core frontend pages and base components for ChatSphere, establishing the foundation UI framework with React.js, TypeScript, and Tailwind CSS.
+This Sub-PRD outlines the implementation of core frontend pages and base components for KyroChat, establishing the foundation UI framework with React.js, TypeScript, and Tailwind CSS.
 
 ## User Stories
-- **As a new user**, I want to register for an account so that I can access the ChatSphere platform
+- **As a new user**, I want to register for an account so that I can access the KyroChat platform
 - **As a returning user**, I want to log in securely so that I can manage my chatbots
 - **As a user**, I want a clean dashboard so that I can quickly see my bot status and activities
 - **As a user**, I want consistent navigation so that I can easily move between different sections

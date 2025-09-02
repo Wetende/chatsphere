@@ -1,7 +1,7 @@
 # Sub-PRD: Design System Component Library
 
 ## Overview
-This Sub-PRD outlines the comprehensive design system and reusable component library for ChatSphere frontend, inspired by BrightData's clean and modern UI design.
+This Sub-PRD outlines the comprehensive design system and reusable component library for KyroChat frontend, inspired by BrightData's clean and modern UI design.
 
 ## User Stories
 - **As a developer**, I want consistent UI components so that development is efficient and maintainable

@@ -1,5 +1,5 @@
 """
-ChatSphere FastAPI Application - Onion Architecture Entry Point
+KyroChat FastAPI Application - Onion Architecture Entry Point
 
 Main application entry point following onion architecture principles.
 Configures the FastAPI application with proper dependency injection,
@@ -60,7 +60,7 @@ from presentation.middleware.auth_middleware import AuthMiddleware
 from presentation.middleware.error_handling_middleware import ErrorHandlingMiddleware
 
 # Infrastructure configuration
-from infrastructure.config.settings import Settings
+from infrastructure.config.settings import Settings, get_settings
 
 
 # Configure logging
@@ -82,7 +82,7 @@ async def lifespan(app: FastAPI):
     - Resource cleanup on shutdown
     - Dependency injection container setup
     """
-    logger.info("Starting ChatSphere application...")
+    logger.info("Starting KyroChat application...")
     
     try:
         # Setup composition root and dependencies
@@ -93,7 +93,7 @@ async def lifespan(app: FastAPI):
         logger.info("External services initialized")
         
         # Startup complete
-        logger.info("ChatSphere application started successfully")
+        logger.info("KyroChat application started successfully")
         yield
         
     except Exception as e:
@@ -101,7 +101,7 @@ async def lifespan(app: FastAPI):
         raise
     finally:
         # Cleanup resources
-        logger.info("Shutting down ChatSphere application...")
+        logger.info("Shutting down KyroChat application...")
         try:
             await composition_root.teardown()
             logger.info("Cleanup completed successfully")
@@ -111,7 +111,7 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI application with onion architecture
 app = FastAPI(
-    title="ChatSphere API",
+    title="KyroChat API",
     description="AI-powered chatbot platform with onion architecture",
     version="1.0.0",
     docs_url="/docs",
@@ -134,8 +134,8 @@ app.add_middleware(
 
 # Add trusted host middleware
 if settings.allowed_hosts:
-app.add_middleware(
-    TrustedHostMiddleware,
+    app.add_middleware(
+        TrustedHostMiddleware,
         allowed_hosts=settings.allowed_hosts
     )
 
@@ -146,7 +146,7 @@ app.add_middleware(RateLimitingMiddleware)
 app.add_middleware(AuthMiddleware)
 
 # Configure Prometheus metrics
-if settings.enable_metrics:
+if settings.monitoring.enable_metrics and PROMETHEUS_AVAILABLE:
     instrumentator = Instrumentator(
         should_group_status_codes=False,
         should_ignore_untemplated=True,
@@ -204,7 +204,7 @@ async def health_check():
     """
     return {
         "status": "healthy",
-        "service": "chatsphere-api",
+        "service": "kyrochat-api",
         "version": "1.0.0",
         "architecture": "onion"
     }
@@ -320,7 +320,7 @@ async def root():
         API welcome message and documentation links
     """
     return {
-        "message": "Welcome to ChatSphere API",
+        "message": "Welcome to KyroChat API",
         "version": "1.0.0",
         "architecture": "onion",
         "documentation": "/docs",
