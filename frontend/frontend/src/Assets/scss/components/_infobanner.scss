@@ -1,0 +1,48 @@
+// Info Banner
+.info-banner-style01 {
+	transition: var(--default-transition);
+	@apply px-[2rem] py-[55px] lg:py-[55px] lg:px-4;
+	.feature-box-icon {
+		position: relative;
+		margin-bottom: 20px;
+
+		i {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 1;
+			font-size: 40px;
+			background-image: linear-gradient(to right, #556fff, #556fff, #e05fc4, #f767a6, #ff798e);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+	}
+		.title {
+            @apply text-darkgray;
+ 		}
+
+		.feature-box-content {
+			@apply text-center;
+
+			h6 {
+				@apply font-medium  xs:mb-[5px];
+			}
+			p {
+				margin-bottom: 0;
+			}
+		}
+
+	.feature-box-icon {
+		@apply flex justify-center;
+		margin-bottom: 30px;
+	}
+	&:hover {
+		box-shadow: 5px 5px 20px rgb(231, 228, 228);
+		border-color: transparent;
+		transform: translate3d(0, -7px, 0);
+		opacity: 1;
+		background-color: white;
+		border-radius: 6px;
+	}
+}

@@ -53,11 +53,18 @@ class SqlAlchemyUserRepository(IUserRepository):
             User domain entity or None if not found
         """
         try:
-            # Convert value object to UUID
-            id_value = uuid.UUID(str(user_id))
+            # Our BaseModel id is integer; UserId stores ints. Accept UUID-like strings by ignoring dashes if needed.
+            # Support both numeric and UUID string in UserId.value; our DB PK is int
+            id_str = str(user_id)
+            try:
+                id_value_int = int(id_str) if id_str.isdigit() else None
+            except Exception:
+                id_value_int = None
+            if id_value_int is None:
+                return None
             
             # Query for user model
-            stmt = select(UserModel).where(UserModel.id == id_value)
+            stmt = select(UserModel).where(UserModel.id == id_value_int)
             result = await self.session.execute(stmt)
             user_model = result.scalar_one_or_none()
             
@@ -137,9 +144,14 @@ class SqlAlchemyUserRepository(IUserRepository):
             # Check if user exists
             existing_model = None
             if user.id:
-                stmt = select(UserModel).where(UserModel.id == uuid.UUID(str(user.id)))
-                result = await self.session.execute(stmt)
-                existing_model = result.scalar_one_or_none()
+                # Only support integer IDs for updates; new users have id None or "0"
+                id_str = str(user.id)
+                if id_str.isdigit() and int(id_str) > 0:
+                    stmt = select(UserModel).where(UserModel.id == int(id_str))
+                    result = await self.session.execute(stmt)
+                    existing_model = result.scalar_one_or_none()
+                else:
+                    existing_model = None
             
             if existing_model:
                 # Update existing
@@ -175,8 +187,12 @@ class SqlAlchemyUserRepository(IUserRepository):
             True if deleted, False if not found
         """
         try:
-            # Convert value object to UUID
-            id_value = uuid.UUID(str(user_id))
+            # Convert value object to integer primary key
+            try:
+                id_value = int(str(user_id))
+            except ValueError:
+                logger.error(f"Invalid integer id for delete: {user_id}")
+                return False
             
             # Query for user
             stmt = select(UserModel).where(UserModel.id == id_value)
@@ -342,7 +358,7 @@ class SqlAlchemyUserRepository(IUserRepository):
     def _model_to_domain(self, model: UserModel) -> User:
         """Convert SQLAlchemy model to domain entity."""
         return User(
-            id=UserId(str(model.id)),
+            id=UserId(model.id),
             email=Email(model.email),
             username=Username(model.username),
             password_hash=model.password_hash,
@@ -376,7 +392,7 @@ class SqlAlchemyUserRepository(IUserRepository):
         
         # Set ID if provided
         if user.id:
-            model.id = uuid.UUID(str(user.id))
+            model.id = int(str(user.id))
         
         return model
     

@@ -1,0 +1,45 @@
+h1, h2, h3, h4, h5, h6, .heading-1, .heading-2, .heading-3, .heading-4, .heading-5, .heading-6 { margin:0 0 25px 0; padding:0; letter-spacing: -0.5px; font-weight: inherit; }
+h1, .heading-1 { font-size:5rem; line-height: 5rem; }
+h2, .heading-2 { font-size:3.9rem; line-height:4.2rem; }
+h3, .heading-3 { font-size:3.4rem; line-height:3.9rem; }
+h4, .heading-4 { font-size:2.85rem; line-height:3.4rem; }
+h5, .heading-5 { font-size:2.30rem; line-height:3rem; }
+h6, .heading-6 { font-size:1.80rem; line-height:2.5rem; }
+
+@screen lg {
+    h1, h2, h3, h4, h5, h6, .heading-1, .heading-2, .heading-3, .heading-4, .heading-5, .heading-6 { margin:0 0 15px 0; }
+}
+
+.text-xl {
+    @screen md {
+        font-size: 18px;
+        line-height: 26px;
+    }
+}
+
+.text-xbig {
+    @screen xl {
+        font-size: 200px;
+        line-height: 200px;
+    }
+
+    @screen lg {
+        font-size: 170px;
+        line-height: 170px;
+    }
+
+    @screen md {
+        font-size: 130px;
+        line-height: 130px;
+    }
+
+    @screen sm {
+        font-size: 100px;
+        line-height: 100px;
+    }
+
+    @screen xs {
+        font-size: 55px;
+        line-height: 55px;
+    }
+}

@@ -1,0 +1,125 @@
+// Split swiper css
+.split-swiper {
+  .swiper-wrapper {
+    @screen md {
+      display: block;
+    }
+  }
+
+  .swiper-slide {
+    @apply flex flex-wrap overflow-hidden w-full md:flex-row-reverse;
+
+    &.swiper-slide-active {
+      .swiper-half-l {
+        opacity: 1;
+        transform: translateY(0);
+        z-index: 1;
+        min-height: 600px;
+      }
+      .swiper-half-r {
+        opacity: 1;
+        transform: translateY(0);
+        min-height: 600px;
+      }
+    }
+
+    &.swiper-slide-duplicate-active {
+      .swiper-half-l {
+        transform: translateY(0);
+      }
+      .swiper-half-r {
+        transform: translateY(0);
+      }
+    }
+
+    .swiper-half-l {
+      @apply opacity-0 relative w-1/2;
+      position: relative;
+      transition: 0.5s ease-in-out;
+      transform: translateY(100%);
+
+      @screen md {
+        opacity: 1;
+        transform: translateY(0);
+        flex: 0 0 100%;
+
+        @media screen and (orientation: landscape) {
+          min-height: 500px;
+        }
+      }
+    }
+    .swiper-half-r {
+      @apply opacity-0 relative w-1/2 md:w-full;
+      transition: 0.5s ease-in-out;
+      transform: translateY(-100%);
+
+      @screen md {
+        opacity: 1;
+        transform: translateY(0);
+        flex: 0 0 100%;
+
+        @media screen and (orientation: landscape) {
+          min-height: 500px;
+        }
+      }
+    }
+
+    @screen md {
+      height: auto !important;
+      transform: translateY(0) !important;
+      opacity: 1 !important;
+    }
+  }
+}
+
+// Split Portfolio css
+.split-swiper {
+  .swiper-pagination-bullets {
+    right: 60px !important;
+    .swiper-pagination-bullet {
+      margin: 10px 0 !important;
+      &.swiper-pagination-bullet-active {
+        @apply bg-darkgray w-[16px] h-[16px];
+      }
+    }
+  }
+}
+
+// header-hamburgermenu
+.splitportfolio-hamburgermenu {
+  ul {
+    @apply font-serif w-full font-semibold tracking-[-2px];
+
+    li {
+      @apply py-[13px];
+
+      &:hover {
+        a {
+          @apply text-[#00000099];
+        }
+      }
+
+      a {
+        @apply text-[44px] md:text-[30px] sm:text-[24px] leading-[50px] md:leading-[38px] sm:leading-[30px] relative p-0 text-darkgray inline-block;
+        transition: var(--default-transition);
+
+        &:hover {
+          text-decoration: none;
+          outline: 0;
+          outline-offset: 0;
+
+          &::before {
+            visibility: visible;
+            width: 100%;
+          }
+        }
+
+        &::before {
+          @apply bg-[#17171780] absolute w-0 h-[2px] bottom-0 left-1/2 -translate-x-1/2 invisible;
+          content: "";
+          transition: var(--default-transition);
+        }
+      }
+    }
+  }
+}

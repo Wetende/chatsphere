@@ -1,0 +1,159 @@
+//List Style 01
+.list-style-01 {
+  color: #232323;
+  li {
+    position: relative;
+    padding: 12px 25px 14px 25px;
+    z-index: 1;
+    border-radius: 4px;
+    list-style: none;
+    transition-duration: .4s;
+    
+    &:hover {
+      box-shadow: 0 0 15px rgb(0 0 0 / 8%);
+      background: white;
+      padding: 12px 25px 14px 50px;
+      i {
+        left: 25px;
+        opacity: 1;
+      }
+    }
+
+     i {
+      position: absolute;
+      top: 21px;
+      left: 0;
+      font-size: 14px;
+      opacity: .7; 
+      color: #757575;
+      transition-duration: .4s;
+     }
+  }
+}
+
+//List Style 02
+.list-style-02 {
+  li {
+    @apply flex;
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  i {
+    @apply relative leading-[30px] mr-[10px] text-[18px];
+    color: var(--base-color, #0038e3);
+  }
+}
+
+// List style 03
+.list-style-03 {
+  @apply font-medium font-serif uppercase text-darkgray text-sm;
+
+  li {
+    @apply text-darkgray p-[15px] pl-0 leading-[30px] border-b border-mediumgray items-center flex;
+
+    &:last-child {
+      border: 0px;
+    }
+
+    &:first-child {
+      @apply pt-0;
+    }
+  }
+
+  i {
+    @apply leading-[30px] mr-[10px] text-[18px];
+    color: var(--base-color, #0038e3);
+  }
+}
+
+//List Style 04
+.list-style-04 li {
+  padding: 10px 0;
+  border-bottom: 1px solid #e4e4e4;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+// List Style 05
+.list-style-05 {
+  li {
+    @apply flex items-center py-[10px] px-[20px] mb-[20px] rounded-[6px];
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-white-rgb), var(--bs-bg-opacity)) !important;
+
+    &:hover {
+      box-shadow: 0 0 20px rgb(0 0 0 / 15%);
+    }
+  }
+
+  i {
+    color: var(--base-color, #0038e3);
+    margin-right: 15px;
+  }
+
+  span {
+    @apply text-darkgray;
+  }
+}
+
+//List Style 06
+.list-style-06 {
+  @apply text-left pl-[20px] ml-[10px];
+
+  li {
+    list-style: disc;
+    margin-bottom: 10px;
+  }
+}
+
+//List Style 07
+.list-style-07 {
+  li {
+    @apply flex items-start rounded-md mb-[35px];
+  }
+  i {
+    @apply text-white text-center h-[25px] w-[25px] mr-[25px] mt-[5px] rounded-[50%] pt-[4px];
+    flex: 0 0 auto;
+    background-color: var(--base-color, #0038e3);
+
+    &::before {
+      font-size: 10px;
+    }
+  }
+
+  .list-title {
+    @apply block text-xmd font-medium mb-[5px] text-[#2f2f2f];
+  }
+
+  .list-content {
+    @apply block w-[80%] xs:w-full mb-0;
+  }
+}
+
+//List Style 08
+.list-style-08 {
+  li {
+    @apply relative inline-block w-full mb-[15px] leading-[18px];
+  }
+
+  a {
+    @apply inline-block text-left;
+    text-decoration: none;
+    color: #828282;
+    transition: var(--default-transition);
+
+    &:hover {
+      color: var(--base-color, #0038e3);
+    }
+  }
+
+  .list-number {
+    @apply text-[14px] absolute text-right top-[1px] right-0;
+  }
+}

@@ -1,0 +1,163 @@
+---
+alwaysApply: true
+description: FastAPI presentation layer patterns and HTTP best practices
+globs: *.py
+---
+
+# Presentation Layer Rules
+
+## FastAPI Router Pattern
+- Use APIRouter for modular organization
+- GET and POST methods only (per project requirements)
+- Proper HTTP status codes
+- Comprehensive error handling
+
+```python
+# ✅ GOOD - Router structure
+router = APIRouter(
+    prefix="/bots",
+    tags=["bots"],
+    responses={
+        401: {"description": "Authentication required"},
+        403: {"description": "Insufficient permissions"},
+        404: {"description": "Bot not found"},
+        500: {"description": "Internal server error"}
+    }
+)
+
+@router.post("/{bot_id}", response_model=BotResponse, status_code=status.HTTP_200_OK)
+async def upsert_bot(
+    bot_id: int,
+    payload: BotPayload,
+    current_user_id: int = Depends(get_current_user_id),
+    create_bot_use_case: CreateBotUseCase = Depends(get_create_bot_use_case)
+) -> BotResponse:
+    """Create or update a bot (bot_id=0 for create, bot_id>0 for update)"""
+    try:
+        request = CreateBotRequestDTO(
+            name=payload.name,
+            description=payload.description,
+            owner_id=current_user_id,
+            model_config=payload.model_config
+        )
+        
+        result = await create_bot_use_case.execute(request)
+        return BotResponse.from_dto(result)
+        
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except AuthorizationException as e:
+        raise HTTPException(status_code=403, detail=str(e))
+```
+
+## Request/Response Models
+- Pydantic models for serialization
+- Separate from domain entities and DTOs
+- Input validation and documentation
+
+```python
+# ✅ GOOD - Request/Response models
+class BotPayload(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    description: Optional[str] = Field(None, max_length=500)
+    model_config: Dict[str, Any] = Field(default_factory=dict)
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "Customer Support Bot",
+                "description": "Handles customer inquiries",
+                "model_config": {"temperature": 0.7}
+            }
+        }
+
+class BotResponse(BaseModel):
+    id: int
+    name: str
+    description: Optional[str]
+    owner_id: int
+    created_at: datetime
+    is_active: bool
+    
+    @classmethod
+    def from_dto(cls, dto: CreateBotResponseDTO) -> 'BotResponse':
+        return cls(
+            id=dto.id,
+            name=dto.name,
+            description=dto.description,
+            owner_id=dto.owner_id,
+            created_at=dto.created_at,
+            is_active=dto.is_active
+        )
+```
+
+## Dependency Injection
+- Use FastAPI Depends for dependency injection
+- Wire use cases through composition root
+- Authentication dependencies
+
+```python
+# ✅ GOOD - Dependency injection
+def get_current_user_id(
+    token: str = Depends(HTTPBearer()),
+    auth_service: IJWTAuthService = Depends(get_auth_service)
+) -> int:
+    try:
+        payload = auth_service.decode_token(token.credentials)
+        return payload.user_id
+    except InvalidTokenException:
+        raise HTTPException(status_code=401, detail="Invalid authentication token")
+
+def get_create_bot_use_case(
+    session: AsyncSession = Depends(get_session),
+    container: Container = Depends(get_container)
+) -> CreateBotUseCase:
+    return container.create_bot_use_case()
+```
+
+## Error Handling
+- Convert application exceptions to HTTP exceptions
+- Consistent error response format
+- Proper logging
+
+```python
+# ✅ GOOD - Error handling
+async def handle_application_exceptions(request: Request, call_next):
+    try:
+        response = await call_next(request)
+        return response
+    except ValidationException as e:
+        logger.warning(f"Validation error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+    except AuthorizationException as e:
+        logger.warning(f"Authorization error: {e}")
+        raise HTTPException(status_code=403, detail=str(e))
+    except EntityNotFoundException as e:
+        logger.info(f"Entity not found: {e}")
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
+```
+
+## OpenAPI Documentation
+- Comprehensive endpoint documentation
+- Request/response examples
+- Error response documentation
+
+```python
+@router.post(
+    "/{bot_id}",
+    response_model=BotResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Create or update bot",
+    description="Create a new bot (bot_id=0) or update existing bot (bot_id>0)",
+    responses={
+        200: {"description": "Bot created/updated successfully"},
+        400: {"description": "Validation error"},
+        401: {"description": "Authentication required"},
+        403: {"description": "Insufficient permissions"},
+        404: {"description": "Bot not found (for updates)"}
+    }
+)
+```

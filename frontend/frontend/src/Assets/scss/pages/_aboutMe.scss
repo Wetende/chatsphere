@@ -1,0 +1,99 @@
+.about-me-counter {
+    .fancy-text-box-03 {
+        .text-box-content {
+            padding: 3rem;
+
+            .text-box {
+                @screen xs {
+                    flex-direction: column;
+                }
+
+                .fancy-box-wrapper {
+                    padding-left: 35px;
+                    flex: none;
+
+                    span {
+                        line-height: 16px;
+                    }
+
+                    p {
+                        line-height: normal;
+                        @apply font-serif;
+                    }
+
+                    @screen xs {
+                        padding: 0;
+                        margin: 0;
+                        border-left: 0;
+                        text-align: center;
+                    }
+                }
+            }
+        }
+
+        .counter-style-01 {
+            .counter-numbers {
+                font-weight: 500;
+                letter-spacing: -1px;
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+.about-me-blockquote {
+    .blockquote-style-01 {
+        padding: 6rem;
+        @apply p-24 xl:p-8 md:p-20;
+
+        h6 {
+            width: 100%;
+        }
+
+        span {
+            opacity: .7;
+        }
+    }
+}
+
+.about-me-progressbar{
+.progressbar-title{
+font-size: 13px;
+line-height: 22px;
+font-weight: 500;
+}
+.progressbar-main {
+    @apply sm:pb-4;
+}
+}
+
+.about-me-page-tab{
+    span{
+    @apply xs:mb-[20px] ;
+    }
+}
+
+.about-me-icon-with-text {
+    div:first-child {
+        @apply p-14 lg:p-[0.5rem];
+    }
+}
+.about-me-portfolio-overlay{
+    .portfolio-hover{
+        i{
+    color: #ffffff;
+        }
+    }
+}
+
+.about-me-subscribe {
+    .subscribe-style-02 {
+        form {
+            button {
+                @screen xs {
+                    position: relative !important;
+                }
+            }
+        }
+    }
+}

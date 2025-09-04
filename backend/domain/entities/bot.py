@@ -69,21 +69,69 @@ class Bot:
         """Validate business invariants after initialization."""
         if self.configuration is None:
             self.configuration = {}
-        pass  # Implementation would go here
+        if not self.name or not self.name.strip():
+            raise DomainException("Bot name is required")
+        if len(self.name.strip()) < 3:
+            raise DomainException("Bot name must be at least 3 characters")
+        if not (0.0 <= float(self.temperature) <= 2.0):
+            raise DomainException("Temperature must be between 0.0 and 2.0")
+        if self.created_at is None:
+            self.created_at = datetime.utcnow()
     
     @classmethod
     def create(
         cls,
-        owner_id: UserId,
         name: str,
-        description: Optional[str] = None
+        description: Optional[str],
+        owner_id: UserId,
+        model_name: str,
+        temperature: float,
+        max_tokens: Optional[int],
+        system_prompt: Optional[str],
+        is_public: bool,
+        category: Optional[str],
+        tags: Optional[List[str]],
+        knowledge_base_id: Optional[str],
+        avatar_url: Optional[str],
+        color_theme: Optional[str]
     ) -> 'Bot':
         """Factory method for creating new bots with business rules."""
-        pass  # Implementation would go here
+        configuration: Dict[str, Any] = {}
+        if max_tokens is not None:
+            configuration["max_tokens"] = max_tokens
+        if tags:
+            configuration["tags"] = tags
+        if knowledge_base_id:
+            configuration["knowledge_base_id"] = knowledge_base_id
+        if avatar_url:
+            configuration["avatar_url"] = avatar_url
+        if color_theme:
+            configuration["color_theme"] = color_theme
+        if category:
+            configuration["category"] = category
+
+        return cls(
+            id=BotId(0),
+            owner_id=owner_id,
+            name=name.strip(),
+            description=description.strip() if description else None,
+            welcome_message="Hi! How can I help you today?",
+            model_type=model_name,
+            temperature=temperature,
+            system_prompt=system_prompt.strip() if system_prompt else None,
+            configuration=configuration,
+            is_public=is_public,
+            is_active=True,
+            status="inactive",
+            created_at=datetime.utcnow(),
+            updated_at=None,
+        )
     
     def update_configuration(self, config: Dict[str, Any]) -> None:
         """Update bot configuration with validation."""
-        pass  # Implementation would go here
+        if not isinstance(config, dict):
+            raise DomainException("Configuration must be a dictionary")
+        self.configuration.update(config)
     
     def start_training(self) -> None:
         """Begin training process with validation."""
@@ -91,15 +139,19 @@ class Bot:
     
     def activate(self) -> None:
         """Make bot available for chat with validation."""
-        pass  # Implementation would go here
+        self.is_active = True
+        self.status = "active"
+        self.updated_at = datetime.utcnow()
     
     def deactivate(self) -> None:
         """Disable bot temporarily."""
-        pass  # Implementation would go here
+        self.is_active = False
+        self.status = "inactive"
+        self.updated_at = datetime.utcnow()
     
     def can_be_deleted(self) -> bool:
         """Check if bot can be safely deleted."""
-        pass  # Implementation would go here
+        return True
     
     def add_training_document(self, document_id: str) -> None:
         """Add document for training with validation."""

@@ -1,0 +1,169 @@
+// Blockquote style 01
+.blockquote-style-01 {
+  padding: 6rem;
+
+
+  @media (min-width: var(--xl)) {
+    padding: 2rem;
+  }
+
+  @media (min-width: var(--md)) {
+    padding: 5rem;
+  }
+
+  h6 {
+    color: #fff;
+    font-family: var(--alt-font);
+    font-weight: 500;
+    margin-bottom: 30px;
+    width: 90%;
+  }
+
+  i {
+    display: block;
+    color: #ffffff;
+    font-size: 40px;
+    margin-bottom: 25px;
+  }
+
+  span {
+    font-size: 14px;
+    line-height: 20px;
+    font-family: var(--alt-font);
+    color: #ffffff;
+    opacity: 0.7;
+    font-weight: 400;
+  }
+}
+
+// Blockquote style 02
+.blockquote-style-02 {
+  padding: 2px 40px;
+  border-left: 6px;
+  border-color: var(--base-color);
+  border-style: solid;
+
+
+  @media (max-width: var(--md)) {
+    margin-top: 54px;
+    margin-bottom: 54px;
+    padding-left: 30px;
+    padding-right: 0;
+  }
+
+  @media (max-width:var(--sm)) {
+    margin-top: 54px;
+    margin-bottom: 54px;
+  }
+
+  h6 {
+    color: #232323;
+    font-size: 18px;
+    letter-spacing: 0;
+    line-height: 30px;
+    font-weight: 500;
+    font-family: var(--alt-font);
+    margin-bottom: 17px;
+  }
+
+  span {
+    display: inline-block;
+    font-family: var(--alt-font);
+    font-size: 13px;
+    line-height: 22px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+
+  }
+}
+
+// // Blockquote style 03
+.blockquote-style-03 {
+  text-align: center;
+
+  i {
+    font-size: 50px;
+    margin-bottom: 25px;
+    display: inline-block;
+  }
+
+  h6 {
+    font-family: var(--alt-font);
+    margin-bottom: 25px;
+    color: #232323;
+    line-height: 34px;
+    font-size: 20px;
+    letter-spacing: normal;
+
+    @media (min-width: var(--lg)) {
+      font-size: 18px;
+      line-height: 22px;
+    }
+
+  }
+
+  span {
+    font-family: var(--alt-font);
+    letter-spacing: 4px;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 22px;
+    text-transform: uppercase;
+  }
+}
+
+// // Blockquote style 04
+.blockquote-style-04 {
+  i {
+    display: inline-block;
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: var(--base-color, #0038e3);
+  }
+
+  h6 {
+    font-family: var(--alt-font);
+    font-size: 2.30rem;
+    font-weight: 500;
+    margin-bottom: 25px;
+    line-height: 3rem;
+    color: #232323;
+
+    @media (max-width:var(--lg)) {
+      margin-bottom: 15px;
+    }
+  }
+
+  span {
+    font-family: var(--alt-font);
+  }
+}
+
+// // Blockquote style 05
+.blockquote-style-05 {
+  i {
+    display: inline-block;
+    margin-bottom: 30px;
+    font-size: 40px;
+  }
+
+  h6 {
+    font-weight: 300;
+    color: #fff;
+    font-family: var(--alt-font);
+
+    @media (max-width:var(--lg)) {
+      margin-bottom: 15px;
+    }
+  }
+
+  span {
+    display: inline-block;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}

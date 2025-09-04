@@ -1,0 +1,113 @@
+---
+alwaysApply: true
+description: Repository implementation patterns for data persistence
+globs: *.py
+---
+
+# Repository Implementation Rules
+
+## SQLAlchemy Async Patterns
+- Always use AsyncSession for database operations
+- Implement proper transaction handling
+- Use select() statements for queries
+- Handle connection errors gracefully
+
+```python
+# ✅ GOOD - Async repository pattern
+class SqlAlchemyBotRepository(IBotRepository):
+    def __init__(self, session: AsyncSession):
+        self._session = session
+    
+    async def get_by_id(self, bot_id: BotId) -> Optional[Bot]:
+        async with self._session() as session:
+            stmt = select(BotModel).where(BotModel.id == bot_id.value)
+            result = await session.execute(stmt)
+            bot_model = result.scalar_one_or_none()
+            return self._to_domain(bot_model) if bot_model else None
+    
+    async def add(self, bot: Bot) -> Bot:
+        async with self._session() as session:
+            bot_model = self._to_model(bot)
+            session.add(bot_model)
+            await session.commit()
+            await session.refresh(bot_model)
+            return self._to_domain(bot_model)
+```
+
+## Entity Mapping
+- Separate methods for domain ↔ model conversion
+- Handle all field mappings explicitly
+- Validate data integrity during conversion
+
+```python
+def _to_domain(self, model: BotModel) -> Bot:
+    return Bot(
+        id=BotId(model.id),
+        name=BotName(model.name),
+        owner_id=UserId(model.owner_id),
+        model_config=ModelConfig.from_dict(model.config_data),
+        created_at=model.created_at
+    )
+
+def _to_model(self, bot: Bot) -> BotModel:
+    return BotModel(
+        id=bot.id.value if bot.id else None,
+        name=bot.name.value,
+        owner_id=bot.owner_id.value,
+        config_data=bot.model_config.to_dict(),
+        created_at=bot.created_at
+    )
+```
+
+## Query Optimization
+- Use eager loading for related entities
+- Implement pagination for list operations
+- Add database indexes for common queries
+- Use select_related for N+1 prevention
+
+```python
+async def get_by_owner(self, owner_id: UserId, limit: int = 50, offset: int = 0) -> Sequence[Bot]:
+    stmt = (
+        select(BotModel)
+        .where(BotModel.owner_id == owner_id.value)
+        .options(selectinload(BotModel.conversations))  # Eager loading
+        .order_by(BotModel.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    result = await self._session.execute(stmt)
+    bot_models = result.scalars().all()
+    return [self._to_domain(model) for model in bot_models]
+```
+
+## Error Handling
+```python
+async def update(self, bot: Bot) -> Bot:
+    try:
+        async with self._session() as session:
+            stmt = select(BotModel).where(BotModel.id == bot.id.value)
+            result = await session.execute(stmt)
+            bot_model = result.scalar_one_or_none()
+            
+            if not bot_model:
+                raise EntityNotFoundException(f"Bot {bot.id.value} not found")
+            
+            # Update fields
+            bot_model.name = bot.name.value
+            bot_model.config_data = bot.model_config.to_dict()
+            
+            await session.commit()
+            await session.refresh(bot_model)
+            return self._to_domain(bot_model)
+            
+    except IntegrityError as e:
+        raise RepositoryException(f"Database constraint violation: {e}")
+    except SQLAlchemyError as e:
+        raise RepositoryException(f"Database error: {e}")
+```
+
+## Testing Support
+- Implement repository factories for tests
+- Use in-memory SQLite for unit tests
+- Provide test data builders
+- Mock external dependencies only

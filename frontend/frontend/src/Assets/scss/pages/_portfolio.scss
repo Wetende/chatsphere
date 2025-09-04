@@ -1,0 +1,38 @@
+// Next / Prev Button
+.portfolio_btn {
+  .portfolio_img {
+    transition-duration: .5s;
+    opacity: 0;
+  }
+
+  &:hover {
+    .portfolio_img {
+      opacity: 1;
+    }
+
+    .btn_icon {
+      @apply text-white;
+      transition-duration: .3s;
+    }
+
+    .portfolio_disc {
+      transition-duration: .3s;
+      color: white;
+    }
+  }
+}
+
+// SingleProjectPage05
+.SingleProjectPage05 {
+  .swiper-wrapper {
+    cursor: url("../img/download.png"), move;
+
+    .swiper-slide {
+      opacity: 0.6;
+
+      &.swiper-slide-active {
+        opacity: 1;
+      }
+    }
+  }
+}

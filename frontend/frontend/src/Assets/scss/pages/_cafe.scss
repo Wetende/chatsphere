@@ -1,0 +1,15 @@
+.cafe-tab-style-03 {
+    .tab-style-03 {
+        .nav-item {
+            @screen xs {
+                padding-left: 0;
+            }
+        }
+    }
+}
+
+.cafe-form {
+    ::placeholder {
+        @apply font-serif text-black text-[14px];
+    }
+}

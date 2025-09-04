@@ -1,0 +1,872 @@
+/* interactivebanners-style-01 */
+.interactivebanners-style-01 {
+  .interactive-banners-image {
+    transition: all 0.5s ease-in-out;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    z-index: -1;
+    opacity: 0;
+    top: 0;
+  }
+
+  h3 {
+    @apply text-darkgray;
+  }
+
+  &:hover {
+    span {
+      color: #fff;
+    }
+
+    h3 {
+      color: #fff;
+    }
+
+    a {
+      i {
+        color: #fff;
+      }
+    }
+
+    .interactive-banners-image {
+      opacity: 1;
+      transform: scale(1.1, 1.1);
+    }
+  }
+}
+
+/* interactivebanners-style-02 */
+.interactivebanners-style-02 {
+  .swiper-wrapper {
+    cursor: url("../img/icon-move-light.png"), move;
+  }
+
+  .interactivebanners-main {
+    position: relative;
+    transition: 0.3s ease-in-out;
+
+    .interactivebanners-subtitle {
+      @apply rounded-[2px] inline-block;
+      background-color: var(--base-color, #0038e3);
+      transition: all 0.5s ease-in-out;
+    }
+
+    .interactivebanners-title {
+      width: 80%;
+      transition: all 0.5s ease-in-out;
+
+      @screen xl {
+        width: 90%;
+      }
+
+      @screen lg {
+        width: 80%;
+      }
+
+      @screen md {
+        width: 90%;
+      }
+
+      @screen sm {
+        width: 60%;
+      }
+
+      @screen xs {
+        width: 100%;
+      }
+    }
+
+    .btn {
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.5s ease-in-out;
+    }
+
+    .fancy-text-content {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: 0;
+      z-index: 9;
+      height: auto;
+      transform: translateY(10px);
+      transition: all 0.5s ease-in-out;
+    }
+
+    img {
+      transition: opacity 0.5s ease-in-out;
+      width: 100%;
+    }
+
+    &:hover {
+      background: #1f232c;
+      .fancy-text-content {
+        transform: translateY(-50px);
+      }
+
+      .interactivebanners-subtitle {
+        opacity: 0;
+      }
+
+      .interactivebanners-image {
+        opacity: 0.7;
+      }
+
+      .btn {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      img {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .overlay-bg {
+    &::before {
+      content: "";
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, #1f232c 100%);
+    }
+  }
+}
+
+/* interactivebanners-style-03 */
+.interactivebanners-style-03 {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+
+  .interactivebanners-img {
+    transition: var(--default-transition);
+  }
+
+  .interactivebanners-btn {
+    opacity: 0;
+    @apply bg-white border-white border-2;
+    transform: translate(-50%, -50%);
+    transition: var(--default-transition);
+
+    i {
+      transition: var(--default-transition);
+    }
+  }
+
+  .interactivebanners-box-hover {
+    opacity: 0;
+    background: var(--overlay-color, #000);
+    transition: var(--default-transition);
+  }
+
+  .interactiveanners-subtitle {
+    transition: var(--default-transition);
+    transition-duration: 0.5s;
+    transition: 0.3s ease-in-out;
+  }
+
+  .interactivebanners-box-content {
+    a {
+      @apply text-darkgray;
+    }
+
+    .content-hover-effect {
+      .interactivebanners-box-sub-title {
+        color: #2ed47c;
+      }
+    }
+  }
+
+  .interactivebanners-box-sub-title {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: var(--default-transition);
+
+    .interactivebanners-subtitle {
+      opacity: 1;
+      transition: 0.3s ease-in-out;
+    }
+
+    a {
+      color: #2ed47c;
+    }
+  }
+
+  &:hover {
+    .interactivebanners-img {
+      transform: scale(1.1);
+      transition-duration: 0.3s;
+    }
+
+    .interactivebanners-btn {
+      &:hover {
+        background: transparent;
+
+        i {
+          @apply text-white;
+        }
+      }
+    }
+
+    .interactivebanners-btn,
+    .interactivebanners-box-hover {
+      opacity: 1;
+    }
+
+    .interactivebanners-subtitle {
+      opacity: 0;
+    }
+
+    .interactivebanners-box-sub-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* interactivebanners-style-04 */
+.interactive-banners-style-04 {
+  figure {
+    @apply relative overflow-hidden;
+
+    img {
+      transition-duration: 2s;
+    }
+
+    &:hover {
+      img {
+        transform: scale(1.4);
+        transition-duration: 4s;
+      }
+
+      .interactive-banners-overlay {
+        opacity: 1;
+        transition: all 0.5s ease-in-out;
+      }
+    }
+  }
+  figcaption {
+    @apply absolute top-0 left-0 w-full h-full;
+
+    &:hover {
+      .interactive-banners-content {
+        .interactive-banners-hover-icon {
+          opacity: 0;
+          transform: scale(0);
+          transition: all 0.5s ease-in-out;
+        }
+      }
+      .interactive-banners-hover-action {
+        opacity: 1;
+        bottom: 0;
+        transition: all 0.5s ease-in-out;
+      }
+    }
+  }
+
+  .interactive-banners-content {
+    .interactive-banners-hover-icon {
+      @apply absolute left-[60px] bottom-[60px];
+      transform: scale(1);
+      transition: all 0.5s ease-in-out;
+    }
+  }
+
+  .interactive-banners-hover-action {
+    @apply absolute -bottom-[25px] h-full w-full;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+  }
+  .interactive-banners-action-content {
+    @apply overflow-hidden min-h-[75px];
+    text-overflow: ellipsis;
+  }
+
+  .interactive-banners-overlay {
+    opacity: 0;
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    background: var(--overlay-color, #000);
+    transition: all 0.5s ease-in-out;
+  }
+}
+
+/* interactivebanners-style-05 */
+.interactive-banners-style-05 {
+  .figure {
+    .interactive-banners-image {
+      img {
+        transition: var(--default-transition);
+      }
+    }
+
+    &:hover {
+      img {
+        opacity: 0.4;
+      }
+
+      .interactive-banners-details {
+        a {
+          transform: scale(1, 1);
+          opacity: 1;
+        }
+      }
+
+      figcaption {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+    }
+
+    .interactive-banners-details {
+      a {
+        transform: scale(0.9, 0.9);
+        opacity: 0;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.08);
+        transition: var(--default-transition);
+      }
+    }
+
+    figcaption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      transform: translateY(50%);
+      transition-duration: 0.3s;
+
+      > div {
+        transition: all 0.3s ease-in-out;
+      }
+    }
+  }
+}
+
+/* interactivebanners-style-06*/
+.interactive-banners-style-06 {
+  transition-duration: 0.4s;
+  overflow: hidden;
+
+  .interactivebanners-image {
+    transition: var(--default-transition);
+
+    a {
+      transition: var(--default-transition);
+
+      img {
+        transition-duration: 0.4s;
+      }
+    }
+  }
+
+  &:hover {
+    .interactivebanners-image {
+      left: -20%;
+      filter: grayscale(100%);
+      opacity: 0.8;
+    }
+
+    .interactivebanners-content {
+      h2 {
+        margin-bottom: 10px;
+      }
+
+      a {
+        opacity: 1;
+        transform: scale(1, 1);
+        border-bottom: 2px solid;
+      }
+    }
+  }
+
+  .interactivebanners-content {
+    h2 {
+      transition: var(--default-transition);
+    }
+
+    a {
+      opacity: 0;
+      transition: var(--default-transition);
+      align-self: flex-start;
+      color: var(--base-color, #0038e3);
+      border-radius: 0;
+    }
+  }
+}
+
+/* interactivebanners-style-07*/
+.interactive-banners-style-07 {
+  @apply inline-block border-0 relative;
+  transition: var(--default-transition);
+
+  &:hover {
+    .interactive-banners-hover {
+      opacity: 1;
+    }
+    .interactive-banners-image {
+      img {
+        transform: scale3d(1.1, 1.1, 1);
+        opacity: 0.5;
+      }
+    }
+    .interactive-banners-icon {
+      opacity: 1;
+      transform: translateX(-18px);
+    }
+    .interactive-banners-title {
+      opacity: 0;
+      transform: translateY(70px);
+    }
+    .interactive-banners-sub-title {
+      opacity: 1;
+      transform: translateY(10px);
+    }
+  }
+
+  .interactive-banners-image {
+    @apply relative overflow-hidden  rounded-[6px] bg-darkslateblue;
+    img {
+      @apply w-full;
+      transition: var(--default-transition);
+      transform: scale3d(1, 1, 1);
+    }
+  }
+  .interactive-banners-hover {
+    @apply absolute w-full h-full left-0 top-0;
+    transition: var(--default-transition);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 30%, #232323 100%);
+  }
+  .interactive-banners-icon {
+    @apply w-[35px] h-[35px] leading-[36px] rounded-full text-center absolute top-1/2 left-1/2 -mt-[18px] -translate-x-1/2 -translate-y-1/2;
+    opacity: 0;
+    transition: var(--default-transition);
+  }
+  .interactive-banners-title {
+    opacity: 1;
+    transform: translateY(35px);
+    transition: var(--default-transition);
+  }
+  .interactive-banners-sub-title {
+    opacity: 0;
+    transform: translateY(70px);
+    text-align: center;
+    transition: var(--default-transition);
+  }
+}
+
+/* interactivebanners-style-08*/
+.interactive-banners-style-08 {
+  .interactive-banners-image {
+    a {
+      .category-name {
+        transition: var(--default-transition);
+
+        @apply bg-white text-darkgray;
+      }
+    }
+    .overlay-banner {
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, #000 100%);
+    }
+    .category-content {
+      .interactive-banners-icon {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: var(--default-transition);
+      }
+    }
+  }
+
+  &:hover {
+    .interactive-banners-image {
+      a {
+        .category-name {
+          @apply bg-darkgray text-white;
+        }
+      }
+
+      .category-content {
+        .interactive-banners-icon {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+/* interactivebanners-style-09*/
+
+.interactive-banners-style-09 {
+  &:hover {
+    .interactive-banners-content {
+      .tour-button {
+        bottom: 0;
+        opacity: 1;
+      }
+    }
+  }
+  .interactive-banners-content {
+    .tour-button {
+      @apply absolute -bottom-[30px] my-0 mx-auto left-0 right-0;
+      transition: var(--default-transition);
+      opacity: 0;
+    }
+  }
+}
+
+// interactive-banners-style-10
+.interactive-banners-style-10 {
+  @apply text-center;
+
+  .interactive-banners-box {
+    @apply relative overflow-hidden;
+
+    &:hover {
+      .interactive-banners-box-image {
+        img {
+          filter: blur(3px);
+          transform: scale(1.1);
+        }
+
+        .interactive-banners-text-overlay {
+          opacity: 0.77;
+        }
+      }
+
+      .interactive-banners-text-content {
+        transform: translateY(-65px);
+
+        a {
+          opacity: 1;
+          transform: translateY(0);
+          -webkit-transform: translateY(0);
+        }
+      }
+    }
+
+    .interactive-banners-box-image {
+      @apply relative overflow-hidden;
+      img {
+        transition: all 0.5s ease-in-out;
+      }
+
+      .interactive-banners-text-overlay {
+        @apply absolute top-0 left-0 w-full h-full bg-[#262b35];
+        opacity: 0.3;
+        transition: all 0.4s ease-in-out;
+      }
+
+      .overlay {
+        @apply absolute h-full w-full top-0 left-0;
+        opacity: 0.5;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0,
+          #1f232c 100%
+        );
+      }
+    }
+
+    .interactive-banners-text-content {
+      @apply absolute w-full left-0 top-auto bottom-0 h-auto px-20 sm:px-12;
+      z-index: 9;
+      transform: translateY(20px);
+      -webkit-transform: translateY(20px);
+      transition: all 0.5s ease-in-out;
+
+      h6 {
+        @apply mb-[5px] font-semibold text-white font-serif uppercase;
+      }
+
+      span {
+        @apply tracking-[1px] text-white text-md font-serif uppercase block;
+        opacity: 0.7;
+      }
+
+      a {
+        @apply text-xxs tracking-[.5px] py-[10px] px-[24px] mt-[35px];
+        opacity: 0;
+        transform: translateY(15px);
+      }
+    }
+  }
+}
+
+// interactive-banners-style-11
+.interactive-banners-style-11 {
+  figure {
+    figcaption {
+      @apply absolute top-0 left-0 h-full w-full;
+      opacity: 0;
+      transition: var(--default-transition);
+
+      a {
+        transition: var(--default-transition);
+        transform: translateY(-15px);
+      }
+    }
+
+    &:hover {
+      figcaption {
+        opacity: 1;
+        a {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+// interactive-banners-style-12
+
+.interactive-banners-style-12 {
+  @apply relative overflow-hidden;
+
+  &:hover {
+    .interactive-banners-image {
+      .section-link {
+        opacity: 0;
+        transform: translateY(100%);
+      }
+    }
+
+    .interactive-banners-content {
+      transform: translateY(0);
+      -webkit-transform: translateY(0);
+
+      .overlayer-box {
+        @apply h-full;
+      }
+
+      .interactive-banners-content-text {
+        @apply visible;
+        opacity: 1;
+      }
+    }
+  }
+
+  .interactive-banners-image {
+    transition: all 0.4s cubic-bezier(0.2, 0, 0.3, 1);
+
+    .overlay-bg {
+      @apply absolute h-full w-full top-0 left-0;
+      opacity: 0.75;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, #141414 150%);
+    }
+
+    a {
+      @apply rounded-[50%] h-[35px] w-[35px] right-[45px] bottom-[50px] border-[#fff] border-[2px] z-[1] leading-[32px] text-[#fff] text-center absolute;
+      transition: var(--default-transition);
+    }
+  }
+
+  .interactive-banners-content {
+    @apply absolute bottom-0 left-0 w-full z-[1] p-14;
+    transform: translateY(calc(100% - 130px));
+    transition: all 0.4s cubic-bezier(0.2, 0, 0.3, 1);
+
+    .overlayer-box {
+      @apply h-0 -z-[1] bottom-0 top-auto absolute w-full left-0 bg-darkgray;
+      transition: all 0.4s cubic-bezier(0.2, 0, 0.3, 1);
+      opacity: 0.9;
+      transition: var(--default-transition);
+    }
+
+    .interactive-banners-content-text {
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--default-transition);
+    }
+  }
+}
+
+// interactive-banners-style-13
+
+.interactive-banners-style-13 {
+  display: inline-block;
+  position: relative;
+
+  a {
+    &:hover {
+      color: #cb933d;
+
+      .interactive-banners-text {
+        transform: translateX(0);
+      }
+
+      .interactive-banners-icon {
+        transform: scaleX(1) translateX(0);
+      }
+    }
+
+    .interactive-banners-text {
+      transform: translateX(20%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.95, 0.25, 1),
+        -webkit-transform 0.3s cubic-bezier(0.2, 0.95, 0.25, 1);
+      transform-origin: left center;
+    }
+
+    .interactive-banners-icon {
+      display: inline-block;
+      transform: scaleX(0) translateX(0);
+      transition: transform 0.3s cubic-bezier(0.2, 0.95, 0.25, 1),
+        -webkit-transform 0.3s cubic-bezier(0.2, 0.95, 0.25, 1);
+      transform-origin: left center;
+    }
+  }
+}
+
+// interactive-banners-style-14
+.interactive-banners-style-14 {
+  transition: all 0.4s ease-in-out;
+
+  figure {
+    @apply relative mb-0 overflow-hidden;
+
+    &:hover {
+      figcaption {
+        .hover-content {
+          @apply -translate-y-[40px];
+
+          .hover-show-content {
+            opacity: 1;
+            visibility: visible;
+
+            .hover-content-detail {
+              @apply h-auto;
+              opacity: 1;
+              transform: translate3d(0, 0, 0);
+              transition: all 0.4s ease-in-out;
+            }
+          }
+        }
+
+        .hover-action-btn {
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(50px);
+        }
+
+        .overlayer-box {
+          opacity: 0.85;
+        }
+      }
+    }
+
+    figcaption {
+      @apply absolute top-0 left-0 w-full h-full z-[1];
+      transition: all 0.4s ease-in-out;
+
+      .hover-content {
+        @apply h-full text-center items-center flex-col flex;
+        transition: all 0.4s ease-in-out;
+
+        div {
+          @apply opacity-60 text-white text-md leading-[20px] mt-auto font-serif;
+        }
+
+        h6 {
+          @apply font-medium text-white mb-0 font-serif w-1/2;
+        }
+
+        .hover-show-content {
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.4s ease-in-out;
+
+          p {
+            @apply min-h-[50px] h-[50px] overflow-hidden w-[60%] leading-[26px] mx-auto text-[#ffffff80];
+            opacity: 0;
+            transition: all 0.4s ease-in-out;
+            transform: translate3d(0, 25px, 0);
+          }
+        }
+      }
+
+      .hover-action-btn {
+        @apply absolute bottom-[40px] left-0 w-full text-center;
+        transition: all 0.4s ease-in-out;
+
+        span {
+          @apply h-[40px] w-[40px] bg-[#c89965] leading-[44px] rounded-[50%] inline-block;
+
+          i {
+            @apply text-lg text-[#333045];
+          }
+        }
+      }
+
+      .opacity-medium {
+        @apply -z-[1] absolute h-full w-full opacity-75 top-0 left-0 bg-[#333045];
+        transition: all 0.4s ease-in-out;
+      }
+
+      .overlayer-box {
+        @apply absolute h-full w-full top-0 left-0 bg-[#333045] -z-[1];
+        opacity: 0;
+        transition: all 0.4s ease-in-out;
+      }
+    }
+  }
+}
+
+/* interactivebanners-style-15 */
+.interactive-banners-style-15 {
+  figure {
+    @apply relative overflow-hidden;
+    img {
+      transition-duration: 2s;
+    }
+    &:hover {
+      img {
+        transform: scale(1.4);
+        transition-duration: 4s;
+      }
+    }
+  }
+  figcaption {
+    @apply absolute top-0 left-0 w-full h-full;
+
+    &:hover {
+      .interactive-banners-hover-action {
+        opacity: 1;
+        bottom: 0;
+        transition: all 0.5s ease-in-out;
+      }
+      .interactive-banners-content {
+        .interactive-banners-hover-icon {
+          opacity: 0;
+          transform: scale(0);
+          transition: all 0.5s ease-in-out;
+        }
+      }
+    }
+  }
+  .interactive-banners-content {
+    .interactive-banners-hover-icon {
+      @apply absolute left-[60px] bottom-[60px];
+      transform: scale(1);
+      transition: all 0.5s ease-in-out;
+    }
+  }
+  .interactive-banners-hover-action {
+    opacity: 0;
+    @apply absolute -bottom-[25px] h-full w-full;
+    transition: all 0.5s ease-in-out;
+  }
+  .bg-transparent-gradiant-white-black {
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0) 0,
+      rgba(0, 0, 0, 0.18) 18%,
+      rgba(0, 0, 0, 0.95) 100%
+    );
+  }
+}

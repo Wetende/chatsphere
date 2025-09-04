@@ -1,0 +1,207 @@
+// Note: Footer Component only supports dark light class (.text-themecolor).
+// Add the color of your choice to text-themecolor and apply it to .text-themecolor in the footer component area.
+footer {
+  position: relative;
+
+  .text-themecolor {
+    color: #232323;
+  }
+
+  &.pos-fixed {
+    left: 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: -10;
+  }
+
+  .footer-menu {
+    span {
+      color: #232323;
+    }
+
+    ul,
+    li {
+      list-style: none;
+    }
+  }
+
+  a {
+    transition: var(--default-transition);
+
+    &:hover {
+      color: var(--base-color, #232323);
+    }
+  }
+
+  .subtitle {
+    color: #232323;
+  }
+
+  &.dark {
+    .text-themecolor {
+      color: #fff;
+    }
+
+    .footer-menu {
+      span {
+        color: #f7f7f7;
+      }
+    }
+
+    a {
+      transition: var(--default-transition);
+
+      &:hover {
+        color: #ffffff;
+      }
+    }
+
+    .subtitle {
+      color: #828282;
+    }
+  }
+}
+
+// Footer style 04
+.footer-style-03 {
+  form {
+    input {
+      box-shadow: none;
+    }
+
+    button {
+      @media (max-width:var(--xs)) {
+        width: auto;
+        position: absolute !important;
+        top: 0;
+        right: 0px;
+        bottom: 0;
+        border: 0;
+        padding: 0px 18px;
+        letter-spacing: inherit;
+        overflow: hidden;
+        height: 46px;
+        margin-top: 0;
+        border-radius: 2px;
+      }
+
+      &.btn-gradient {
+        background-image: linear-gradient(to right,
+            #556fff,
+            #ff798e,
+            #556fff) !important;
+        color: #fff;
+        background-size: 200% auto;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+        &:hover {
+          background-position: right center;
+        }
+      }
+    }
+  }
+}
+
+// Footer style 04
+.footer-style-04 {
+  .subscribe-style-09 {
+    form {
+      input {
+        box-shadow: none;
+      }
+
+      button {
+        @media (max-width:var(--xs)) {
+          width: auto;
+          position: absolute !important;
+          top: 0;
+          right: 0px;
+          bottom: 0;
+          border: 0;
+          padding: 0px 18px;
+          letter-spacing: inherit;
+          overflow: hidden;
+          height: 43px;
+          margin-top: 0;
+          border-radius: 2px;
+        }
+
+        &.btn-gradient {
+          background-image: linear-gradient(to right,
+              #556fff,
+              #ff798e,
+              #556fff) !important;
+          color: #fff;
+          background-size: 200% auto;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+          &:hover {
+            background-position: right center;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Footer style 05
+.footer-style-05 {
+  .subscribe-style-09 {
+    form {
+      button {
+        @media (max-width:var(--xs)) {
+          width: auto;
+          position: absolute !important;
+          top: 0;
+          right: 0px;
+          bottom: 0;
+          border: 0;
+          padding: 0px 18px;
+          letter-spacing: inherit;
+          overflow: hidden;
+          height: 44px;
+          margin-top: 0;
+          border-radius: 2px;
+        }
+
+        &.btn-gradient {
+          background: linear-gradient(to right, #0039e3, #8600d4, #0039e3);
+          color: #fff;
+          background-size: 200% auto;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+          &:hover {
+            background-position: right center;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Footer style 09
+.footer-style-09 {
+
+  //subscribe form
+  .subscribe-style-05 {
+    input {
+      padding: 13px 70px 13px 15px;
+      font-size: 14px;
+    }
+
+    form {
+      button {
+        border: none;
+        height: 100%;
+      }
+    }
+  }
+}
+
+// Footer style 11
+.footer-style-11 {
+  .social-icon {
+    row-gap: 0;
+  }
+}

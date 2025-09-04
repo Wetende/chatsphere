@@ -1,0 +1,56 @@
+/* Piechart style 01 */
+.piechart-style-01 {
+  @apply relative;
+  .piechart-vertical {
+    padding: 45px 0 0;
+    @apply relative ;
+    &:before {
+      content: "";
+      @apply bg-darkgray absolute -top-[20px] left-1/2 w-[0.5px] h-[40px] opacity-50;
+      transform: translateX(-50%);
+    }
+    .title {
+      @apply text-sm uppercase;
+    }
+  }
+  span,
+  p {
+    @apply text-darkgray;
+  }
+  svg {
+    width: 180px;
+    margin: 0 auto;
+
+    text{
+      @apply font-medium;
+    }
+  }
+}
+
+/* Piechart_style-02 */
+.piechart-style-02 {
+   svg {
+    width: 140px;
+    height: 140px;
+    @apply mb-[40px] font-serif xs:mb-[20px];
+  }
+
+  .piechart-vertical {
+    span {
+      display: inline-block;
+      margin-bottom: 5px;
+      @apply text-darkgray;
+
+      @screen xs {
+        display: block;
+      }
+
+      text{
+        @apply font-medium;
+      }
+    }
+    p{
+      @apply inline-block w-[65%] lg:w-[90%] md:w-[75%] sm:w-[95%] xs:w-[75%];
+    }
+  }
+}

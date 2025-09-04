@@ -1,0 +1,132 @@
+// Text slider style 01
+.text-slider-01 {
+  div[class*="col"] {
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    position: relative;
+    background-position: center;
+    padding: 0;
+    align-items: flex-end;
+    justify-content: flex-end;
+    display: flex;
+  }
+
+  .swiper-wrapper {
+    .text-slider-swiper-wrapper {
+      opacity: 0;
+    }
+  }
+
+  .swiper-slide {
+    &.swiper-slide-prev,
+    &.swiper-slide-next {
+      opacity: .3;
+    }
+    &.swiper-slide-active{
+      opacity: 1;
+    }
+
+    opacity: .3;
+    transition: var(--default-transition);
+
+    .slider-content {
+      opacity: 0;
+    }
+
+    &.swiper-slide-active {
+      .text-slider-swiper-wrapper {
+        opacity: 1;
+      }
+
+      .slider-content {
+        opacity: 1;
+      }
+    }
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+    margin: 0;
+    outline: 0;
+    transition: var(--default-transition);
+    position: absolute;
+    top: 50%;
+    left: 40px;
+    transform: translateY(-50%);
+    background-color: rgba(23, 23, 23, .5);
+    color: #fff;
+
+    &:after {
+      @apply text-base;
+    }
+
+    &:hover {
+      background-color: #fff;
+      @apply text-darkgray;
+    }
+  }
+
+  .swiper-button-prev {
+    &:after {
+      content: "\e910";
+      font-family: "feather";
+    }
+  }
+
+  .swiper-button-next {
+    right: 40px;
+    left: auto;
+
+    &:after {
+      content: "\e912";
+      font-family: "feather";
+    }
+  }
+}
+
+// Text slider style 02
+.text-slider-02 {
+  position: relative;
+  transition: var(--default-transition);
+
+  .swiper-wrapper {
+    cursor: url("../img/icon-move-black.png"), move;
+  }
+
+  .swiper-slide {
+    .overlay {
+      opacity: 0.6;
+    }
+
+    .slider-content {
+      opacity: 0;
+
+      a {
+        transition: var(--default-transition);
+      }
+    }
+
+    .text-wrapper {
+      opacity: 0;
+    }
+
+    &.swiper-slide-active {
+      .overlay {
+        opacity: 0.2;
+      }
+
+      .slider-content {
+        opacity: 1;
+      }
+
+      .text-wrapper {
+        opacity: 1;
+      }
+    }
+  }
+}

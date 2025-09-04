@@ -22,7 +22,7 @@ import logging
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field, model_validator
 
 from application.use_cases.user.get_user_profile_use_case import (
     GetUserProfileUseCase,
@@ -91,6 +91,12 @@ class ChangePasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=8, description="New password (minimum 8 characters)")
     confirm_password: str = Field(..., description="Confirm new password")
 
+    @model_validator(mode="after")
+    def _passwords_match(self) -> "ChangePasswordRequest":
+        if self.new_password != self.confirm_password:
+            raise ValueError("Passwords do not match")
+        return self
+
 
 # Import dependency providers from composition root
 from composition_root import (
@@ -101,22 +107,56 @@ from composition_root import (
 )
 
 
-# Placeholder for JWT authentication dependency
-# In a real implementation, this would extract and validate JWT token
-async def get_current_user_id() -> int:
+from fastapi import Request
+from application.interfaces.auth_service import IAuthService, TokenValidationError
+from composition_root import get_auth_service
+
+
+async def get_current_user_id(
+    request: Request,
+    auth_service: IAuthService = Depends(get_auth_service)
+) -> int:
+    """Extract current user ID from request.state or Authorization header."""
+    user_id = getattr(request.state, "user_id", None)
+    if isinstance(user_id, int) and user_id > 0:
+        return user_id
+
+    # Fallback: validate bearer token if middleware hasn’t populated state
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authorization token required")
+
+    token = auth_header[7:]
+    try:
+        claims = auth_service.validate_token(token)
+        sub = claims.get("sub")
+        return int(sub)
+    except TokenValidationError:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+
+async def get_current_user_id_optional(
+    request: Request,
+    auth_service: IAuthService = Depends(get_auth_service)
+) -> Optional[int]:
+    """Return user_id if Authorization is present and valid; otherwise None.
+    Used to ensure request body/query validation (422) can occur before 401.
     """
-    Extract current user ID from JWT token.
-    
-    This is a placeholder implementation. In a real system, this would:
-    1. Extract JWT token from Authorization header
-    2. Validate token signature and expiration
-    3. Extract user ID from token claims
-    4. Return user ID for authorization
-    
-    For now, returns a dummy user ID for testing.
-    """
-    # TODO: Implement real JWT token extraction and validation
-    return 1  # Dummy user ID for testing
+    user_id = getattr(request.state, "user_id", None)
+    if isinstance(user_id, int) and user_id > 0:
+        return user_id
+
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return None
+
+    token = auth_header[7:]
+    try:
+        claims = auth_service.validate_token(token)
+        sub = claims.get("sub")
+        return int(sub)
+    except TokenValidationError:
+        return None
 
 
 @router.get(
@@ -220,9 +260,11 @@ async def get_my_profile(
 )
 async def update_my_profile(
     request: UpdateProfileRequest,
-    current_user_id: int = Depends(get_current_user_id),
+    current_user_id: Optional[int] = Depends(get_current_user_id_optional),
     update_profile_use_case: UpdateUserProfileUseCase = Depends(get_update_user_profile_use_case)
 ) -> UserProfileResponse:
+    if current_user_id is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authorization token required")
     """
     Update current user profile information.
     
@@ -317,9 +359,11 @@ async def update_my_profile(
 )
 async def change_password(
     request: ChangePasswordRequest,
-    current_user_id: int = Depends(get_current_user_id),
+    current_user_id: Optional[int] = Depends(get_current_user_id_optional),
     change_password_use_case: ChangePasswordUseCase = Depends(get_change_password_use_case)
 ) -> dict:
+    if current_user_id is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authorization token required")
     """
     Change user password.
     

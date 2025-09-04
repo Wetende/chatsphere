@@ -1,0 +1,91 @@
+//Dropcaps style 01
+.dropcaps-style01 span {
+  @apply text-darkgray font-semibold text-center;
+  float: left;
+  font-size: 50px;
+  line-height: normal;
+  margin: 0 20px 0 0;
+  padding: 10px 0;
+
+  @screen xs {
+    padding: 10px 10px;
+  }
+
+}
+
+//Dropscaps style 02
+.dropcaps-style02 span {
+  @apply font-medium bg-darkgray text-center;
+  float: left;
+  font-size: 30px;
+  height: 55px;
+  line-height: 25px;
+  padding: 15px 0;
+  width: 55px;
+  margin-top: 5px;
+  margin: 0 20px 0 0;
+  color: #fff;
+}
+
+// Dropcaps style 03
+.dropcaps-style03 span {
+  @apply rounded-md font-medium text-center text-darkgray;
+  float: left;
+  border: 1px solid;
+  border-color: #e4e4e4;
+  font-size: 30px;
+  height: 55px;
+  line-height: 25px;
+  padding: 15px;
+  width: 55px;
+  margin-top: 5px;
+  margin: 0 20px 0 0;
+}
+
+// Dropcaps style 04
+.dropcaps-style04 span {
+  @apply relative font-semibold text-center;
+  float: left;
+  font-size: 100px;
+  line-height: 100px;
+  margin: 0 35px 0 0;
+  padding: 0 8px;
+
+  &::before {
+    @apply absolute block;
+    border-bottom: 1px solid;
+    content: "";
+    width: 100%;
+    top: 55%;
+    left: 0;
+  }
+}
+
+// Dropcaps style 05
+.dropcaps-style05 span {
+  @apply text-darkgray text-center font-semibold;
+  float: left;
+  border-radius: 50%;
+  font-size: 35px;
+  padding: 15px;
+  width: 65px;
+  height: 65px;
+  line-height: 35px;
+  border: 1px solid;
+  border-color: #e4e4e4;
+  font-size: 35px;
+  margin: 0 20px 0 0;
+}
+
+// Dropcaps style 06
+.dropcaps-style06 span {
+  @apply bg-darkgray text-white text-center font-semibold;
+  float: left;
+  border-radius: 50%;
+  font-size: 35px;
+  padding: 15px;
+  width: 65px;
+  height: 65px;
+  line-height: 35px;
+  margin: 0 20px 0 0;
+}

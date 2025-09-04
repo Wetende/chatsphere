@@ -1,0 +1,33 @@
+header.reverse-scroll.sticky-header.header-appear > .header-transparent {
+    .header-btn {
+        --brand-color: #232323 !important;
+        --text-color: #fff !important;
+    }
+}
+
+@screen md {
+    .navbar-expand-lg {
+        .header-btn {
+            --brand-color: #232323 !important;
+            --text-color: #fff !important;
+        }
+    }
+}
+
+@screen sm {
+    .navbar-expand-md {
+        .header-btn {
+            --brand-color: #232323 !important;
+            --text-color: #fff !important;
+        }
+    }
+}
+
+@screen xs {
+    .navbar-expand-sm {
+        .header-btn {
+            --brand-color: #232323 !important;
+            --text-color: #fff !important;
+        }
+    }
+}

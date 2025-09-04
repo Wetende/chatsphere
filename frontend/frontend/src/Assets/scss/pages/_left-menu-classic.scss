@@ -1,0 +1,13 @@
+.left-sidebar-menu {
+    &.collapsible-menu {
+        > .accordion-item {
+            > .accordion-header {
+                .accordion-button {
+                    font-size: 14px;
+                    line-height: normal;
+                    padding: 9px 0;
+                }
+            }
+        }
+    }
+}

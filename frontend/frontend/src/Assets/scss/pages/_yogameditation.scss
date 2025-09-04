@@ -1,0 +1,37 @@
+.yogameditation-iconwithtext {
+    .icon-with-text-03 {
+        >div {
+            @screen xs {
+                padding: 0 15px !important;
+            }
+        }
+
+        .feature-box-content {
+            .title {
+                color: #333045;
+            }
+        }
+    }
+}
+
+.yogameditation-accordion {
+    .accordion-style-02 {
+        .panel-title {
+            color: #333045;
+        }
+
+        &.light {
+            .accordion-button {
+                &::after {
+                    color: #333045;
+                }
+
+                &:not(.collapsed) {
+                    &:after {
+                        color: #333045;
+                    }
+                }
+            }
+        }
+    }
+}

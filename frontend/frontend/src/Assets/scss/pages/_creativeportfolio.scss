@@ -1,0 +1,45 @@
+.creativeportfolio-humburger-menu {
+    .hamburger-menu-wrapper {
+        ul {
+            li {
+                @apply py-[13px];
+
+                a {
+                    font-size: 44px;
+                    line-height: 50px;
+                    @apply font-serif;
+                    color: #fff;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}
+
+.creative-portfolio-slider {
+    .swiper-slide {
+        h2 {
+            @apply relative;
+
+            &::after {
+                content: "";
+                transition: var(--default-transition);
+                @apply absolute top-[55%] left-0 bg-darkgray -translate-y-1/2 w-full h-[4px] scale-x-0;
+            }
+        }
+
+        &:hover {
+            h2 {
+                &::after {
+                    @apply scale-x-100;
+                }
+            }
+        }
+    }
+
+    .swiper-pagination-bullets {
+        &.swiper-pagination-horizontal {
+            bottom: 0 !important;
+        }
+    }
+}

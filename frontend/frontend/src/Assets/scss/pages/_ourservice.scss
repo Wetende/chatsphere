@@ -1,0 +1,31 @@
+.ourservice-pricingtable {
+    .pricing-table-style-04 {
+        .pricing-wrapper {
+            box-shadow: none;
+        }
+    }
+}
+
+.ourservice-list {
+    .list-style-03 {
+        font-size: 15px;
+        text-transform: none;
+        font-weight: 400;
+    }
+}
+
+.ourservice-start-your-project {
+    .btn {
+        &.btn-link {
+            &:hover {
+                color: #0038e3;
+                opacity: 1;
+
+                &::after {
+                    background-color: #0038e3;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}

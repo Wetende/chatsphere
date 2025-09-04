@@ -1,0 +1,73 @@
+---
+alwaysApply: true
+description: Use case implementation patterns and best practices
+globs: *.py
+---
+
+# Use Cases Implementation Rules
+
+## Single Responsibility
+- One use case = one business operation
+- Clear execute() method signature
+- Async/await for I/O operations
+
+## Structure Template
+```python
+class [Operation][Entity]UseCase:
+    def __init__(self, 
+                 repo: I[Entity]Repository,
+                 service: I[Service]):
+        self._repo = repo
+        self._service = service
+    
+    async def execute(self, request: [Operation]RequestDTO) -> [Operation]ResponseDTO:
+        # 1. Input validation
+        # 2. Business logic
+        # 3. Repository operations
+        # 4. Return DTO
+        pass
+```
+
+## Error Handling Pattern
+```python
+async def execute(self, request: CreateUserRequestDTO) -> CreateUserResponseDTO:
+    try:
+        # Check business rules first
+        existing_user = await self._repo.get_by_email(request.email)
+        if existing_user:
+            raise UserAlreadyExistsException(request.email)
+        
+        # Create domain entity
+        user = User.create(
+            email=EmailAddress(request.email),
+            password=Password(request.password)
+        )
+        
+        # Persist
+        saved_user = await self._repo.add(user)
+        
+        # Return DTO
+        return CreateUserResponseDTO.from_entity(saved_user)
+        
+    except DomainException as e:
+        logger.error(f"Domain error in CreateUser: {e}")
+        raise ApplicationException(str(e))
+```
+
+## Validation Rules
+- Input validation at use case boundary
+- Use Pydantic for DTO validation
+- Domain validation in entities
+- Business rule validation in use cases
+
+## Transaction Boundaries
+- Use cases define transaction boundaries
+- One use case = one transaction
+- Repository operations within transaction
+- Rollback on any failure
+
+## Logging & Monitoring
+- Log use case entry/exit
+- Log business rule violations
+- Performance metrics for slow operations
+- Error tracking with context

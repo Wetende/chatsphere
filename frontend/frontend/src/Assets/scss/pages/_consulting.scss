@@ -1,0 +1,39 @@
+.consulting-about {
+    .list-style-02 {
+        i {
+            font-size: 13px !important;
+        }
+    }
+}
+
+.consulting-blogclean {
+    .post-details {
+        @apply p-[40px] lg:p-[35px];
+    }
+}
+
+.consulting-footer {
+    .social-icon {
+        li {
+            &:hover {
+                a {
+                    color: #fff;
+                }
+            }
+
+            a {
+                color: #828282;
+            }
+        }
+    }
+
+    form {
+        .btn {
+            background: white;
+
+            i {
+                color: #bf8c4c;
+            }
+        }
+    }
+}

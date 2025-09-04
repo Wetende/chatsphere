@@ -1,0 +1,116 @@
+//Countdown Style 01
+.countdown-style-01 {
+  .number {
+    text-align: center;
+    font-size: 47px;
+    line-height: 50px;
+
+    @screen xl {
+      font-size: 40px;
+      line-height: 50px;
+    }
+  }
+
+  .unit {
+    @apply font-serif uppercase;
+    margin: -2px 0px 0px;
+    font-size: 12px;
+    opacity: 0.5;
+    line-height: 30px;
+    font-weight: 400;
+  }
+
+  > div {
+    text-align: center;
+
+    @screen xs {
+      @apply w-[50%] mb-[30px] px-[0];
+    }
+    
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+
+  span {
+    display: block;
+    line-height: normal;
+  }
+}
+
+//Countdown Style 02
+.countdown-style-02 {
+  .unit {
+    @apply font-serif font-normal block text-xs leading-[30px] uppercase text-center;
+    opacity: 0.6;
+  }
+
+  > div {
+    @apply m-0 relative text-center inline-block w-[130px] font-light sm:w-[120px];
+    @screen xs {
+      @apply w-[50%] mb-[25px] px-[15px];
+    }
+
+    &:nth-child(2) {
+      &::after {
+        @apply xs:hidden;
+      }
+    }
+
+    &:after {
+      content: ":";
+      position: absolute;
+      right: 0;
+      top: 5px;
+      font-size: 34px;
+      opacity: 0.45;
+    }
+
+    &:last-child {
+      &:after {
+        content: "";
+      }
+    }
+  }
+
+  .number {
+    display: inline-block;
+    width: 90px;
+    font-size: 47px;
+    text-align: center;
+    line-height: 50px;
+    position: relative;
+  }
+}
+
+//Countdown Style 03
+.countdown-style-03 {
+  > div {
+    display: inline-block;
+    text-align: center;
+    float: none;
+    margin: 0;
+    padding: 0 20px;
+    position: relative;
+    @screen xs {
+      @apply w-[50%] mb-[15px] px-[15px];
+    }
+  }
+
+  .number {
+    font-size: 38px;
+    letter-spacing: -1px;
+    text-align: center;
+    line-height: 38px;
+  }
+
+  .unit {
+    @apply font-serif text-sm block text-center font-medium uppercase;
+    margin-top: -2px;
+    opacity: 1;
+  }
+}

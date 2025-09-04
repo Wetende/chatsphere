@@ -1,0 +1,692 @@
+//Process Step Style 01
+.process-step-style-01 {
+  &.process-step {
+    text-align: center;
+
+    &:hover {
+      .process-step-icon {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.11);
+        transition: var(--default-transition);
+      }
+    }
+
+    &:last-child {
+      .process-step-bfr {
+        display: none;
+      }
+    }
+
+    .process-step-content {
+      display: inline-block;
+      margin-bottom: 28px;
+      width: 85%;
+
+      @media (max-width:var(--lg)) {
+        width: 100%;
+      }
+
+      @media (max-width:var(--md)) {
+        width: 70%;
+      }
+
+      @media (max-width:var(--sm)) {
+        width: 90%;
+      }
+
+      @media (max-width:var(--xs)) {
+        margin-bottom: 0;
+      }
+    }
+
+    .process-step-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 40px;
+
+      @media (max-width:var(--sm)) {
+        margin: 0 auto 30px;
+      }
+    }
+  }
+
+  .process-step-number {
+    display: none;
+  }
+
+  .process-step-heading {
+    display: block;
+    color: #232323;
+    font-weight: 400;
+    margin-bottom: 10px;
+    font-family: var(--alt-font)
+  }
+
+  .process-step-icon-box {
+    text-align: center;
+    position: relative;
+  }
+
+  .process-step-bfr {
+    left: calc(100% + 10px);
+    transform: translate(-50%, -50%);
+    background-color: #757575;
+    width: 80px;
+    height: 1px;
+    top: 22%;
+    position: absolute;
+    display: block;
+    opacity: 0.2;
+
+    @media (max-width:var(--xs)) {
+      overflow: hidden;
+    }
+  }
+
+  .process-step-icon {
+    background-color: #fff;
+    width: 130px;
+    height: 130px;
+    box-shadow: 0 0 10px rgb(0 0 0 / 7%);
+    line-height: 130px;
+    border-radius: 100%;
+    text-align: center;
+    vertical-align: middle;
+    transition-duration: 0.5s;
+
+    i {
+      font-size: 50px;
+      background: linear-gradient(to right,
+          #b783ff,
+          #b783ff,
+          #fa7cc1,
+          #ff85a6,
+          #ff9393);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  &:nth-child(2) {
+    .process-step-bfr {
+      @media (max-width:var(--md)) {
+        overflow: hidden;
+      }
+    }
+  }
+}
+
+//Process Step Style 02
+.process-step-style-02 {
+  display: inline-block;
+
+  .process-step-number {
+    position: relative;
+    font-family: var(--alt-font);
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 500;
+    z-index: 1;
+    color: #fff;
+    text-align: center;
+
+    @media (max-width:var(--md)) {
+      margin-right: 40px;
+    }
+
+    @media (max-width:var(--xs)) {
+      margin-right: 20px;
+    }
+
+    span {
+      background-color: var(--base-color, #0038e3);
+      position: relative;
+      width: 50%;
+      height: 50px;
+      width: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      transition: all 0.3s ease-in-out;
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      background-color: #e4e4e4;
+      height: calc(100% - 90px);
+      left: 50%;
+      min-height: 20px;
+      transform: translateX(-50%);
+      width: 1px;
+      bottom: 20px;
+    }
+  }
+
+  &.process-step {
+    &:hover {
+      .process-step-number {
+        color: var(--base-color, #0038e3);
+
+        span {
+          background-color: #fff;
+          border-color: var(--base-color, #0038e3);
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    &:last-child {
+      .process-step-bfr {
+        display: none;
+      }
+    }
+  }
+
+  .process-step-bfr {
+    overflow: hidden;
+  }
+
+  .process-step-description {
+    .process-step-heading {
+      display: inline-block;
+      color: #232323;
+      font-family: var(--alt-font);
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .process-step-content {
+      width: 60%;
+
+      @media (max-width:var(--md)) {
+        width: 80%;
+      }
+
+      @media (max-width:var(--xs)) {
+        width: 100%;
+      }
+    }
+  }
+
+  .process-step-icon-box {
+    position: relative;
+    display: flex;
+
+    div {
+      text-align: left;
+      margin-left: 40px;
+      margin-bottom: 3.7em;
+
+      @media (max-width:var(--md)) {
+        margin-left: 0;
+      }
+    }
+  }
+
+  &:last-child {
+    .process-step-number {
+      &::after {
+        display: none;
+      }
+    }
+  }
+}
+
+//Process Step Style 03
+.process-step-style-03 {
+  &.process-step {
+    text-align: center;
+    padding: 45px 25px 0;
+
+    .process-step-heading {
+      display: block;
+      text-transform: uppercase;
+      font-family: var(--alt-font);
+      font-weight: 600;
+      padding-top: 50px;
+      margin-bottom: 10px;
+      background-image: linear-gradient(to right,
+          #b93c90,
+          #a92a96,
+          #951a9d,
+          #7b10a5,
+          #5412ae);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+
+      @media (max-width:var(--lg)) {
+        margin-bottom: 10px;
+      }
+    }
+
+    .process-step-bfr {
+      background-color: #e4e4e4;
+      display: block;
+      width: calc(100% + 55px);
+      height: 1px;
+      position: absolute;
+      top: 16px;
+      left: -15px;
+
+      @media (max-width:var(--xs)) {
+        width: 100%;
+        left: 0;
+      }
+    }
+  }
+
+  .process-step-icon-box {
+    position: relative;
+
+    @media (max-width:var(--sm)) {
+      padding-left: 25px;
+      padding-right: 25px;
+    }
+
+    @media (max-width:var(--xs)) {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    &:hover {
+      .process-step-number {
+        &::after {
+          height: 55px;
+          width: 55px;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        &::before {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1.3);
+        }
+      }
+    }
+  }
+
+  .process-step-number {
+    position: relative;
+    z-index: 1;
+    line-height: 35px;
+    display: block;
+    color: #232323;
+    font-weight: 500;
+    text-align: center;
+    font-size: 21px;
+    transition: var(--default-transition);
+    transition-duration: 250ms;
+
+    &::after {
+      content: "";
+      display: inline-block;
+      border-radius: 50%;
+      z-index: -15;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      background-color: #ffffff;
+      width: 55px;
+      height: 55px;
+      box-shadow: 0 0 15px rgb(0 0 0 / 8%);
+      transform: translate(-50%, -50%);
+      transition: 0.3s ease-in-out;
+
+      @media (max-width:var(--lg)) {
+        width: 56px;
+        height: 56px;
+      }
+    }
+
+    &::before {
+      content: "";
+      display: inline-block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: -15;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+
+      @media (max-width:var(--lg)) {
+        width: 56px;
+        height: 56px;
+      }
+
+      background-image: linear-gradient(to right top,
+        #b93c90,
+        #a92a96,
+        #951a9d,
+        #7b10a5,
+        #5412ae);
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: 0.3s ease-in-out;
+      box-shadow: 0 0 15px rgb(0 0 0 / 8%);
+    }
+  }
+}
+
+//Process Step Style 04
+.process-step-style-04 {
+  &.process-step {
+    text-align: center;
+
+    .process-step-heading {
+      font-family: var(--alt-font);
+      display: block;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: #374162;
+      margin: 0 0 10px;
+      padding-top: 50px;
+    }
+
+    &:hover {
+      .process-step-number {
+        &::before {
+          width: 80px;
+          height: 80px;
+        }
+
+        &::after {
+          width: 61px;
+          height: 61px;
+        }
+      }
+    }
+
+    .process-step-bfr {
+      display: block;
+      width: calc(100% + 33px);
+      height: 1px;
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #e4e4e4;
+
+      @media (max-width:var(--xs)) {
+        left: 0;
+        width: 100%;
+        transform: translateX(0);
+      }
+    }
+  }
+
+  .process-step-number {
+    font-size: 21px;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    line-height: 38px;
+    display: block;
+    transition: var(--default-transition);
+    transition-duration: 250ms;
+    color: #fff;
+
+    &::after {
+      content: "";
+      width: 56px;
+      height: 56px;
+      display: inline-block;
+      background-image: linear-gradient(to right top,
+          #ec606c,
+          #ee6362,
+          #ee6757,
+          #ed6c4d,
+          #eb7242);
+      border-radius: 50%;
+      position: absolute;
+      z-index: -15;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: 0.3s ease-in-out;
+    }
+
+    &::before {
+      content: "";
+      width: 72px;
+      height: 72px;
+      display: inline-block;
+      background-color: #ffded8;
+      border-radius: 50%;
+      position: absolute;
+      z-index: -15;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 1;
+      transition: 0.3s ease-in-out;
+    }
+  }
+
+  .process-step-icon-box {
+    position: relative;
+
+    .process-step-description {
+
+      @media (max-width:var(--sm)) {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+    }
+  }
+}
+
+//Process Step Style 05
+.process-step-style-05 {
+  .process-step-bfr {
+    display: block;
+    height: 1px;
+    position: absolute;
+    content: "";
+    background-color: white;
+    left: 75%;
+    opacity: .2;
+    top: 61px;
+    width: 60%;
+
+    @media (max-width:var(--sm)) {
+      overflow: hidden;
+    }
+  }
+
+  .process-step-icon-box {
+    .process-step-description {
+      padding-top: 50px;
+    }
+  }
+
+  &.process-step {
+    display: block;
+    position: relative;
+    float: left;
+    z-index: 1;
+
+    &:last-child {
+      .process-step-bfr {
+        opacity: 0;
+      }
+    }
+
+    p {
+      margin-bottom: 0;
+      opacity: 0.7;
+    }
+
+    &:hover {
+      .process-step-number {
+        transform: scale(1.2);
+      }
+    }
+
+    .process-step-icon-box {
+      padding: 45px 25px 0;
+    }
+  }
+
+  .process-step-heading {
+    margin-bottom: 10px;
+    font-weight: 500;
+    font-family: var(--alt-font);
+    display: block;
+
+  }
+
+  .process-step-number {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-size: 18px;
+    line-height: 22px;
+    font-family: var(--alt-font);
+    line-height: 1;
+    transition: all 250ms ease-in-out;
+    font-weight: 500;
+    color: black;
+    display: inline-block;
+
+    span {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      background-color: #fff;
+    }
+
+    &::after {
+      content: "";
+      width: calc(100% + 15px);
+      height: calc(100% + 15px);
+      display: inline-block;
+      background-color: #fff;
+      opacity: 0.4;
+      border-radius: 50%;
+      position: absolute;
+      z-index: -15;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: 0.3s ease-in-out;
+    }
+
+    &::before {
+      content: "";
+      width: calc(100% + 30px);
+      height: calc(100% + 30px);
+      display: inline-block;
+      background-color: #fff;
+      border-radius: 50%;
+      position: absolute;
+      z-index: -15;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.4;
+      transition: 0.3s ease-in-out;
+    }
+  }
+}
+
+//Process Step Style 06
+.process-step-style-06 {
+
+  @media (max-width:var(--md)) {
+    padding: 0;
+  }
+
+  .process-step-number {
+    display: none;
+  }
+
+  .process-step-heading {
+    color: #232323;
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+    line-height: 22px;
+
+    @media (max-width:var(--md)) {
+      font-size: 16px;
+      line-height: 28px;
+    }
+  }
+
+  &.process-step {
+    @media (max-width:var(--sm)) {
+      margin-bottom: 20px;
+    }
+
+    .propcess-step-containt {
+      display: block;
+      font-size: 16px;
+      line-height: 28px;
+    }
+
+    &:last-child {
+      .process-step-bfr {
+        display: none;
+      }
+    }
+  }
+
+  .process-step-icon-box {
+    position: relative;
+
+    @media (max-width:var(--md)) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+    }
+
+    @media (max-width:var(--xs)) {
+      text-align: center;
+    }
+
+    .process-step-description {
+      display: inline-block;
+      text-align: left;
+
+      .process-step-content {
+        font-size: 16px;
+        line-height: 28px;
+      }
+    }
+  }
+
+  .process-step-bfr {
+    width: 40px;
+    background-color: #e4e4e4;
+    display: block;
+    left: 100%;
+    height: 1px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    @media (max-width:var(--md)) {
+      flex: 1;
+      left: 225px;
+      order: 999;
+      transform: translateX(-50%);
+      right: 0;
+    }
+
+    @media (max-width:var(--sm)) {
+      overflow: hidden;
+    }
+  }
+}

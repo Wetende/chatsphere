@@ -141,6 +141,17 @@ class BcryptPasswordService(IPasswordService):
         if len(password) > 128:
             return False, "Password cannot be longer than 128 characters"
         
+        # Check against common passwords first so 'common' takes precedence in messaging
+        common_passwords = {
+            'password', 'password123', '123456', '123456789', 'qwerty',
+            'abc123', 'password1', 'admin', 'letmein', 'welcome',
+            'monkey', '1234567890', 'dragon', 'master', 'superman',
+            'password123!'
+        }
+        
+        if password.lower() in common_passwords:
+            return False, "Password is too common, please choose a different one"
+        
         # Check for at least one uppercase letter
         if not re.search(r'[A-Z]', password):
             return False, "Password must contain at least one uppercase letter"
@@ -156,16 +167,6 @@ class BcryptPasswordService(IPasswordService):
         # Check for at least one special character
         if not re.search(r'[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>/?]', password):
             return False, "Password must contain at least one special character"
-        
-        # Check against common passwords
-        common_passwords = {
-            'password', 'password123', '123456', '123456789', 'qwerty',
-            'abc123', 'password1', 'admin', 'letmein', 'welcome',
-            'monkey', '1234567890', 'dragon', 'master', 'superman'
-        }
-        
-        if password.lower() in common_passwords:
-            return False, "Password is too common, please choose a different one"
         
         return True, None
     

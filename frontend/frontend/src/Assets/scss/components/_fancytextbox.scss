@@ -1,0 +1,426 @@
+// Fancy text box 01
+.fancy-text-box-01 {
+  .col {
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+
+    @media (max-width:var(--xs)) {
+      border-right: 0;
+    }
+
+    &.dark {
+      .text-box-content {
+        .text-box {
+          background-color: #232323
+        }
+
+        .text-box-hover {
+          background: #232323;
+
+          span {
+            color: #fff;
+          }
+
+          p {
+            color: #fff;
+          }
+        }
+
+        .text-box {
+          span {
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+
+    &:last-child {
+      border-right: 0;
+    }
+
+    .text-box-content {
+      overflow: hidden;
+
+      .text-box-hover {
+        padding: 40px 20px 40px !important;
+      }
+
+      .text-box,
+      .text-box-hover {
+        padding: 52px 20px 43px;
+        display: block;
+        width: 100%;
+        transition: var(--default-transition);
+        transition-duration: 0.5s;
+        text-align: center;
+      }
+
+      .text-box {
+        display: grid;
+
+        i {
+          font-size: 40px;
+          color: #8bb867;
+          margin-bottom: 15px;
+        }
+
+        span {
+          font-family: var(--alt-font);
+          font-weight: 500;
+          text-transform: uppercase;
+          color: #232323;
+        }
+      }
+
+      &:hover {
+        .text-box {
+          color: #ff6437;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(-100%);
+        }
+
+        .text-box-hover {
+          transform: translateY(0);
+        }
+      }
+
+      .text-box-hover {
+        position: absolute;
+        top: 0;
+        display: inline-block;
+        text-align: center;
+        transform: translateY(100%);
+        background: linear-gradient(to bottom, #fff, #fdfdfd, #fbfbfb, #f9f9f9, #f7f7f7);
+        height: 100%;
+
+        span {
+          text-align: center;
+          justify-content: center;
+          text-transform: uppercase;
+          font-family: var(--alt-font);
+          font-weight: 500;
+          margin-bottom: 10px;
+          line-height: normal;
+          color: #2f2f2f;
+        }
+
+        p {
+          margin-bottom: 0;
+          line-height: 26px;
+        }
+      }
+    }
+  }
+}
+
+// Fancy text box style 02
+.fancy-text-box-02 {
+  justify-content: center;
+  text-align: center;
+
+  .col {
+    &.dark {
+      .text-box-content {
+        background-color: #232323;
+
+        .text-box-wrapper {
+          .text-box {
+            span {
+              color: #fff;
+            }
+          }
+        }
+      }
+    }
+
+    .text-box-content {
+      overflow: hidden;
+      background-color: #fff;
+      border-radius: 6px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.08);
+
+      .text-box-wrapper {
+        padding: 17px 70px;
+        transform: translateY(25px);
+        transition: var(--default-transition);
+
+        @media (max-width:var(--lg)) {
+          padding-left: 2.5rem;
+          padding-right: 2.5rem;
+        }
+
+        @media (max-width:var(--md)) {
+          padding-right: 4rem;
+          padding-right: 4rem;
+        }
+
+        .text-box {
+
+          @media (max-width:var(--lg)) {
+            padding-bottom: 25px;
+          }
+
+          span {
+            color: #232323;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 28px;
+            font-family: var(--alt-font)
+          }
+        }
+
+        i {
+          display: block;
+          margin-bottom: 25px;
+          font-size: 40px;
+          transition: var(--default-transition);
+        }
+
+        p {
+          opacity: 0;
+          margin-bottom: 0;
+          transform: translateY(20px);
+          transition: var(--default-transition);
+        }
+
+        a {
+          font-family: var(--alt-font);
+          display: block;
+          color: #828282;
+          transition: var(--default-transition);
+
+          &:hover {
+            color: var(--base-color, #0038e3);
+          }
+        }
+      }
+    }
+
+    &:hover {
+      .text-box-wrapper {
+        transform: translateY(-30px);
+
+        i {
+          opacity: 0;
+        }
+
+        p {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+// Fancy text box style 03
+.fancy-text-box-03 {
+  justify-content: center;
+  text-align: center;
+
+  .col {
+    &.dark {
+      .text-box-content {
+        background-color: #232323;
+
+        .text-box {
+          .fancy-box-wrapper {
+            span {
+              color: #fff;
+            }
+          }
+        }
+      }
+    }
+
+    .text-box {
+      .fancy-box-wrapper {
+        font-family: var(--alt-font);
+        flex: 0 0 70%;
+        border-left: 1px solid #e4e4e4;
+        display: block;
+        text-align: start;
+        padding-left: 45px;
+        margin-left: 40px;
+
+        @media (max-width:var(--xs)) {
+          padding-left: 25px;
+          margin-left: 25px;
+        }
+
+        p {
+          margin-bottom: 0;
+          font-family: var(--alt-font);
+        }
+
+        span {
+          font-family: var(--alt-font);
+        }
+      }
+
+      span {
+        p {
+          margin-bottom: 0;
+          font-size: 15px;
+          display: block;
+          text-align: start;
+          color: #828282;
+          font-family: var(--alt-font);
+        }
+      }
+    }
+
+    .fancy-text-icon {
+      margin-bottom: 0;
+      font-family: var(--alt-font);
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: -1px;
+      flex: 0 0 auto;
+    }
+
+    .fancy-box-content {
+      border-left: 1px solid;
+      border-color: #e4e4e4;
+      flex: 1;
+    }
+
+    .featured-box-style2 {
+      transition-duration: 0.4s;
+    }
+
+    .text-box-content {
+      padding: 3.5rem;
+      background-color: #fff;
+      border-radius: 6px;
+      transition: var(--default-transition);
+      box-shadow: 0 0 15px rgb(0 0 0 / 8%);
+
+      @media (max-width:var(--lg)) {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+      }
+
+      @media (max-width:var(--md)) {
+        padding-left: 3.5rem;
+        padding-right: 3.5rem;
+      }
+
+      @media (max-width:var(--xs)) {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+
+      &:hover {
+        transform: translate3d(0, -3px, 0);
+      }
+    }
+  }
+}
+
+// Fancy text box style 04
+.fancy-text-box-04 {
+  .col {
+    &.dark {
+      .text-box-content {
+        background-color: #232323;
+
+        .feature-box-content {
+          div {
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .text-box-content {
+      transition: var(--default-transition);
+
+      &:hover {
+        transform: translate3d(0, -3px, 0);
+      }
+    }
+  }
+}
+
+// Facny text box style 05
+.fancy-text-box-05 {
+  position: relative;
+  transition: all 0.5s ease-in-out;
+
+  .fancy-box-item {
+    .bg-banner-image {
+      transition-duration: 0.5s;
+      height: 100%;
+      width: 100%;
+      z-index: 0;
+      opacity: 0;
+      left: 0;
+      top: 0;
+      position: absolute;
+      visibility: hidden
+    }
+
+    .fancy-text-box {
+      position: relative;
+
+      .fancy-text-content {
+        z-index: 9;
+        width: 100%;
+        height: auto;
+        bottom: 0;
+        left: 0;
+        top: auto;
+        position: absolute;
+        transform: translateY(70px);
+        transition: all 0.5s ease-in-out;
+
+        .fancy-text-box-bottom {
+          opacity: 0;
+          transform: translateY(15px);
+          transition: all 0.5s ease-in-out;
+        }
+
+        .feather-box-overlay {
+          z-index: -1;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          left: 0;
+          top: 0;
+          position: absolute;
+          transition: all 0.5s ease-in-out;
+        }
+      }
+    }
+
+    &:hover {
+      .bg-banner-image {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .fancy-text-box {
+        .fancy-text-content {
+          transform: translateY(0);
+          background-color: var(--base-color);
+
+          .fancy-text-box-bottom {
+            opacity: 1;
+            transform: translateY(0);
+          }
+
+          .feature-box-overlay {
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+    }
+  }
+}

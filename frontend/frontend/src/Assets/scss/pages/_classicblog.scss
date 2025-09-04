@@ -1,0 +1,19 @@
+.home-classic-blog {
+    .blog-clean {
+        .blog-post {
+            border-radius: 0 !important;
+            box-shadow: none;
+            transform: none !important;
+
+            .blog-rounded-icon {
+                background-color: transparent !important;
+                border: none !important;
+
+                i {
+                    font-size: 28px !important;
+                    color: white;
+                }
+            }
+        }
+    }
+}

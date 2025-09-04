@@ -1,0 +1,76 @@
+---
+alwaysApply: true
+description: Application layer orchestration and use case rules
+globs: *.py
+---
+
+# Application Layer Rules
+
+## Use Case Pattern
+- Each use case = single business operation
+- Input validation using DTOs
+- Orchestrate domain entities and services
+- Return DTOs, never domain entities directly
+
+```python
+# ✅ GOOD - Use case structure
+class CreateUserUseCase:
+    def __init__(self, user_repo: IUserRepository, email_service: IEmailService):
+        self._user_repo = user_repo
+        self._email_service = email_service
+    
+    async def execute(self, request: CreateUserRequestDTO) -> CreateUserResponseDTO:
+        # 1. Validate input
+        # 2. Create domain entity
+        # 3. Call repository
+        # 4. Return DTO
+        pass
+```
+
+## DTO Guidelines
+- Input/Output data transfer objects
+- Pydantic models for validation
+- Map between DTOs and domain entities
+- Located in application/dtos/
+
+```python
+# ✅ GOOD - Request/Response DTOs
+class CreateUserRequestDTO(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8)
+
+class CreateUserResponseDTO(BaseModel):
+    id: int
+    email: str
+    created_at: datetime
+```
+
+## Interface Definitions
+- All external service interfaces here
+- Repository interfaces in domain/
+- Service interfaces in application/interfaces/
+
+```python
+# ✅ GOOD - Service interface
+class IEmailService(ABC):
+    @abstractmethod
+    async def send_verification_email(self, email: str, token: str) -> bool:
+        pass
+```
+
+## Exception Handling
+- Application-specific exceptions
+- Business rule violations
+- Located in application/exceptions/
+
+```python
+# ✅ GOOD - Application exceptions
+class UserAlreadyExistsException(Exception):
+    def __init__(self, email: str):
+        super().__init__(f"User with email {email} already exists")
+```
+
+## Dependency Rules
+- Import from domain/ and application/ only
+- NO imports from infrastructure/ or presentation/
+- Use interfaces for external dependencies

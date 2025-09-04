@@ -1,0 +1,51 @@
+.our-story-page {
+    .process-step-style-05.process-step {
+        .process-step-icon-box {
+            padding: 45px 0 0;
+        }
+    }
+}
+
+.our-story-process-step-style {
+    .process-step-description {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+.our-story-fancy-text-box {
+    .fancy-box-wrapper {
+        padding-right: 40px;
+        p {
+            font-family: "Roboto", sans-serif !important;
+        }
+    }
+    .text-box-content {
+        h4 {
+            font-size: 2.3rem;
+            line-height: 3rem;
+        }
+    }
+}
+
+.our-story-testimonial {
+    .swiper-wrapper {
+        cursor: url("../img/icon-move-black.png"), move !important;
+
+        .swiper-slide {
+            i {
+                color: #c3c3c3;
+            }
+            span {
+                &:nth-child(2) {
+                    color: #232323;
+                }
+                &:nth-child(4) {
+                    background: linear-gradient(to right, #556fff, #556fff, #e05fc4, #f767a6, #ff798e);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                }
+            }
+        }
+    }
+}

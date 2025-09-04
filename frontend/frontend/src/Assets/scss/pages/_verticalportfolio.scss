@@ -1,0 +1,23 @@
+.verticalportfolio-social-icon {
+    li {
+        a {
+            color: #fff !important;
+
+            &:hover {
+                opacity: .5 !important;
+            }
+        }
+    }
+}
+
+.vertical-portfolio {
+    .swiper-pagination-vertical {
+        &.swiper-pagination-bullets {
+            right: 110px !important;
+        }
+
+        .swiper-pagination-bullet {
+            margin: 10px 0 !important;
+        }
+    }
+}

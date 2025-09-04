@@ -1,0 +1,24 @@
+.travel-agency-slider {
+  .swiper-button-prev,
+  .swiper-button-next {
+    background-color: rgba(23, 23, 23, 0.5);
+  }
+
+  .swiper-button-prev {
+    @apply left-[40px] xs:hidden;
+  }
+
+  .swiper-button-next {
+    @apply right-[40px] xs:hidden;
+  }
+
+  .swiper-pagination-bullets {
+    @apply bottom-[45px];
+  }
+}
+
+.travel-agency-list-style {
+  .list-title {
+    color: #232323;
+  }
+}

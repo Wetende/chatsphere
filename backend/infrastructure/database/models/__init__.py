@@ -15,10 +15,12 @@ Key Features:
 from .user import UserModel
 from .bot import BotModel
 from .conversation import ConversationModel, MessageModel
+from .document import DocumentModel
 
 __all__ = [
     "UserModel",
     "BotModel", 
     "ConversationModel",
-    "MessageModel"
+    "MessageModel",
+    "DocumentModel",
 ]

@@ -1,0 +1,116 @@
+.text-box-style-01 {
+  .feature-box {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .feature-box-content {
+    padding: 28px;
+
+    @media (max-width:var(--lg)) {
+      padding: 0;
+    }
+
+    @media (max-width:var(--md)) {
+      padding: 2rem 1rem;
+    }
+
+    @media (max-width:var(--sm)) {
+      padding: 2rem;
+    }
+
+    h2 {
+      color: var(--base-color, #0038e3);
+      transition-duration: 0.4s;
+      display: inline-block;
+      font-weight: 300;
+      line-height: 59px;
+      letter-spacing: -2px;
+      font-size: 55px;
+      padding: 0;
+      margin-bottom: 25px;
+
+      @media (max-width:var(--md)) {
+        font-size: 47px;
+      }
+
+      @media (max-width:var(--sm)) {
+        font-size: 43px;
+      }
+    }
+
+    span {
+      font-weight: 500;
+      color: #232323;
+      font-family: var(--alt-font);
+      display: block;
+      margin-bottom: 5px;
+    }
+  }
+}
+
+//text style 2
+.text-box-style-02 {
+  .feature-box-content {
+    padding: 0;
+
+    span {
+      font-weight: 500;
+      color: #232323;
+      font-family: var(--alt-font);
+      display: block;
+      font-size: 20px;
+      line-height: 28px;
+      text-align: start;
+      width: 50%;
+
+      @media (max-width:var(--lg)) {
+        font-size: 18px;
+        line-height: 22px;
+      }
+
+      @media (max-width:var(--xs)) {
+        width: 100%;
+      }
+    }
+
+    p {
+      width: 70%;
+      display: block;
+      text-align: start;
+
+      @media (max-width:var(--sm)) {
+        width: 90%;
+      }
+    }
+  }
+
+  .feature-box-number {
+    font-family: var(--alt-font);
+    font-size: 18px;
+    line-height: 22px;
+    text-align: start;
+    color: var(--base-color, #0038e3);
+    margin: 13px 0;
+
+    @media (max-width:var(--md)) {
+      font-size: 16px;
+      line-height: 28px;
+    }
+
+    span {
+      height: 1px;
+      width: 75%;
+      vertical-align: middle;
+      margin-right: 10px;
+      display: inline-block;
+      background-color: var(--base-color, #0038e3);
+
+      @media (max-width:var(--sm)) {
+        width: 90%;
+      }
+    }
+  }
+}

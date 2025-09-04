@@ -19,7 +19,7 @@ Dependency Direction:
 
 import asyncio
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import aiosmtplib
@@ -47,12 +47,12 @@ class SmtpEmailService(IEmailService):
         self,
         smtp_host: str,
         smtp_port: int = 587,
-        smtp_username: str = None,
-        smtp_password: str = None,
+        smtp_username: Optional[str] = None,
+        smtp_password: Optional[str] = None,
         use_tls: bool = True,
-        default_from_email: str = None,
+        default_from_email: str = "",
         connection_timeout: int = 30,
-        templates: Dict[str, str] = None
+        templates: Optional[Dict[str, str]] = None
     ):
         """
         Initialize SMTP email service.
@@ -187,29 +187,48 @@ class SmtpEmailService(IEmailService):
             subject="Welcome to KyroChat!"
         )
 
-    async def send_password_reset_email(self, to_email: str, reset_token: str) -> bool:
-        """
-        Send a password reset email.
-
-        Args:
-            to_email: User's email address
-            reset_token: Password reset token
-
-        Returns:
-            True if email was sent successfully
-        """
+    async def _send_password_reset_email_str(self, to_email: str, reset_token: str) -> bool:
         template_data = {
             "email": to_email,
             "reset_token": reset_token,
             "reset_url": f"https://yourapp.com/reset-password?token={reset_token}"
         }
-
         return await self.send_template_email(
             to_email=to_email,
             template_name="password_reset",
             template_data=template_data,
             subject="Reset Your Password"
         )
+
+    async def send_verification_email(self, email, verification_token: str, user_name: Optional[str] = None) -> bool:
+        """
+        Send an email verification message.
+
+        Args:
+            email: Email value object or string
+            verification_token: Verification token
+            user_name: Optional user name for personalization
+
+        Returns:
+            True if sent successfully
+        """
+        to_email = str(email)
+        template_data = {
+            "user_name": user_name or to_email,
+            "email": to_email,
+            "verification_token": verification_token,
+            "verification_url": f"https://yourapp.com/verify-email?token={verification_token}&email={to_email}"
+        }
+        return await self.send_template_email(
+            to_email=to_email,
+            template_name="verify_email",
+            template_data=template_data,
+            subject="Verify Your Email"
+        )
+
+    async def send_password_reset_email(self, email, reset_token: str, user_name: Optional[str] = None) -> bool:  # type: ignore[override]
+        """Interface-compatible method signature delegating to string-based implementation."""
+        return await self._send_password_reset_email_str(str(email), reset_token)
 
     def _create_email_message(self, message: EmailMessage) -> MIMEMultipart:
         """Create email message object."""
@@ -244,18 +263,14 @@ class SmtpEmailService(IEmailService):
 
             # Start TLS if required
             if self.use_tls:
-                await smtp_client.start_tls()
+                await smtp_client.starttls()
 
             # Login if credentials provided
             if self.smtp_username and self.smtp_password:
                 await smtp_client.login(self.smtp_username, self.smtp_password)
 
             # Send email
-            await smtp_client.sendmail(
-                from_addr=msg['From'],
-                to_addrs=[msg['To']],
-                msg=msg.as_string()
-            )
+            await smtp_client.sendmail(msg['From'], [msg['To']], msg.as_string())
 
             # Quit
             await smtp_client.quit()

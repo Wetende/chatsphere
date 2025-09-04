@@ -1,0 +1,17 @@
+.my-atropos {
+  .title {
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+  }
+  .atropos-shadow {
+    display: none;
+  }
+  .atropos-rotate-touch {
+    text-align: center;
+    overflow: hidden;
+  }
+  .atropos-inner {
+    text-align: center;
+    overflow: visible;
+  }
+}

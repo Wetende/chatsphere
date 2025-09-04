@@ -24,10 +24,8 @@ class TestAuthenticationAPI:
     
     @pytest.fixture
     def mock_app(self):
-        """Create mock FastAPI app for testing."""
-        # This is a simplified mock - in real tests you'd use the actual app
-        app = MagicMock()
-        return app
+        """Provide a placeholder to satisfy fixture lookup (not used)."""
+        return MagicMock()
     
     @pytest.mark.asyncio
     async def test_login_endpoint_success(self, mock_app):
@@ -172,7 +170,8 @@ class TestRequestValidation:
             "not-an-email",
             "@example.com",
             "user@",
-            "user space@example.com"
+            "user space@example.com",
+            "user@example"
         ]
         
         # In actual implementation, these would be tested via API calls
@@ -181,7 +180,15 @@ class TestRequestValidation:
         
         for email in invalid_emails:
             # Would trigger validation error in actual API call
-            assert not (email.count("@") == 1 and "." in email.split("@")[1])
+            parts = email.split("@")
+            is_valid = False
+            if len(parts) == 2:
+                local, domain = parts
+                if local and " " not in local and "." in domain:
+                    labels = [lbl for lbl in domain.split(".") if lbl]
+                    # valid only if there are at least 2 labels and last label length >= 2
+                    is_valid = len(labels) >= 2 and len(labels[-1]) >= 2
+            assert is_valid is False
     
     def test_password_validation_requirements(self):
         """Test password validation requirements."""

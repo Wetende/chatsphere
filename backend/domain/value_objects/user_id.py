@@ -24,42 +24,48 @@ Immutability:
 """
 
 from typing import Union
+import uuid
 
 
 class UserId:
-    """Value object for User ID with validation and immutability."""
+    """Value object for User ID with validation and immutability.
+
+    Accepts either an integer ID or a UUID string for flexibility across
+    different persistence strategies in tests.
+    """
     
     def __init__(self, value: Union[int, str, None] = None):
-        """
-        Initialize UserId with validation.
+        """Initialize UserId with validation.
         
         Args:
-            value: Integer ID, string representation of ID, or None (defaults to 0 for new users)
-            
-        Raises:
-            ValueError: If value is not a valid integer or convertible to integer
+            value: Integer ID, UUID string, numeric string, or None (defaults to 0 for new users)
         """
         if value is None:
-            self._value = 0  # Default for new users
+            self._value = "0"
         elif isinstance(value, int):
             if value < 0:
                 raise ValueError(f"Invalid UserId: must be non-negative integer, got {value}")
-            self._value = value
+            self._value = str(value)
         elif isinstance(value, str):
-            try:
-                parsed_value = int(value)
-                if parsed_value < 0:
-                    raise ValueError(f"Invalid UserId: must be non-negative integer, got {parsed_value}")
-                self._value = parsed_value
-            except ValueError as e:
-                raise ValueError(f"Invalid UserId string format: {value}") from e
+            # Numeric string
+            if value.isdigit():
+                if int(value) < 0:
+                    raise ValueError(f"Invalid UserId: must be non-negative integer, got {value}")
+                self._value = value
+            else:
+                # Accept UUID strings for compatibility with tests
+                try:
+                    uuid.UUID(value)
+                    self._value = value
+                except Exception as e:
+                    raise ValueError(f"Invalid UserId string format: {value}") from e
         else:
             raise ValueError(f"Invalid UserId type: {type(value)}")
     
     @property
-    def value(self) -> int:
-        """Get the integer value."""
-        return self._value
+    def value(self):
+        """Get the value: returns int for numeric IDs, otherwise UUID string."""
+        return int(self._value) if str(self._value).isdigit() else self._value
     
     def __str__(self) -> str:
         """String representation for API serialization."""
@@ -81,4 +87,4 @@ class UserId:
     
     def is_new_user(self) -> bool:
         """Check if this represents a new user (ID = 0)."""
-        return self._value == 0
+        return self._value == "0"

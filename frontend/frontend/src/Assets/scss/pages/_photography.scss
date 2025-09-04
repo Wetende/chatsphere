@@ -1,0 +1,64 @@
+.photography-slider {
+  .swiper-button-prev,
+  .swiper-button-next {
+    @apply top-auto bottom-[70px] h-[50px] w-auto cursor-pointer;
+
+    span {
+      @apply inline-block text-lg text-[#828282];
+      transition: var(--default-transition);
+    }
+
+    .line {
+      @apply inline-block w-[133px] h-[1px] bg-[#28292b] mr-[15px] border-none relative;
+
+      &:after {
+        content: "";
+        @apply w-0 h-full absolute top-0 left-0 inline-block;
+        background: linear-gradient(
+          to left,
+          #3edfb6,
+          #58e49a,
+          #7ce878,
+          #a5e850,
+          #d0e51b
+        );
+        transition: var(--default-transition);
+      }
+    }
+
+    &:after {
+      content: "";
+    }
+
+    &:hover {
+      .line {
+        &:after {
+          @apply w-full;
+        }
+      }
+
+      span {
+        @apply text-white;
+      }
+    }
+
+    @screen xs {
+        @apply hidden;
+    }
+  }
+
+  .swiper-button-next {
+    .line {
+      @apply mr-0 ml-[15px];
+
+      &:after {
+        @apply right-0 left-auto;
+      }
+    }
+  }
+}
+.photography-bg-gradient{
+  background: linear-gradient(to right,#3edfb6,#58e49a,#7ce878,#a5e850,#d0e51b);
+  -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

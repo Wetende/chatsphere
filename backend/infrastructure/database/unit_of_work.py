@@ -188,9 +188,9 @@ class SqlAlchemyUnitOfWork(IUnitOfWork):
             True if active, False otherwise
         """
         return (
-            self._is_active 
-            and self._session is not None 
-            and not self._session.is_closed
+            self._is_active
+            and self._session is not None
+            and not getattr(self._session, "closed", False)
         )
     
     def is_in_transaction(self) -> bool:
@@ -211,7 +211,7 @@ class SqlAlchemyUnitOfWork(IUnitOfWork):
     
     async def _cleanup_session(self) -> None:
         """Clean up session resources."""
-        if self._session and not self._session.is_closed:
+        if self._session and not getattr(self._session, "closed", False):
             try:
                 await self._session.close()
             except Exception as e:

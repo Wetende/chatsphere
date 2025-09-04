@@ -1,0 +1,235 @@
+// testimonials_style_01
+.testimonials-style-01 {
+  padding-top: 49px;
+  padding-bottom: 49px;
+  padding-right: 0;
+  padding-left: 49px;
+
+  @media (max-width:var(--lg)) {
+    padding-top: 36px;
+    padding-bottom: 36px;
+    padding-right: 0;
+    padding-left: 36px;
+  }
+
+  transition: var(--default-transition);
+  transition-duration: 0.5s;
+
+  &:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.07);
+    background: #fff;
+
+    p {
+      color: var(--base-color, #0038e3);
+    }
+
+    i {
+      transform: rotateY(-180deg) rotateX(-180deg);
+    }
+  }
+
+  p {
+    transition: var(--default-transition);
+    transition-duration: 0.5s;
+  }
+
+  i {
+    color: var(--base-color, #0038e3);
+    transition: var(--default-transition);
+    transition-duration: 0.5s;
+  }
+}
+
+/* testimonials_style_02 */
+.testimonials-style-02 {
+  transition: .3s ease-in-out;
+  overflow: hidden;
+  border-radius: 5px;
+
+  &:hover {
+    transition: var(--default-transition);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.07);
+
+    .testimonials-rounded-icon {
+      transform: translatex(-50%) scale(1.2);
+    }
+  }
+
+  .testimonials-rounded-icon {
+    transform: translateX(-50%);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.05);
+    transition: var(--default-transition);
+
+    i {
+      background: linear-gradient(to right,
+          #b783ff,
+          #b783ff,
+          #fa7cc1,
+          #ff85a6,
+          #ff9393);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+}
+
+/* testimonials_style_03 */
+.testimonials-style-03 {
+  .testimonials-bubble {
+    box-shadow: 0 0 20px rgb(0 0 0 / 8%);
+    transition: var(--default-transition);
+
+    &::before {
+      content: "";
+      position: absolute;
+      border-style: solid;
+      bottom: 0;
+      height: 0;
+      width: 0;
+      border-color: #fff transparent transparent;
+      border-width: 27px 10px 0;
+      border-left-color: transparent;
+      border-right-color: transparent;
+      bottom: -19px;
+      left: 50px;
+      z-index: 1;
+      -webkit-transform: rotate(27deg);
+      -ms-transform: rotate(27deg);
+      transform: rotate(27deg);
+    }
+
+    &:hover {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+      transform: translate3d(0, -3px, 0);
+    }
+  }
+}
+
+/* testimonials style 04 */
+.testimonials-style-04 {
+  .testimonials-bubble {
+    border: 1px solid #ededed;
+    transition: var(--default-transition);
+
+    &::before,
+    &::after {
+      content: "";
+      top: 100%;
+      left: 50px;
+      border: solid transparent;
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+
+    &::before {
+      border-top-color: #ededed;
+      border-width: 18px 18px 0 0;
+    }
+
+    &::after {
+      border-top-color: #fff;
+      border-width: 14px 13px 0 0;
+      margin-left: 2px;
+    }
+  }
+
+  .star-rating {
+    display: inline-block;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 2px;
+    overflow: hidden;
+    position: relative;
+    width: auto;
+    color: #fd961e;
+    height: 1em;
+    font-family: "Font Awesome 5 Free";
+
+    &::before {
+      color: #fd9d38;
+      content: "\f005\f005\f005\f005\f005";
+    }
+
+    span {
+      display: inline-block;
+      overflow: hidden;
+      position: absolute;
+      left: 0;
+      color: #fd961e;
+      padding-top: 1.5em;
+      white-space: nowrap;
+
+      &::before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-weight: 600;
+        content: "\f005\f005\f005\f005\f005";
+      }
+    }
+  }
+}
+
+/* testimonials style 05 */
+.testimonials-style-05 {
+  transition: var(--default-transition);
+  box-shadow: 0 0 15px rgba(0, 0, 0, .08);
+
+  &:hover {
+    transform: translate3d(0, -3px, 0);
+  }
+
+  .star-rating {
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    width: auto;
+    color: #fd9d38;
+    height: 1em;
+    line-height: 1;
+    letter-spacing: 4px;
+    font-family: "Font Awesome 5 Free";
+
+    &::before {
+      color: #fd9d38;
+      content: "\f005\f005\f005\f005\f005";
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    span {
+      display: inline-block;
+      overflow: hidden;
+      position: absolute;
+      left: 0;
+      color: #fd9d38;
+      padding-top: 1.5em;
+      white-space: nowrap;
+
+      &::before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-weight: 600;
+        content: "\f005\f005\f005\f005\f005";
+        font-size: 12px;
+        line-height: 16px;
+      }
+    }
+  }
+}
+
+// testimonials-carousel
+.testimonials-swiper {
+  &.swiper-horizontal {
+
+    .swiper-pagination-bullets,
+    .swiper-pagination-bullets {
+      &.swiper-pagination-horizontal {
+        bottom: 0;
+      }
+    }
+  }
+}

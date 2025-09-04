@@ -1,0 +1,34 @@
+.blogpostlayout-page-02 {
+    &.swiper-navigation-03 {
+
+        .swiper-button-prev,
+        .swiper-button-next {
+            background: #fff;
+            transform: translateY(-50%);
+        }
+
+        .swiper-button-prev {
+            left: 40px;
+
+            @screen sm {
+                left: 25px
+            }
+
+            @screen xs {
+                left: -5px
+            }
+        }
+
+        .swiper-button-next {
+            right: 40px;
+
+            @screen sm {
+                right: 25px
+            }
+
+            @screen xs {
+                right: -5px
+            }
+        }
+    }
+}

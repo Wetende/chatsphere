@@ -1,0 +1,71 @@
+//ProgressBar Style 01
+.progressbar-style-01 {
+	.progressbar-main {
+		&:last-child {
+			.progressbar-wrapper {
+				@apply mb-0;
+			}
+		}
+	}
+
+	.progressbar {
+		background: var(--progress-color);
+		border-radius: 25px;
+		text-align: right;
+		transform-origin: left;
+		position: relative;
+
+		span {
+			@apply absolute -top-[27px] right-0;
+			@apply font-serif font-semibold text-darkgray text-sm;
+		}
+	}
+
+	.progressbar-wrapper {
+		width: 100%;
+		border-radius: 40px;
+		margin-bottom: 37px;
+		background:var(--trail-color); 
+		@screen md {
+			margin-bottom:25px;
+		}
+	}
+
+	.progressbar-title {
+		@apply font-semibold text-md inline-block mb-[8px];
+	}
+}
+
+//ProgressBar Style 02
+.progressbar-style-02 {
+	.progressbar-main {
+		&:last-child {
+			.progressbar-wrapper {
+				@apply mb-0;
+			}
+		}
+	}
+
+	.progressbar {
+		height: 8px;
+		background: var(--progress-color);
+		border-radius: 25px;
+		text-align: right;
+		transform-origin: left;
+		position: relative;
+	}
+
+	.progressbar-wrapper {
+		width: 100%;
+		border-radius: 40px;
+		margin-bottom: 34px;
+		background:var(--trail-color); 
+		span {
+			@apply font-serif font-medium text-darkgray text-sm absolute -top-[30px] right-0;
+		}
+	}
+
+	.progressbar-title {
+		@apply font-medium text-sm uppercase;
+	}
+}

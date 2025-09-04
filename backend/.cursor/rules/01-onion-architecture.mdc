@@ -1,0 +1,39 @@
+---
+alwaysApply: true
+description: Enforces onion architecture principles across the entire backend
+---
+
+# Onion Architecture - Core Principles
+
+## Layer Dependencies (CRITICAL)
+- **Domain** (innermost): Pure business logic, no external dependencies
+- **Application**: Orchestrates domain logic, defines interfaces
+- **Infrastructure**: Implements interfaces, external service integrations
+- **Presentation**: HTTP/API layer, depends on Application layer only
+
+## Dependency Flow Rules
+1. Dependencies MUST flow inward toward the domain
+2. Outer layers depend on inner layers, NEVER the reverse
+3. Use dependency injection at composition root
+4. Domain entities remain pure - no ORM annotations, no external libs
+
+## File Structure Enforcement
+```
+backend/
+├── domain/           # Pure business logic
+├── application/      # Use cases & interfaces
+├── infrastructure/   # External service implementations  
+└── presentation/     # FastAPI routers & middleware
+```
+
+## Import Rules
+- Domain: Import ONLY from domain/ 
+- Application: Import from domain/ and application/
+- Infrastructure: Import from domain/, application/, infrastructure/
+- Presentation: Import from domain/, application/, presentation/
+
+## FastAPI Integration
+- All HTTP concerns stay in presentation layer
+- Use dependency injection for cross-layer communication
+- Repository interfaces in application/, implementations in infrastructure/
+- DTOs for API serialization, separate from domain entities

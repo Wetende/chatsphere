@@ -9,7 +9,7 @@ from typing import Optional
 from enum import Enum
 
 from sqlalchemy import String, Text, ForeignKey, Index, Integer, Float
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import BaseModel
@@ -87,7 +87,7 @@ class ConversationModel(BaseModel):
     )
     
     settings: Mapped[Optional[dict]] = mapped_column(
-        JSONB,  # PostgreSQL JSONB for settings
+        JSON,  # Use generic JSON for cross-dialect support
         nullable=True
     )
     
@@ -196,7 +196,7 @@ class MessageModel(BaseModel):
     
     # Message context and metadata
     message_metadata: Mapped[Optional[dict]] = mapped_column(
-        JSONB,
+        JSON,
         nullable=True
     )
     

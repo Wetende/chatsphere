@@ -1,0 +1,189 @@
+---
+alwaysApply: true
+description: API router implementation standards and FastAPI best practices
+globs: *.py
+---
+
+# API Router Implementation Rules
+
+## GET/POST Only Pattern (Project Requirement)
+- Use POST for create/update operations with ID in path
+- ID=0 for create, ID>0 for update/retrieve
+- GET for retrieval and listing operations
+- GET for delete operations (project constraint)
+
+```python
+# ✅ GOOD - GET/POST pattern
+@router.post("/{resource_id}", response_model=ResourceResponse)
+async def upsert_resource(resource_id: int, payload: ResourcePayload):
+    """Create (id=0) or update (id>0) resource"""
+    if resource_id == 0:
+        # Create new resource
+        pass
+    else:
+        # Update existing resource
+        pass
+
+@router.get("/{resource_id}", response_model=ResourceResponse)
+async def get_resource(resource_id: int):
+    """Get single resource by ID"""
+    pass
+
+@router.get("/", response_model=List[ResourceResponse])
+async def list_resources(limit: int = 50, offset: int = 0):
+    """List resources with pagination"""
+    pass
+
+@router.get("/delete/{resource_id}", status_code=204)
+async def delete_resource(resource_id: int):
+    """Delete resource (GET due to project constraints)"""
+    pass
+```
+
+## Authentication Requirements
+- All endpoints require authentication except public ones
+- Use dependency injection for user context
+- Handle authentication errors consistently
+
+```python
+# ✅ GOOD - Authentication pattern
+@router.post("/{bot_id}", response_model=BotResponse)
+async def upsert_bot(
+    bot_id: int,
+    payload: BotPayload,
+    current_user_id: int = Depends(get_current_user_id)  # Auth required
+):
+    pass
+
+# Public endpoint (no auth)
+@router.get("/health", include_in_schema=False)
+async def health_check():
+    return {"status": "healthy"}
+```
+
+## Request Validation
+- Comprehensive Pydantic validation
+- Custom validators for business rules
+- Clear error messages
+
+```python
+class CreateBotPayload(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100, description="Bot name")
+    description: Optional[str] = Field(None, max_length=500)
+    model_config: Dict[str, Any] = Field(default_factory=dict)
+    
+    @validator('name')
+    def validate_name(cls, v):
+        if not v.strip():
+            raise ValueError('Name cannot be empty or whitespace')
+        return v.strip()
+    
+    @validator('model_config')
+    def validate_model_config(cls, v):
+        required_fields = ['model_name', 'temperature']
+        for field in required_fields:
+            if field not in v:
+                raise ValueError(f'model_config must contain {field}')
+        return v
+```
+
+## Response Formatting
+- Consistent response models
+- Include metadata for lists
+- Proper HTTP status codes
+
+```python
+class BotListResponse(BaseModel):
+    bots: List[BotResponse]
+    total: int
+    limit: int
+    offset: int
+    
+class BotResponse(BaseModel):
+    id: int
+    name: str
+    description: Optional[str]
+    owner_id: int
+    created_at: datetime
+    updated_at: datetime
+    is_active: bool
+    model_config: Dict[str, Any]
+```
+
+## Pagination Pattern
+```python
+@router.get("/", response_model=BotListResponse)
+async def list_bots(
+    limit: int = Query(50, ge=1, le=100, description="Number of items to return"),
+    offset: int = Query(0, ge=0, description="Number of items to skip"),
+    current_user_id: int = Depends(get_current_user_id),
+    list_bots_use_case: ListBotsUseCase = Depends(get_list_bots_use_case)
+):
+    request = ListBotsRequestDTO(
+        owner_id=current_user_id,
+        limit=limit,
+        offset=offset
+    )
+    
+    result = await list_bots_use_case.execute(request)
+    
+    return BotListResponse(
+        bots=[BotResponse.from_dto(bot) for bot in result.bots],
+        total=result.total,
+        limit=limit,
+        offset=offset
+    )
+```
+
+## Error Response Standards
+```python
+# Consistent error response format
+class ErrorResponse(BaseModel):
+    error: str
+    message: str
+    details: Optional[Dict[str, Any]] = None
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+# Usage in exception handlers
+@app.exception_handler(ValidationException)
+async def validation_exception_handler(request: Request, exc: ValidationException):
+    return JSONResponse(
+        status_code=400,
+        content=ErrorResponse(
+            error="VALIDATION_ERROR",
+            message=str(exc),
+            details={"field": exc.field} if hasattr(exc, 'field') else None
+        ).dict()
+    )
+```
+
+## OpenAPI Metadata
+```python
+router = APIRouter(
+    prefix="/bots",
+    tags=["Bot Management"],
+    responses={
+        401: {"description": "Authentication required"},
+        403: {"description": "Insufficient permissions"},
+        422: {"description": "Validation error"},
+        500: {"description": "Internal server error"}
+    }
+)
+
+# Detailed endpoint documentation
+@router.post(
+    "/{bot_id}",
+    response_model=BotResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Create or update bot",
+    description="""
+    Create a new bot or update an existing one.
+    
+    - **bot_id=0**: Create new bot
+    - **bot_id>0**: Update existing bot
+    
+    Requires authentication. Users can only manage their own bots.
+    """,
+    response_description="Bot details with generated ID and timestamps"
+)
+```

@@ -1,0 +1,124 @@
+// interactive portfolio page scss
+.home-interactive-portfolio {
+    @apply p-0 overflow-hidden bg-black;
+
+    .fullscreen-hover-box {
+        @apply px-[10.5rem] z-[1] items-center justify-center flex-col w-full relative flex md:px-[4rem] xs:px-[10px];
+    }
+}
+
+.fullscreen-hover-list {
+    @apply max-h-[80vh] overflow-auto w-full;
+
+    .hover-list-item {
+
+        &.active {
+            .interactive-number {
+                opacity:1;
+                transform:translateX(65px);
+                transition-duration:.7s;
+                transition-timing-function:ease-in-out;
+            }
+
+            .interactive-line {
+                transform:scale(0);
+                opacity:0;
+                transition-duration:.7s;
+                transition-timing-function:ease-in-out;
+            }
+            .interactive-icon {
+                @apply hidden md:inline-block;
+                visibility: visible;
+                opacity: 1;
+            }
+
+
+            .interactive-title {
+                @apply text-white;
+                -webkit-text-stroke:0 #4e4e4f;
+                transition-duration:.5s;
+                transition-timing-function:ease-in-out;
+
+                &::after {
+                    width:calc(100% - 70px);
+                    transition-duration:.7s;
+                    transition-timing-function:ease-in-out;
+                    white-space:nowrap;
+
+                    @screen sm {
+                        width:100%;
+                    }
+
+                    @screen xs {
+                        width:100%;
+                        height:42%;
+                    }
+
+                }
+            }
+
+            .fullscreen-hover-image {
+                opacity:1;
+                visibility:visible;
+            }
+        }
+
+        a {
+            @apply inline-block text-[#828282];
+            color:#828282;
+            text-decoration:none;
+
+            .interactive-number {
+                @apply inline-block align-middle text-white mb-0 font-light;
+                opacity:.3;
+                transition-duration:.7s;
+                transition-timing-function:ease-in-out;
+
+            }
+
+            .interactive-line {
+                @apply inline-block align-middle w-[30px] h-[1px] ml-[35px] bg-mediumgray xs:ml-[5px];
+                transition-duration:.7s;
+                transition-timing-function:ease-in-out;
+                opacity:.2;
+
+            }
+
+            .interactive-title {
+                @apply text-[#3e3e3e] inline-block align-middle py-[25px] px-[35px] relative font-semibold text-[80px] leading-[80px] font-serif lg:text-[70px] lg:leading-[70px] lg:py-[20px] lg:px-[35px] md:text-[55px] md:leading-[60px] sm:text-[35px] sm:leading-[35px] sm:p-[25px] xs:text-[30px] xs:leading-[35px] xs:p-[15px];
+                -webkit-text-stroke:2px #4e4e4f;
+                -webkit-text-fill-color:transparent;
+                -webkit-background-clip:text;
+                transition-duration:.5s;
+
+                @screen xs {
+                    -webkit-text-stroke:1px #4e4e4f;
+                }
+
+                &::after {
+                    @apply absolute left-[35px] bottom-[25px] w-0 overflow-hidden;
+                    content:attr(data-link-text);
+                    height:calc(100% - 50px);
+                    -webkit-text-fill-color:#fff;
+                    transition:0.4s ease-in-out;
+                }
+            }
+
+            .interactive-icon {
+                @apply align-middle leading-normal text-[50px] relative inline-block text-white xs:ml-[15px] xs:text-[40px];
+                opacity:0;
+                visibility:hidden;
+                transition-duration:.5s;
+                transition-timing-function:ease-in-out;
+            }
+        }
+
+        .fullscreen-hover-image {
+            @apply absolute top-0 left-0 h-full w-full -z-[1] bg-no-repeat bg-cover overflow-hidden;
+            opacity:0;
+            visibility:hidden;
+            transition:.3s ease-in-out;
+            background-position:center center;
+        }
+    }
+}

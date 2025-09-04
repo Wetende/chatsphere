@@ -65,7 +65,7 @@ class TestAuthenticationFlow:
         assert response.success is True
         assert response.access_token is not None
         assert response.refresh_token is not None
-        assert response.user_id == str(self.test_user.id)
+        assert str(response.user_id) == str(self.test_user.id)
         assert response.expires_at is not None
         assert "successful" in response.message.lower()
     

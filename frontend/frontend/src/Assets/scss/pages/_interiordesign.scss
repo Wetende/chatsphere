@@ -1,0 +1,76 @@
+.interior-design-swiper {
+    .swiper-pagination-bullets {
+        .swiper-pagination-bullet {
+            height: 12px;
+            width: 12px;
+            background: #fff;
+            border-color: #fff;
+            opacity: .5;
+        }
+    }
+}
+
+.interiordesign-icon-with-text {
+    .feature-box-bg-white-hover {
+        transition: var(--default-transition);
+
+        &:hover {
+            background-color: #fff;
+            border-color: #fff !important;
+            box-shadow: 0 0 15px rgb(0 0 0 / 8%);
+
+            .move-bottom-top {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .feature-box-move-bottom-top {
+                transform: translateY(-15px);
+            }
+        }
+
+        .move-bottom-top {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--default-transition);
+        }
+
+        .feature-box-move-bottom-top {
+            transition: var(--default-transition);
+        }
+
+    }
+}
+
+.interiordesign-counter {
+    .vertical-counter {
+        span {
+            font-size: 40px !important;
+        }
+    }
+
+    .counter-content {
+        margin-top: 0;
+
+        .counter-title {
+            font-weight: 400;
+        }
+    }
+}
+
+.interiordesign-header-menu {
+    .navbar-nav {
+        >.nav-item {
+            >.nav-link {
+                text-transform: uppercase;
+            }
+        }
+    }
+}
+
+.interiordesign-blog {
+    .blog-author {
+        background: var(--base-color) !important;
+        -webkit-background-clip: text !important;
+    }
+}

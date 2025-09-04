@@ -27,22 +27,14 @@ Dependency Flow:
 - Clean separation of concerns maintained
 """
 
-import asyncio
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
-from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.exceptions import HTTPException
-try:
-    from prometheus_fastapi_instrumentator import Instrumentator
-    PROMETHEUS_AVAILABLE = True
-except ImportError:
-    PROMETHEUS_AVAILABLE = False
-    Instrumentator = None
 
 # Composition root for dependency injection
 from composition_root import composition_root
@@ -52,15 +44,21 @@ from presentation.api.user_router import router as user_router
 from presentation.api.bot_router import router as bot_router
 from presentation.api.conversation_router import router as conversation_router
 from presentation.api.auth_router import router as auth_router
+from presentation.api.document_router import router as document_router
+from presentation.api.analytics_router import router as analytics_router
+from presentation.api.widget_router import router as widget_router
+from presentation.api.import_export_router import router as import_export_router
+from presentation.api.websocket_router import router as websocket_router
 
 # Presentation layer middleware
 from presentation.middleware.logging_middleware import LoggingMiddleware
 from presentation.middleware.rate_limiting_middleware import RateLimitingMiddleware
 from presentation.middleware.auth_middleware import AuthMiddleware
 from presentation.middleware.error_handling_middleware import ErrorHandlingMiddleware
+from presentation.middleware.localization_middleware import LocalizationMiddleware
 
 # Infrastructure configuration
-from infrastructure.config.settings import Settings, get_settings
+from infrastructure.config.settings import get_settings
 
 
 # Configure logging
@@ -72,7 +70,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(fastapi_app: FastAPI):
     """
     Async lifespan manager for application startup and shutdown.
     
@@ -142,22 +140,18 @@ if settings.allowed_hosts:
 # Add custom middleware (order matters - first added = outermost)
 app.add_middleware(ErrorHandlingMiddleware)
 app.add_middleware(LoggingMiddleware)
+app.add_middleware(LocalizationMiddleware)
 app.add_middleware(RateLimitingMiddleware)
-app.add_middleware(AuthMiddleware)
 
-# Configure Prometheus metrics
-if settings.monitoring.enable_metrics and PROMETHEUS_AVAILABLE:
-    instrumentator = Instrumentator(
-        should_group_status_codes=False,
-        should_ignore_untemplated=True,
-        should_respect_env_var=True,
-        should_instrument_requests_inprogress=True,
-        excluded_handlers=[".*admin.*", "/metrics"],
-        env_var_name="ENABLE_METRICS",
-        inprogress_name="inprogress",
-        inprogress_labels=True,
-    )
-    instrumentator.instrument(app).expose(app)
+# Configure AuthMiddleware with DI-provided auth service and public paths
+_auth_service = composition_root.get_auth_service()
+app.add_middleware(
+    AuthMiddleware,
+    auth_service=_auth_service,
+    public_paths=["/docs", "/redoc", "/openapi.json", "/health", "/api/v1/auth/"]
+)
+
+# Metrics integration can be added here when dependencies are available
 
 
 # API Router Registration
@@ -191,6 +185,37 @@ app.include_router(
     prefix=API_V1_PREFIX,
     tags=["conversations"]
 )
+
+# Document routes
+app.include_router(
+    document_router,
+    prefix=API_V1_PREFIX,
+    tags=["documents"]
+)
+
+# Analytics routes
+app.include_router(
+    analytics_router,
+    prefix=API_V1_PREFIX,
+    tags=["analytics"]
+)
+
+# Widget customization routes
+app.include_router(
+    widget_router,
+    prefix=API_V1_PREFIX,
+    tags=["widgets"]
+)
+
+# Bot import/export routes
+app.include_router(
+    import_export_router,
+    prefix=API_V1_PREFIX,
+    tags=["bots"]
+)
+
+# WebSocket routes (not versioned)
+app.include_router(websocket_router)
 
 
 # Health Check Endpoints

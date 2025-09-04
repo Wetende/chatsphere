@@ -1,0 +1,8 @@
+.rotate-text {
+    .cd-text {
+        &:after {
+            content: "";
+            @apply absolute bottom-[-2px] left-0 w-full h-[2px];
+        }
+    }
+}

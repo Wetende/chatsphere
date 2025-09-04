@@ -1,0 +1,84 @@
+---
+alwaysApply: true
+description: Infrastructure layer implementation rules and external service integration
+globs: *.py
+---
+
+# Infrastructure Layer Rules
+
+## Implementation Guidelines
+- Implement interfaces defined in application/domain layers
+- Handle all external service integration
+- Database access, HTTP clients, file systems
+- Framework-specific code belongs here
+
+## Repository Implementation Pattern
+```python
+# ✅ GOOD - Repository implementation
+class SqlAlchemyUserRepository(IUserRepository):
+    def __init__(self, session: AsyncSession):
+        self._session = session
+    
+    async def get_by_id(self, user_id: UserId) -> Optional[User]:
+        # 1. Query ORM model
+        stmt = select(UserModel).where(UserModel.id == user_id.value)
+        result = await self._session.execute(stmt)
+        user_model = result.scalar_one_or_none()
+        
+        # 2. Convert to domain entity
+        if user_model:
+            return self._to_domain(user_model)
+        return None
+    
+    def _to_domain(self, model: UserModel) -> User:
+        # Map ORM model to domain entity
+        pass
+```
+
+## External Service Pattern
+```python
+# ✅ GOOD - External service implementation
+class SmtpEmailService(IEmailService):
+    def __init__(self, smtp_config: SmtpConfig):
+        self._config = smtp_config
+    
+    async def send_verification_email(self, email: str, token: str) -> bool:
+        try:
+            # External SMTP integration
+            await self._send_email(email, self._build_template(token))
+            return True
+        except Exception as e:
+            logger.error(f"Email sending failed: {e}")
+            return False
+```
+
+## Database Models
+- SQLAlchemy ORM models in infrastructure/database/models/
+- Separate from domain entities
+- Include all persistence concerns
+
+```python
+# ✅ GOOD - ORM model
+class UserModel(Base):
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True)
+    email = Column(String(255), unique=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    bots = relationship("BotModel", back_populates="owner")
+```
+
+## Error Handling
+- Catch external service exceptions
+- Convert to application exceptions
+- Log infrastructure-specific errors
+- Implement retry mechanisms for transient failures
+
+## Configuration
+- External service configuration
+- Database connection settings
+- API keys and secrets
+- Environment-specific settings

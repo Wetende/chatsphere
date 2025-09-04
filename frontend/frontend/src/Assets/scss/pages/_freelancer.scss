@@ -1,0 +1,38 @@
+.freelancer-portfolioswitchimg {
+    .portfolio-switchimg {
+        .portfolio-content {
+            span {
+                text-transform: uppercase;
+            }
+        }
+    }
+}
+
+.freelancer-iconwithtext {
+    .icon-with-text-08 {
+        i {
+            background-image: linear-gradient(to right, #5cc088, #50c28d, #83b879, #c9a95e, #dda556);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            box-shadow: none;
+            margin-right: 35px;
+        }
+
+        .feature-box-content {
+            .title {
+                font-weight: 600;
+                letter-spacing: -0.5px;
+            }
+        }
+    }
+}
+
+.freelancer-social-icon {
+    .social-icon {
+        &.md {
+            li {
+                margin: 0 !important;
+            }
+        }
+    }
+}

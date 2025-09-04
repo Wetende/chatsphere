@@ -1,0 +1,125 @@
+---
+alwaysApply: true
+description: External service integration patterns and best practices
+globs: *.py
+---
+
+# External Services Implementation Rules
+
+## Service Implementation Pattern
+- Implement interfaces from application layer
+- Handle all external API communication
+- Implement retry logic and circuit breakers
+- Proper error handling and logging
+
+```python
+# ✅ GOOD - External service implementation
+class GeminiAIService(IAIService):
+    def __init__(self, api_key: str, model_name: str):
+        self._client = genai.configure(api_key=api_key)
+        self._model = genai.GenerativeModel(model_name)
+    
+    async def chat_completion(self, request: ChatRequest) -> ChatResponse:
+        try:
+            response = await self._model.generate_content_async(
+                request.messages,
+                generation_config=self._build_config(request)
+            )
+            return ChatResponse(
+                content=response.text,
+                model=self._model.model_name,
+                tokens_used=response.usage_metadata.total_token_count
+            )
+        except Exception as e:
+            logger.error(f"Gemini API error: {e}")
+            raise ExternalServiceException(f"AI service unavailable: {e}")
+```
+
+## HTTP Client Pattern
+- Use httpx for async HTTP operations
+- Implement proper timeout handling
+- Add request/response logging
+- Handle network errors gracefully
+
+```python
+class WebScraperService(IWebScraperService):
+    def __init__(self, timeout: int = 30):
+        self._client = httpx.AsyncClient(timeout=timeout)
+    
+    async def scrape_url(self, url: str) -> ScrapedContent:
+        try:
+            response = await self._client.get(url)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.content, 'html.parser')
+            content = self._extract_text(soup)
+            
+            return ScrapedContent(
+                url=url,
+                title=soup.title.string if soup.title else None,
+                content=content,
+                scraped_at=datetime.utcnow()
+            )
+        except httpx.RequestError as e:
+            raise ExternalServiceException(f"Failed to scrape {url}: {e}")
+```
+
+## Configuration Management
+- Environment-based configuration
+- Secure secret handling
+- Validation of required settings
+
+```python
+@dataclass
+class GeminiConfig:
+    api_key: str
+    model_name: str = "gemini-pro"
+    max_tokens: int = 4096
+    temperature: float = 0.7
+    
+    @classmethod
+    def from_env(cls) -> 'GeminiConfig':
+        api_key = os.getenv('GEMINI_API_KEY')
+        if not api_key:
+            raise ConfigurationError("GEMINI_API_KEY not set")
+        
+        return cls(
+            api_key=api_key,
+            model_name=os.getenv('GEMINI_MODEL', cls.model_name),
+            max_tokens=int(os.getenv('GEMINI_MAX_TOKENS', cls.max_tokens))
+        )
+```
+
+## Retry and Circuit Breaker
+```python
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+class EmailService(IEmailService):
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10)
+    )
+    async def send_email(self, email: EmailMessage) -> bool:
+        try:
+            # SMTP sending logic
+            pass
+        except SMTPException as e:
+            logger.warning(f"Email sending failed, retrying: {e}")
+            raise
+```
+
+## Testing and Mocking
+- Provide test doubles for external services
+- Use environment variables for test configuration
+- Mock external APIs in unit tests
+
+```python
+# Test implementation
+class MockGeminiService(IAIService):
+    async def chat_completion(self, request: ChatRequest) -> ChatResponse:
+        return ChatResponse(
+            content="Mock AI response",
+            model="gemini-pro-mock",
+            tokens_used=100
+        )
+```

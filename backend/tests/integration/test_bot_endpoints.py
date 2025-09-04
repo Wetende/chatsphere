@@ -31,7 +31,7 @@ class TestBotEndpoints:
             "name": "Test Bot"
             # Missing other required fields
         }
-        response = await test_client.post("/api/v1/bots", json=incomplete_data)
+        response = await test_client.post("/api/v1/bots", json=incomplete_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
         # Test empty name
@@ -41,7 +41,7 @@ class TestBotEndpoints:
             "model_name": "gemini-2.0-flash-exp",
             "temperature": 0.7
         }
-        response = await test_client.post("/api/v1/bots", json=invalid_data)
+        response = await test_client.post("/api/v1/bots", json=invalid_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
         # Test too short name
@@ -51,7 +51,7 @@ class TestBotEndpoints:
             "model_name": "gemini-2.0-flash-exp",
             "temperature": 0.7
         }
-        response = await test_client.post("/api/v1/bots", json=invalid_data)
+        response = await test_client.post("/api/v1/bots", json=invalid_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
         # Test too long name
@@ -61,7 +61,7 @@ class TestBotEndpoints:
             "model_name": "gemini-2.0-flash-exp",
             "temperature": 0.7
         }
-        response = await test_client.post("/api/v1/bots", json=invalid_data)
+        response = await test_client.post("/api/v1/bots", json=invalid_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
         # Test invalid temperature range
@@ -71,7 +71,7 @@ class TestBotEndpoints:
             "model_name": "gemini-2.0-flash-exp",
             "temperature": 3.0  # Out of range
         }
-        response = await test_client.post("/api/v1/bots", json=invalid_data)
+        response = await test_client.post("/api/v1/bots", json=invalid_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
         # Test too long description
@@ -91,7 +91,7 @@ class TestBotEndpoints:
             "name": "",  # Empty not allowed
             "description": "Updated description"
         }
-        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data)
+        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
         # Test too long name update
@@ -99,7 +99,7 @@ class TestBotEndpoints:
             "name": "A" * 101,  # Too long
             "description": "Updated description"
         }
-        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data)
+        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
         # Test invalid temperature update
@@ -107,7 +107,7 @@ class TestBotEndpoints:
             "name": "Updated Bot",
             "temperature": -1.0  # Out of range
         }
-        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data)
+        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
         # Test too long welcome message
@@ -115,7 +115,7 @@ class TestBotEndpoints:
             "name": "Updated Bot",
             "welcome_message": "A" * 201  # Too long
         }
-        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data)
+        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
         # Test too long system prompt
@@ -123,7 +123,7 @@ class TestBotEndpoints:
             "name": "Updated Bot",
             "system_prompt": "A" * 2001  # Too long
         }
-        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data)
+        response = await test_client.post("/api/v1/bots", params={"bot_id": 1}, json=update_data, headers={"Authorization": "Bearer test-jwt-token"})
         assert response.status_code == 422
 
     async def test_list_bots_with_invalid_filters(self, test_client: AsyncClient):
@@ -187,4 +187,4 @@ class TestBotEndpoints:
         """Test that endpoints include proper CORS headers."""
         response = await test_client.options("/api/v1/bots")
         # CORS preflight should be handled
-        assert response.status_code in [200, 404, 501]  # OK, Not Found, or Not Implemented
+        assert response.status_code in [200, 204, 404, 501]

@@ -1,0 +1,60 @@
+.header-push-button {
+  .hamburgermenu-modern-page {
+    ul {
+      @apply font-serif w-full;
+
+      li {
+        @apply py-[13px] sm:py-[7px];
+
+        a {
+          @apply text-[44px] md:text-[30px] sm:text-[24px] leading-[50px] md:leading-[38px] sm:leading-[30px] relative p-0 inline-block;
+          color: #232323;
+          transition: var(--default-transition);
+
+          &:hover {
+            text-decoration: none;
+            outline: 0;
+            outline-offset: 0;
+            color: #17171780;
+
+            &::before {
+              visibility: visible;
+              width: 100%;
+            }
+          }
+
+          &::before {
+            @apply absolute w-0 h-[2px] bottom-0 left-1/2;
+            content: "";
+            visibility: hidden;
+            transform: translateX(-50%);
+            transition: var(--default-transition);
+            background: rgba(23, 23, 23, 0.5);
+          }
+        }
+      }
+    }
+  }
+
+  &.light {
+    .hamburgermenu-modern-page {
+      ul {
+        li {
+          &:hover {
+            a {
+              color: rgba(255, 255, 255, 0.5);
+            }
+          }
+
+          a {
+            @apply text-white;
+
+            &:before {
+              background-color: rgba(255, 255, 255, 0.5);
+            }
+          }
+        }
+      }
+    }
+  }
+}

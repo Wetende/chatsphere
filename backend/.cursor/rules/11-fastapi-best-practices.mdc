@@ -1,0 +1,232 @@
+---
+alwaysApply: true
+description: FastAPI best practices and performance optimization guidelines
+---
+
+# FastAPI Best Practices
+
+## Application Structure
+- Use lifespan events for startup/shutdown
+- Implement proper dependency injection
+- Configure middleware in correct order
+- Use APIRouter for modular organization
+
+```python
+# ✅ GOOD - Application setup
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    logger.info("Starting KyroChat API...")
+    await container.initialize()
+    
+    yield
+    
+    # Shutdown
+    logger.info("Shutting down KyroChat API...")
+    await container.cleanup()
+
+app = FastAPI(
+    title="KyroChat API",
+    description="AI-powered chatbot platform",
+    version="1.0.0",
+    lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+```
+
+## Async/Await Best Practices
+- Use async for I/O bound operations
+- Await all database and external service calls
+- Use async context managers for resource management
+
+```python
+# ✅ GOOD - Async patterns
+@router.post("/bots/{bot_id}")
+async def create_bot(
+    bot_id: int,
+    payload: BotPayload,
+    session: AsyncSession = Depends(get_session),
+    use_case: CreateBotUseCase = Depends(get_create_bot_use_case)
+):
+    async with session.begin():  # Async context manager
+        result = await use_case.execute(request)  # Await use case
+        return BotResponse.from_dto(result)
+```
+
+## Dependency Injection Patterns
+- Use FastAPI's Depends for dependency injection
+- Create provider functions for complex dependencies
+- Cache expensive dependencies
+
+```python
+# ✅ GOOD - Dependency providers
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()
+
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    async with container.session_maker() as session:
+        yield session
+
+def get_current_user_id(
+    request: Request,
+    auth_service: IJWTAuthService = Depends(lambda: container.jwt_auth_service())
+) -> int:
+    return request.state.user_id  # Set by auth middleware
+```
+
+## Request/Response Optimization
+- Use response models for automatic serialization
+- Implement proper caching headers
+- Optimize database queries
+
+```python
+# ✅ GOOD - Response optimization
+@router.get("/bots", response_model=BotListResponse)
+async def list_bots(
+    limit: int = Query(50, le=100),
+    offset: int = Query(0, ge=0),
+    use_case: ListBotsUseCase = Depends(get_list_bots_use_case)
+):
+    result = await use_case.execute(ListBotsRequest(limit=limit, offset=offset))
+    
+    response = BotListResponse.from_dto(result)
+    
+    # Add caching headers for list responses
+    response.headers["Cache-Control"] = "public, max-age=300"  # 5 minutes
+    
+    return response
+```
+
+## Error Handling Standards
+- Use HTTPException for API errors
+- Implement global exception handlers
+- Return consistent error formats
+
+```python
+# ✅ GOOD - Error handling
+@app.exception_handler(ValidationException)
+async def validation_exception_handler(request: Request, exc: ValidationException):
+    return JSONResponse(
+        status_code=422,
+        content={
+            "error": "VALIDATION_ERROR",
+            "message": str(exc),
+            "details": exc.details if hasattr(exc, 'details') else None,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    )
+```
+
+## Security Best Practices
+- Validate all inputs with Pydantic
+- Implement proper authentication
+- Use HTTPS in production
+- Set security headers
+
+```python
+# ✅ GOOD - Security configuration
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["localhost", "*.kyrochat.com"]
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],  # Only allowed methods
+    allow_headers=["*"],
+)
+
+# Security headers
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    return response
+```
+
+## Performance Optimization
+- Use connection pooling for databases
+- Implement response caching
+- Optimize database queries
+- Use background tasks for heavy operations
+
+```python
+# ✅ GOOD - Background tasks
+from fastapi import BackgroundTasks
+
+@router.post("/documents/upload")
+async def upload_document(
+    file: UploadFile,
+    background_tasks: BackgroundTasks,
+    process_service: DocumentProcessingService = Depends(get_process_service)
+):
+    # Save file immediately
+    file_path = await save_uploaded_file(file)
+    
+    # Process document in background
+    background_tasks.add_task(
+        process_service.process_document,
+        file_path,
+        user_id=request.state.user_id
+    )
+    
+    return {"message": "Document uploaded, processing started"}
+```
+
+## Testing Guidelines
+- Use TestClient for API testing
+- Mock external dependencies
+- Test authentication flows
+- Implement integration tests
+
+```python
+# ✅ GOOD - API testing
+def test_create_bot(client: TestClient, auth_headers: Dict[str, str]):
+    payload = {
+        "name": "Test Bot",
+        "description": "Test description",
+        "model_config": {"temperature": 0.7}
+    }
+    
+    response = client.post("/api/v1/bots/0", json=payload, headers=auth_headers)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["name"] == "Test Bot"
+    assert data["id"] > 0
+```
+
+## Documentation Standards
+- Use docstrings for all endpoints
+- Provide examples in schema
+- Document error responses
+- Keep OpenAPI spec updated
+
+```python
+@router.post(
+    "/bots/{bot_id}",
+    response_model=BotResponse,
+    summary="Create or update bot",
+    description="""
+    Create a new bot or update an existing one.
+    
+    **Parameters:**
+    - `bot_id`: 0 for new bot, >0 for update
+    
+    **Returns:**
+    - Bot details with ID and timestamps
+    """,
+    responses={
+        200: {"description": "Bot created/updated successfully"},
+        400: {"description": "Invalid input data"},
+        401: {"description": "Authentication required"},
+        403: {"description": "Insufficient permissions"}
+    }
+)
+```

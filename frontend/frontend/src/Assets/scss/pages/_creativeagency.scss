@@ -1,0 +1,16 @@
+.creative-footer {
+    .footer-menu {
+        span {
+            @apply mb-[20px] xs:mb-[10px] tracking-[2px];
+        }
+
+        ul {
+            li {
+                a {
+                    font-size: 16px;
+                    line-height: 34px;
+                }
+            }
+        }
+    }
+}

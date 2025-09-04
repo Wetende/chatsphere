@@ -1,0 +1,38 @@
+.latestnews-swiper {
+    .swiper-button-prev {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        top: 50%;
+        transform: matrix(1, 0, 0, 1, 20, -30);
+        left: 0px;
+        background: #fff;
+        padding: 10px;
+        transition: all 0.3s;
+        width: 60px;
+        height: 60px;
+        :hover {
+            background-color: white;
+        }
+    }
+
+    .swiper-button-next {
+        background: #fff;
+        padding: 10px;
+        transition: all 0.3s;
+        -webkit-transition: all 0.3s;
+        width: 60px;
+        height: 60px;
+        box-sizing: border-box;
+        top: 50%;
+        transform: matrix(1, 0, 0, 1, -80, -30);
+        left: 100%;
+        position: absolute;
+        display: flex;
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+}

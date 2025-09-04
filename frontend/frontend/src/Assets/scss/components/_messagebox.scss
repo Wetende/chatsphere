@@ -1,0 +1,25 @@
+//Message Box01
+.alert-dismissible .btn-close {
+    box-shadow: none;
+    background-size: 10px;
+    padding: 22px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 50%;
+    transform: translateY(-50%);
+
+    &:before {
+        content: "✕";
+        display: inline-block;
+        line-height: 1;
+    }
+}
+
+//Message Box02
+.message-box02.alert {
+    @apply text-xmd bg-white;
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 30px 0px;
+    padding: 15px 25px;
+}

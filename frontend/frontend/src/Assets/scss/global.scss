@@ -1,0 +1,41 @@
+@tailwind base;
+
+/* Vendors */
+@import 'swiper/swiper-bundle.min.css';
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "atropos/atropos.css";
+@import "react-18-image-lightbox/style.css";
+
+/* Variable */
+@import "./variable";
+
+/* Core */
+@import "./core/reset";
+@import "./core/classes";
+@import "./core/typography";
+
+/* Components */
+@import "./components/grid";
+@import "./components/blog";
+@import "./components/breadcrumbs";
+@import "./components/clients";
+@import "./components/countdown";
+@import "./components/customiconwithtext";
+@import "./components/dropcaps";
+@import "./components/fancytext";
+@import "./components/imagegallery";
+@import "./components/infobanner";
+@import "./components/instagram";
+@import "./components/interactivebanners";
+@import "./components/lists";
+@import "./components/messagebox";
+@import "./components/overlineiconbox";
+@import "./components/piechart";
+@import "./components/portfolio";
+@import "./components/pricingtable";
+@import "./components/products";
+@import "./components/progressbar";
+@import "./components/subscribe";
+@import "./components/tab";
+@import "./components/testimonialcarousel";
+@import "./components/textslider";

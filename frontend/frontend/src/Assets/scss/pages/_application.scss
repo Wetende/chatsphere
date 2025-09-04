@@ -1,0 +1,27 @@
+header {
+    .navbar-expand-lg {
+        &.application-header {
+            .navbar-collapse {
+                &.mobile-menu-modern {
+                    background: rgb(48, 33, 88);
+                }
+            }
+        }
+    }
+}
+
+.application-iconwithtext {
+    i {
+        margin-bottom: 20px;
+    }
+
+    >div {
+        padding: 0;
+    }
+
+    .feature-box-content {
+        .title {
+            margin-bottom: 5px;
+        }
+    }
+}

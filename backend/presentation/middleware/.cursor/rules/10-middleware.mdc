@@ -1,0 +1,233 @@
+---
+alwaysApply: true
+description: Middleware implementation patterns for cross-cutting concerns
+globs: *.py
+---
+
+# Middleware Implementation Rules
+
+## Authentication Middleware
+- JWT token validation
+- Request context population
+- Handle authentication errors
+- Skip authentication for public endpoints
+
+```python
+# ✅ GOOD - Authentication middleware
+class AuthMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app, auth_service: IJWTAuthService, public_paths: List[str]):
+        super().__init__(app)
+        self._auth_service = auth_service
+        self._public_paths = public_paths
+    
+    async def dispatch(self, request: Request, call_next):
+        # Skip authentication for public paths
+        if any(request.url.path.startswith(path) for path in self._public_paths):
+            return await call_next(request)
+        
+        # Extract token from Authorization header
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return JSONResponse(
+                status_code=401,
+                content={"error": "MISSING_TOKEN", "message": "Authorization header required"}
+            )
+        
+        token = auth_header[7:]  # Remove "Bearer " prefix
+        
+        try:
+            # Validate token and extract user info
+            payload = await self._auth_service.decode_token(token)
+            
+            # Add user context to request state
+            request.state.user_id = payload.user_id
+            request.state.user_email = payload.email
+            
+            response = await call_next(request)
+            return response
+            
+        except InvalidTokenException:
+            return JSONResponse(
+                status_code=401,
+                content={"error": "INVALID_TOKEN", "message": "Invalid or expired token"}
+            )
+        except Exception as e:
+            logger.error(f"Authentication error: {e}")
+            return JSONResponse(
+                status_code=500,
+                content={"error": "AUTH_ERROR", "message": "Authentication service error"}
+            )
+```
+
+## Error Handling Middleware
+- Global exception handling
+- Consistent error responses
+- Logging and monitoring
+
+```python
+class ErrorHandlingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        try:
+            response = await call_next(request)
+            return response
+            
+        except HTTPException:
+            # Let FastAPI handle HTTP exceptions
+            raise
+            
+        except ValidationException as e:
+            logger.warning(f"Validation error on {request.url.path}: {e}")
+            return JSONResponse(
+                status_code=400,
+                content={
+                    "error": "VALIDATION_ERROR",
+                    "message": str(e),
+                    "path": str(request.url.path)
+                }
+            )
+            
+        except AuthorizationException as e:
+            logger.warning(f"Authorization error on {request.url.path}: {e}")
+            return JSONResponse(
+                status_code=403,
+                content={
+                    "error": "AUTHORIZATION_ERROR",
+                    "message": str(e),
+                    "path": str(request.url.path)
+                }
+            )
+            
+        except EntityNotFoundException as e:
+            logger.info(f"Entity not found on {request.url.path}: {e}")
+            return JSONResponse(
+                status_code=404,
+                content={
+                    "error": "NOT_FOUND",
+                    "message": str(e),
+                    "path": str(request.url.path)
+                }
+            )
+            
+        except Exception as e:
+            # Log unexpected errors with full context
+            logger.error(
+                f"Unexpected error on {request.method} {request.url.path}: {e}",
+                exc_info=True,
+                extra={
+                    "request_id": getattr(request.state, "request_id", None),
+                    "user_id": getattr(request.state, "user_id", None),
+                    "path": str(request.url.path),
+                    "method": request.method
+                }
+            )
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "error": "INTERNAL_ERROR",
+                    "message": "An unexpected error occurred",
+                    "request_id": getattr(request.state, "request_id", None)
+                }
+            )
+```
+
+## Logging Middleware
+```python
+class LoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # Generate request ID
+        request_id = str(uuid4())
+        request.state.request_id = request_id
+        
+        # Log request
+        start_time = time.time()
+        logger.info(
+            f"Request started: {request.method} {request.url.path}",
+            extra={
+                "request_id": request_id,
+                "method": request.method,
+                "path": str(request.url.path),
+                "user_id": getattr(request.state, "user_id", None)
+            }
+        )
+        
+        # Process request
+        response = await call_next(request)
+        
+        # Log response
+        duration = time.time() - start_time
+        logger.info(
+            f"Request completed: {response.status_code} in {duration:.3f}s",
+            extra={
+                "request_id": request_id,
+                "status_code": response.status_code,
+                "duration": duration,
+                "path": str(request.url.path)
+            }
+        )
+        
+        # Add request ID to response headers
+        response.headers["X-Request-ID"] = request_id
+        
+        return response
+```
+
+## Rate Limiting Middleware
+```python
+class RateLimitingMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app, redis_client, requests_per_minute: int = 60):
+        super().__init__(app)
+        self._redis = redis_client
+        self._requests_per_minute = requests_per_minute
+    
+    async def dispatch(self, request: Request, call_next):
+        # Get client identifier
+        client_id = self._get_client_id(request)
+        
+        # Check rate limit
+        key = f"rate_limit:{client_id}"
+        current = await self._redis.get(key)
+        
+        if current is None:
+            # First request in window
+            await self._redis.setex(key, 60, 1)
+        elif int(current) >= self._requests_per_minute:
+            # Rate limit exceeded
+            return JSONResponse(
+                status_code=429,
+                content={
+                    "error": "RATE_LIMIT_EXCEEDED",
+                    "message": f"Rate limit of {self._requests_per_minute} requests per minute exceeded"
+                }
+            )
+        else:
+            # Increment counter
+            await self._redis.incr(key)
+        
+        return await call_next(request)
+    
+    def _get_client_id(self, request: Request) -> str:
+        # Use user ID if authenticated, otherwise IP address
+        user_id = getattr(request.state, "user_id", None)
+        if user_id:
+            return f"user:{user_id}"
+        
+        # Get IP from X-Forwarded-For or client host
+        forwarded_for = request.headers.get("X-Forwarded-For")
+        if forwarded_for:
+            return f"ip:{forwarded_for.split(',')[0].strip()}"
+        
+        return f"ip:{request.client.host}"
+```
+
+## Middleware Registration
+```python
+# In main.py - Order matters!
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(ErrorHandlingMiddleware)
+app.add_middleware(AuthMiddleware, 
+                  auth_service=container.jwt_auth_service(),
+                  public_paths=["/docs", "/openapi.json", "/health", "/auth/"])
+app.add_middleware(RateLimitingMiddleware,
+                  redis_client=container.redis_client(),
+                  requests_per_minute=100)
+```

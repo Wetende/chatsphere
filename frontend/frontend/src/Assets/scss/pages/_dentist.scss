@@ -1,0 +1,51 @@
+.dentist-iconwithtext {
+    display: flex;
+    
+    >div {
+        background-color: #fff;
+        box-shadow: 0 0 15px rgb(0 0 0 / 8%);
+
+        &:hover {
+            transform: translate3d(0, -3px, 0);
+        }
+
+        .feature-box-content {
+            span {
+                font-size: 18px;
+                display: block;
+                margin-bottom: 15px;
+            }
+        }
+    }
+}
+
+.dentist-list {
+    li {
+        align-items: center;
+        
+        .list-title {
+            line-height: 28px;
+            @apply font-serif;
+        }
+
+        .list-content {
+            width: 100%;
+        }
+
+    }
+}
+
+.dentist-form {
+    ::placeholder {
+        @apply font-serif text-white text-[14px];
+    }
+}
+
+.dentist-icon-with-text{
+    .feature-box-content{
+        .title{
+font-size:16px;
+line-height: 28px;
+        }
+    }
+}

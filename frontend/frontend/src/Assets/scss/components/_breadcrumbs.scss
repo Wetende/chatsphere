@@ -1,0 +1,25 @@
+.breadcrumb {
+  li {
+    @apply font-serif text-sm leading-none inline-block;
+    text-decoration: none;
+    transition: var(--default-transition);
+
+    &::after {
+      content: "\f111";
+      font-family: "Font Awesome 5 Free";
+      font-weight: 900;
+      padding: 0 14px 0 11px;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 4px;
+      opacity: .6;
+    }
+
+    &:last-child {
+      &::after {
+        @apply p-0 m-0;
+        content: "";
+      }
+    }
+  }
+}

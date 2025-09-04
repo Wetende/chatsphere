@@ -38,8 +38,9 @@ Service Categories:
 - Domain Services: Pure business logic
 """
 
-from typing import Dict, Any
-import asyncio
+from __future__ import annotations
+
+from typing import Dict, Any, AsyncGenerator
 from functools import lru_cache
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
@@ -54,6 +55,7 @@ from application.interfaces.password_service import IPasswordService
 from application.interfaces.unit_of_work import IUnitOfWork
 from application.interfaces.ai_service import IAIService
 from application.interfaces.auth_service import IAuthService
+from application.interfaces.analytics_service import IAnalyticsService
 
 # Application use cases
 from application.use_cases.user.create_user_use_case import CreateUserUseCase
@@ -83,6 +85,9 @@ from infrastructure.external_services.smtp_email_service import SmtpEmailService
 from infrastructure.external_services.bcrypt_password_service import BcryptPasswordService
 from infrastructure.external_services.gemini_ai_service import GeminiAIService
 from infrastructure.external_services.jwt_auth_service import JWTAuthService
+from infrastructure.external_services.analytics_service import SqlAlchemyAnalyticsService
+from application.interfaces.webhook_service import IWebhookService
+from infrastructure.external_services.webhook_service import HttpxWebhookService
 from infrastructure.database.unit_of_work import SqlAlchemyUnitOfWork
 from infrastructure.config.settings import Settings
 
@@ -137,18 +142,9 @@ class CompositionRoot:
         return SqlAlchemyBotRepository(session)
     
     def get_conversation_repository(self, session: AsyncSession) -> IConversationRepository:
-        """Create conversation repository with database session (stub)."""
-        # Placeholder factory until implementation exists
-        from domain.repositories.conversation_repository import IConversationRepository
-        
-        class StubConversationRepository(IConversationRepository):
-            async def get_by_id(self, conversation_id: str): return None
-            async def list_by_user(self, user_id: str, limit: int = 50, offset: int = 0): return []
-            async def add(self, conversation): return conversation
-            async def update(self, conversation): return conversation
-            async def delete(self, conversation_id: str): pass
-        
-        return StubConversationRepository()
+        """Create conversation repository with database session."""
+        from infrastructure.repositories.sqlalchemy_conversation_repository import SqlAlchemyConversationRepository
+        return SqlAlchemyConversationRepository(session)
     
     # Service Factory Methods
     
@@ -161,7 +157,8 @@ class CompositionRoot:
                 smtp_port=self.settings.email.smtp_port,
                 smtp_username=self.settings.email.smtp_username,
                 smtp_password=self.settings.email.smtp_password,
-                use_tls=self.settings.email.smtp_use_tls
+                use_tls=self.settings.email.smtp_use_tls,
+                default_from_email=self.settings.email.default_from_email
             )
         return self._services['email_service']
     
@@ -181,6 +178,13 @@ class CompositionRoot:
                 model_name=self.settings.ai.default_ai_model
             )
         return self._services['ai_service']
+
+    @lru_cache()
+    def get_webhook_service(self) -> IWebhookService:
+        """Get webhook delivery service singleton."""
+        if 'webhook_service' not in self._services:
+            self._services['webhook_service'] = HttpxWebhookService()
+        return self._services['webhook_service']
     
     @lru_cache()
     def get_auth_service(self) -> IAuthService:
@@ -197,6 +201,13 @@ class CompositionRoot:
     def get_unit_of_work(self) -> IUnitOfWork:
         """Create unit of work with session factory (stub)."""
         return SqlAlchemyUnitOfWork(self._session_maker)  # type: ignore
+    
+    # Analytics service factory (scoped per request)
+    def get_analytics_service(self) -> 'IAnalyticsService':
+        # Provide a short-lived service bound to a session
+        # Caller should ensure it's used within request scope
+        session = self._session_maker()
+        return SqlAlchemyAnalyticsService(session)  # type: ignore[arg-type]
     
     # Use Case Factory Methods
     
@@ -239,6 +250,7 @@ class CompositionRoot:
         
         return SendMessageUseCase(
             conversation_repository=self.get_conversation_repository(unit_of_work.session),
+            bot_repository=self.get_bot_repository(unit_of_work.session),
             ai_service=self.get_ai_service(),
             unit_of_work=unit_of_work
         )
@@ -395,7 +407,7 @@ class CompositionRoot:
     
     # Database Session Management
     
-    async def get_database_session(self) -> AsyncSession:
+    async def get_database_session(self) -> AsyncGenerator[AsyncSession, None]:
         """Create new database session."""
         async with self._session_maker() as session:
             yield session
@@ -422,7 +434,7 @@ async def get_composition_root() -> CompositionRoot:
     return composition_root
 
 
-async def get_database_session() -> AsyncSession:
+async def get_database_session() -> AsyncGenerator[AsyncSession, None]:
     """FastAPI dependency for database sessions."""
     async with composition_root._session_maker() as session:
         try:
@@ -433,6 +445,16 @@ async def get_database_session() -> AsyncSession:
             raise
         finally:
             await session.close()
+
+
+# Dependency for analytics service bound to a managed session
+async def get_analytics_service() -> 'IAnalyticsService':
+    async with composition_root._session_maker() as session:  # type: ignore[attr-defined]
+        service = SqlAlchemyAnalyticsService(session)  # type: ignore[arg-type]
+        try:
+            yield service
+        finally:
+            pass
 
 
 # Use case dependency providers

@@ -24,7 +24,7 @@ import logging
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, model_validator
 
 from application.use_cases.user.create_user_use_case import (
     CreateUserUseCase
@@ -118,11 +118,18 @@ class ForgotPasswordRequest(BaseModel):
     email: EmailStr = Field(..., description="User email address")
 
 
-class ResetPasswordRequest(BaseModel):
-    """Reset password request model."""
+class ConfirmResetPasswordPayload(BaseModel):
+    """Reset password confirmation payload."""
     reset_token: str = Field(..., description="Password reset token")
     new_password: str = Field(..., min_length=8, description="New password (minimum 8 characters)")
     confirm_password: str = Field(..., description="Confirm new password")
+
+    @model_validator(mode="after")
+    def _passwords_match(self) -> "ConfirmResetPasswordPayload":
+        if self.new_password != self.confirm_password:
+            # Let FastAPI surface as 422 validation error
+            raise ValueError("Passwords do not match")
+        return self
 
 
 class ResendVerificationRequest(BaseModel):
@@ -346,7 +353,7 @@ async def forgot_password(
     }
 )
 async def reset_password(
-    request: ResetPasswordRequest,
+    request: ConfirmResetPasswordPayload,
     confirm_password_reset_use_case: ConfirmPasswordResetUseCase = Depends(get_confirm_password_reset_use_case)
 ) -> dict:
     """

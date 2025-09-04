@@ -1,0 +1,58 @@
+header {
+    .digital-agency-header {
+        .navbar-collapse {
+            &.mobile-menu-full {
+                background: rgb(51, 58, 58);
+            }
+        }
+    }
+}
+
+.digital-agency-testimonial-carousel {
+    .swiper-navigation-02 {
+
+        .testimonial-carousel-style-07-prev,
+        .testimonial-carousel-style-07-next {
+            @screen xs {
+                display: none;
+            }
+        }
+    }
+}
+
+.footer-digitalagency {
+    .footer-menu {
+        >span {
+            letter-spacing: 2px;
+            font-size: 14px !important;
+            line-height: 20px;
+        }
+
+        .subtitle {
+            font-weight: 500;
+            line-height: 32px;
+            letter-spacing: -.5px;
+            font-size: 20px;
+
+            @screen lg {
+                @apply text-lg;
+            }
+        }
+
+        .instagram-col {
+            letter-spacing: 2px;
+            font-size: 14px !important;
+            line-height: 20px;
+        }
+    }
+
+    .footer-details {
+        padding-bottom: 5.5rem;
+
+        p {
+            a {
+                font-weight: 500;
+            }
+        }
+    }
+}

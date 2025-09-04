@@ -1,0 +1,60 @@
+.marketing-agency-parallx {
+  @apply h-full w-[80%] overflow-hidden bg-[#f4d956] absolute;
+
+  span {
+    @apply absolute top-0 right-[-20px] text-[80px] leading-[80px] h-full whitespace-nowrap text-center w-auto font-semibold tracking-[-3px] text-[#969896] font-serif xs:text-[55px] xs:leading-[65px];
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+}
+
+.marketing-agency-testimonial {
+  &::before {
+    @apply top-[100%] right-[50px] h-0 w-0 absolute;
+    border: solid transparent;
+    content: " ";
+    border-color: rgba(237, 237, 237, 0);
+    border-top-color: #f4d956;
+    border-width: 18px 0 0 18px;
+  }
+}
+
+.marketingagency-quote {
+  ::before {
+    top: 100%;
+    right: 50px;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    border-color: rgba(237, 237, 237, 0);
+    border-top-color: #f4d956;
+    border-width: 18px 0 0 18px;
+  }
+}
+.marketing-agency-progressbar {
+  .progressbar-title {
+    font-weight: 500;
+  }
+}
+
+.marketing-agency-counter {
+  h2 {
+    color: #232323;
+  }
+  .counter-content-section {
+    span {
+      color: #9fa29f;
+    }
+  }
+}
+
+.marketing-agency-testimonials {
+  .testimonials-bubble {
+    p {
+      font-size: 16px;
+      line-height: 34px;
+    }
+  }
+}

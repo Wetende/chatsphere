@@ -1,0 +1,20 @@
+.design-agency-portfolio-bordered {
+    .scale {
+        div:first-child {
+            font-size: 20px;
+            line-height: 28px;
+            font-weight: 600;
+            letter-spacing: -1px;
+        }
+    }
+}
+
+.design-agency-blog-masonry {
+    @apply xs:mt-16;
+    .category {
+        color: #828282;
+        &:hover {
+            color: #000;
+        }
+    }
+}

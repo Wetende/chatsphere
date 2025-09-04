@@ -1,0 +1,122 @@
+// who-we-are
+.who-we-are {
+  .icon-with-text-01 {
+    > div {
+      @apply relative text-white p-12 z-10 md:p-10;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        background-color: white;
+        transition-duration: 0.4s;
+        z-index: -1;
+        border-radius: 4px;
+      }
+
+      .feature-box-content {
+        .title {
+          @apply mb-[10px] inline-block text-white;
+        }
+
+        p {
+          @apply opacity-60 w-full;
+        }
+      }
+
+      &:hover {
+        &::after {
+          opacity: 1;
+        }
+
+        i,
+        .title,
+        p {
+          color: #232323;
+        }
+      }
+    }
+  }
+
+  .btn-custom-class {
+    height: 120px !important;
+    width: 120px !important;
+
+    @screen sm {
+      height: 80px !important;
+      width: 80px !important;
+    }
+  }
+
+  .feature-box {
+    p {
+      width: 75%;
+
+      @screen xs {
+        width: 90%;
+      }
+    }
+  }
+
+  .who-we-are-icon-with-text-02 {
+    @apply relative;
+
+    > div {
+      background-color: #f7f7f7;
+      @screen md {
+        box-shadow: none !important;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        background-color: #232323;
+        transition-duration: 0.4s;
+        z-index: -1;
+      }
+
+      &:hover {
+        transform: translateY(0);
+
+        i {
+          color: white;
+        }
+
+        &::after {
+          opacity: 1;
+        }
+
+        .feature-box-content {
+          .title {
+            color: white;
+          }
+
+          p {
+            color: white;
+            opacity: 0.65;
+          }
+        }
+      }
+    }
+  }
+
+  .who-we-are-bg-color {
+    background-image: linear-gradient(
+      to right top,
+      #b783ff,
+      #e37be0,
+      #fa7cc1,
+      #ff85a6,
+      #ff9393
+    );
+  }
+}

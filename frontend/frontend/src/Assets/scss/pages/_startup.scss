@@ -1,0 +1,97 @@
+.startup {
+    .swiper-button-prev {
+        @apply cursor-pointer bg-[#fff] min-w-[60px] min-h-[60px] absolute z-[2] rounded-[50%] left-[60px];
+
+        &:hover {
+            &::after {
+                color: white;
+            }
+        }
+
+        &::after {
+            @apply block leading-[60px] text-[#aaa] text-center text-[19px];
+        }
+    }
+
+    .swiper-button-next {
+        @apply cursor-pointer bg-[#fff] min-w-[60px] min-h-[60px] absolute z-[2] rounded-[50%] right-[60px];
+
+        &:hover {
+            &::after {
+                color: white;
+            }
+        }
+
+        &::after {
+            @apply block leading-[60px] text-[#aaa] text-center text-[19px];
+        }
+    }
+
+    .startup-link {
+        @apply bg-[#00b057] text-[#ffffff] py-[9px] pr-[9px] pl-[34px] rounded-[50px] items-center flex font-serif;
+
+        &:hover {
+            div {
+                @apply bg-[#fff];
+
+                i {
+                    @apply text-[#00b057];
+                }
+            }
+        }
+
+        div {
+            @apply flex justify-center items-center w-[38px] h-[38px] rounded-[50%] bg-[#007c3e] ml-[19px];
+            transition: var(--default-transition);
+
+            i {
+                @apply text-xs mt-[2px] pl-[3px] relative -top-[1px];
+                transition: var(--default-transition);
+            }
+        }
+    }
+}
+
+.startup-footer {
+    .footer-menu {
+        span {
+            font-size: 14px;
+            line-height: 20px;
+            margin-bottom: 15px;
+        }
+    }
+}
+
+.startup-iconwithtext {
+    .icon-with-text-04 {
+        .feature-box-content {
+            .title {
+                color: #262b35;
+            }
+        }
+    }
+}
+
+.home-startup-interactivebanner {
+    .interactivebanners-main {
+        border-radius: 6px;
+
+        div {
+            border-radius: 6px;
+        }
+    }
+}
+
+.startup-processstep {
+    .process-step-content {
+        width: 80%;
+    }
+}
+
+.home-startup-swiper {
+    .swiper-slide {
+        h1 {
+            text-shadow: rgb(0 0 0 / 30%) 0px 0px 20px;
+        }
+    }
+}

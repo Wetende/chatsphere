@@ -1,0 +1,61 @@
+.financepage {
+    header {
+        .navbar-nav {
+            .megamenu {
+                ul {
+                    .title {
+                        text-transform: capitalize;
+                    }
+                }
+
+                .nav-item {
+                    .nav-link {
+                        text-transform: none;
+                    }
+                }
+            }
+        }
+    }
+
+    .nav-item {
+        .simple-dropdown-menu {
+            li {
+                .nav-link {
+                    text-transform: none;
+                }
+            }
+        }
+    }
+}
+
+.finance-header-menu {
+    .navbar-nav {
+        >.nav-item {
+            text-transform: uppercase;
+        }
+    }
+}
+
+.finance-footer.footer-style-04 {
+    .subscribe-style-09 {
+        form {
+            button {
+                background-image: none !important;
+                background-color: #8bb867 !important;
+
+                @screen xs {
+                    top: 0;
+                    bottom: 0;
+                    letter-spacing: inherit;
+                    overflow: hidden;
+                    padding: 4px 18px;
+                    position: absolute !important;
+                    right: -1px;
+                    width: auto;
+                    margin-top: 0;
+                    border-radius: 2px !important;
+                }
+            }
+        }
+    }
+}

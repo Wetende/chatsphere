@@ -1,0 +1,15 @@
+.pricingtable-pricingpackages .switch-tab .nav-tabs .nav-link.active {
+    background-image: linear-gradient(to right top, #0039e3, #4132e0, #5e28dd, #741bd9, #8600d4) !important;
+}
+
+.pricingtable-pricingpackages .pricing-table-style-01.popular .pricing-wrapper a {
+    background: black;
+    color: white;
+    border: 2px solid black;
+    padding: 8px 22px;
+    font-size: 11px;
+}
+.pricingtable-pricingpackages .pricing-table-style-01.popular .pricing-wrapper a:hover {
+    background: white;
+    color: black;
+}

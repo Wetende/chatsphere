@@ -1,0 +1,119 @@
+.eventsconference-counter {
+    .counter-style-03 {
+        border-bottom: 1px solid #e4e4e4;
+
+        >div {
+            margin-bottom: 25px;
+            margin-top: 5px;
+        }
+
+        &:last-child {
+            border: 0;
+
+            >div {
+                margin-bottom: 0;
+            }
+        }
+
+        .postfix_sign {
+            color: #232323 !important;
+        }
+
+        .counter-content {
+            display: inline-block;
+            width: 56%;
+
+            .counter-title {
+                letter-spacing: 0 !important;
+                word-break: normal;
+            }
+        }
+    }
+}
+
+.eventsconference-coundown {
+    .countdown-style-02 {
+        >div {
+            width: 120px;
+
+            &::after {
+                color: #232323 !important;
+                opacity: 1 !important;
+                top: 18% !important;
+            }
+
+            @screen xs {
+                width: 50%;
+            }
+        }
+
+        .number {
+            display: inline-block;
+            font-weight: 600;
+            width: 80px !important;
+            font-size: 38px !important;
+        }
+
+        .unit {
+            font-weight: 500;
+            opacity: 1;
+        }
+    }
+}
+
+.eventsconference-accordion {
+    .accordion-style-04 {
+        .accordion-body {
+            color: #ffffff4d;
+        }
+    }
+}
+
+.eventsconference-tab {
+    .tab-title {
+        padding: 0 40px 22px !important;
+
+        @screen md {
+            padding: 20px 20px 22px !important;
+        }
+    }
+}
+
+.eventsconference-team {
+    .team-style-03 {
+        figure {
+            border-radius: 5px;
+            overflow: hidden;
+        }
+    }
+}
+
+.eventsconference-testimonials {
+    .testimonials-style-03 {
+        .testimonials-bubble {
+            padding: 28px 27px;
+        }
+    }
+}
+
+.pricingtable-eventsconference {
+    .switch-tab {
+        .pricing-table-style-03 {
+            &.popular {
+                padding-bottom: 5px;
+            }
+
+            .title {
+                letter-spacing: 1px;
+            }
+        }
+    }
+}
+
+.eventesconference-blog {
+    .blog-classic {
+        .blog-post-image {
+            border-radius: 4px;
+        }
+    }
+}

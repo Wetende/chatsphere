@@ -1,0 +1,25 @@
+.restaurant-header-menu {
+    .navbar-nav {
+        >.nav-item {
+            >.nav-link {
+                text-transform: uppercase;
+            }
+        }
+    }
+}
+
+.restaurant-experience {
+    @screen xs {
+        background: inherit !important;
+    }
+}
+
+.restaurant-tab-style-03 {
+    .tab-style-03 {
+        .nav-item {
+            @screen xs {
+                padding-left: 0 !important;
+            }
+        }
+    }
+}

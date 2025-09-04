@@ -1,0 +1,80 @@
+.video-icon-wrapper {
+  @apply w-[30px] h-[30px];
+
+  i {
+    @apply text-[26px] leading-none flex justify-center items-center w-[30px] h-[30px] absolute top-0 left-0;
+  }
+}
+
+.gymfitness-header-menu {
+  .navbar-nav {
+    > .nav-item {
+      > .nav-link {
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+.gym-fitness-pricing-table {
+  .pricing-table-style-03 {
+    .title {
+      letter-spacing: 1px;
+    }
+
+    .price {
+      color: #262b35;
+    }
+
+    .btn {
+      border-radius: 0;
+      letter-spacing: 1px;
+      --brand-color: #262b35 !important;
+    }
+
+    &.popular {
+      .title {
+        background-color: #262b35;
+      }
+    }
+  }
+}
+
+.gym-fitness-footer {
+  &.footer-style-03 {
+    form {
+      button {
+        background: #ff7a56 !important;
+        right: -2px !important;
+        height: 50px !important;
+        border-radius: 0;
+        height: 46px !important;
+        border-width: 0;
+
+        &:active {
+          outline: 0;
+          border-color: transparent !important;
+          color: white !important;
+        }
+      }
+    }
+  }
+
+  > div {
+    &:last-child {
+      border-top: 0;
+      background-color: #1f232c;
+    }
+
+    p {
+      a {
+        color: #8890a4 !important;
+        text-decoration: none;
+
+        &:hover {
+          color: #fff !important;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+.brandinga-agency-testimonials {
+    .swiper-slide {
+        span {
+            @apply leading-[40px];
+
+            @screen xs {
+                @apply leading-[28px];
+            }
+        }
+    }
+
+    .swiper-pagination {
+        bottom: 0 !important;
+    }
+}
+
+.brandinga-agency-social-icon {
+    .social-icon {
+        li {
+            margin-bottom: 0 !important;
+
+            a {
+                color: #fff;
+            }
+        }
+    }
+}
+
+.brandingagency-portfolioscattered {
+    .portfolio-scattered {
+        .portfolio-hover {
+            h6 {
+                text-transform: uppercase;
+            }
+        }
+    }
+}

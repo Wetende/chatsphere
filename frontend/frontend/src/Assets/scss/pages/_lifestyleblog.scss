@@ -1,0 +1,14 @@
+.lifestyleblog-footer {
+    >div {
+        padding-top: 4%;
+
+        @screen xs {
+            padding-top: 50px;
+            padding-bottom: 5%;
+        }
+    }
+
+    .text-themecolor {
+        font-weight: 400;
+    }
+}

@@ -1,0 +1,103 @@
+// Custom icon with text style 01
+.custom-icon-with-text01 {
+  transition: var(--default-transition);
+  @apply px-[2rem] py-[45px] md:px-[60px] md:py-[45px];
+  .feature-box-icon {
+    position: relative;
+    margin-bottom: 20px;
+
+    i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      font-size: 40px;
+      background-image: linear-gradient(
+        to right,
+        #556fff,
+        #556fff,
+        #e05fc4,
+        #f767a6,
+        #ff798e
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .feature-box-content {
+    @apply text-center;
+
+    h6 {
+      @apply font-semibold mb-[5px] tracking-[0px];
+    }
+    p {
+      margin-bottom: 0;
+    }
+  }
+
+  .feature-box-icon {
+    @apply flex justify-center;
+    margin-bottom: 30px;
+  }
+  &:hover {
+    box-shadow: 5px 5px 20px rgb(231, 228, 228);
+    border-color: transparent;
+    transform: translate3d(0, -7px, 0);
+    opacity: 1;
+    background-color: white;
+    border-radius: 6px;
+  }
+}
+
+// Custom icon with text style 02
+.custom-icon-with-text02 {
+  @apply p-[63px] lg:p-[36px] xs:p-[33px];
+  .feature-box-icon {
+    position: relative;
+    margin-bottom: 20px;
+
+    > svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      height: 40px;
+      width: 40px;
+    }
+    i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      font-size: 40px;
+      background-image: linear-gradient(
+        to right,
+        #556fff,
+        #556fff,
+        #e05fc4,
+        #f767a6,
+        #ff798e
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  .feature-box-icon-shap {
+    display: inline-block;
+  }
+  .drop-shadow {
+    svg {
+      display: inline-block;
+      filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.1));
+    }
+  }
+  .feature-box-content{
+    .title{
+      letter-spacing: 0px;
+    }
+  }
+}

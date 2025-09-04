@@ -1,0 +1,33 @@
+// Coming soon V2
+.coming-soon-v2 {
+    .notify-me {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, .8);
+        z-index: 15;
+    }
+
+    .countdown-style-03 {
+        >div {
+            &:first-child {
+                padding-left: 0;
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
+
+            .unit{
+                opacity: 0.5 !important;
+                margin-top: 10px;
+            }
+        }
+
+        .number {
+            font-size: 47px;
+        }
+    }
+}

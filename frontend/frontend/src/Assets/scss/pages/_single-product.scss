@@ -1,0 +1,250 @@
+.single-product {
+  .header-appear {
+    nav {
+      border: 0;
+    }
+  }
+
+  .tab-style-07 {
+    .nav-link {
+      &.active {
+        border-color: #232323;
+      }
+    }
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .shop-color li {
+    margin-right: 12px;
+  }
+
+  .shop-color li > input[type="radio"] + label span {
+    @apply h-[32px] w-[32px] rounded-full inline-block;
+  }
+
+  input[type="radio"] + label span {
+    @apply inline-block w-[15px] h-[15px] align-middle cursor-pointer rounded-full relative;
+  }
+
+  .shop-color li > input[type="radio"]:checked + label span:after {
+    @apply text-white;
+  }
+
+  .shop-color li > input[type="radio"] + label span:after {
+    @apply leading-[32px] text-[10px];
+  }
+
+  .shop-color li > input[type="radio"]:checked + label span:after {
+    @apply absolute top-0 left-0 text-white h-full w-full text-center font-black;
+    content: "\f00c";
+    font-family: "Font Awesome 5 Free";
+    font-size: 10px;
+    line-height: 32px;
+  }
+
+  .shop-size {
+    margin-right: 25px;
+
+    li {
+      margin-right: 14px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      > input[type="radio"] {
+        &:checked {
+          + label {
+            span {
+              @apply border border-[#23232340] text-darkgray;
+            }
+          }
+        }
+
+        + label {
+          span {
+            @apply h-[32px] w-[32px] leading-[30px] rounded-full bg-lightgray border border-transparent text-center;
+          }
+        }
+      }
+    }
+  }
+
+  .table-style-01 {
+    @apply w-full;
+
+    table {
+      @apply w-full;
+    }
+
+    tr {
+      th {
+        @apply py-[12px] px-[10px] first:pl-[20px] first:text-left text-center;
+      }
+    }
+    td {
+      @apply py-[12px] px-[10px] text-center;
+    }
+  }
+
+  .size-chart {
+    .inner-modal {
+      @apply w-[60%];
+    }
+  }
+
+  .single-product-thumb .swiper {
+    width: calc(100% - 30px);
+
+    @screen md {
+      width: 100%;
+    }
+
+    .swiper-button-prev,
+    .swiper-button-next {
+      @apply absolute w-[48%] inline-block bg-darkgray text-white h-[40px] leading-[40px];
+      top: auto;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Font Awesome 5 Free";
+      font-weight: 900;
+
+      @screen md {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        top: 50%;
+      }
+
+      &:after {
+        display: none;
+      }
+    }
+
+    .swiper-button-prev {
+      @screen md {
+        transform: translateY(-50%) rotate(-90deg);
+      }
+
+      &:before {
+        content: "\f077";
+      }
+    }
+
+    .swiper-button-next {
+      @screen md {
+        transform: translateY(-50%) rotate(-90deg);
+      }
+
+      &:before {
+        content: "\f078";
+      }
+    }
+  }
+}
+
+.product-summary {
+  .breadcrumb {
+    margin-bottom: 0;
+
+    li {
+      @apply font-sans;
+    }
+  }
+
+  .quantity {
+    .qty-text {
+      height: 100%;
+    }
+
+    .qty-btn {
+      height: 50%;
+
+      &.qty-minus {
+        top: 50%;
+      }
+    }
+  }
+}
+
+.product-images-box {
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 65px;
+    height: 65px;
+    z-index: 10;
+    transform: translateY(-50%);
+
+    &:after {
+      font-family: "Font Awesome 5 Free";
+      font-weight: 700;
+      color: #232323;
+    }
+  }
+
+  .swiper-button-next {
+    right: 0;
+
+    &:after {
+      content: "\f054";
+    }
+  }
+
+  .swiper-button-prev {
+    left: 0;
+
+    &:after {
+      content: "\f053";
+    }
+  }
+}
+
+.size-chart-popup {
+  width: 1000px;
+
+  @screen xs {
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+  }
+}
+
+/* table style 01 */
+.table-style-01 {
+  position: relative;
+  width: 100%;
+
+  @screen xs {
+    overflow: auto;
+  }
+
+  table {
+    width: 100%;
+
+    @screen xs {
+      width: max-content;
+    }
+  }
+
+  td,
+  th {
+    padding: 12px 10px;
+    text-align: center;
+  }
+
+  tr {
+    th:first-child,
+    td:first-child {
+      padding-left: 20px;
+      text-align: left;
+    }
+  }
+}

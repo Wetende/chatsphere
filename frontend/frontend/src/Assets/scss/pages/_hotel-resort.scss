@@ -1,0 +1,80 @@
+.hotel-resort-slider {
+    .swiper-button-prev,
+    .swiper-button-next {
+        display: block;
+        color: white;
+        top: 50%;
+        transform: translateY(-50%);
+
+        &:hover {
+            opacity: 0.6;
+        }
+
+        &::after {
+            font-size: 35px;
+            height: 50px;
+            width: 50px;
+            font-family: "swiper-icons";
+        }
+    }
+
+    .swiper-button-prev {
+        left: 40px;
+
+        &:after {
+            content: "prev";
+        }
+    }
+
+    .swiper-button-next {
+        right: 25px;
+
+        &:after {
+            content: "next";
+        }
+    }
+
+    .swiper-pagination {
+        bottom: 39px;
+        --swiper-pagination-bullet-horizontal-gap: 5px;
+    }
+}
+
+@keyframes slideLeft {
+    0% {
+        transform: scaleX(0);
+    }
+
+    100% {
+        transform: scaleX(100%);
+    }
+}
+
+.hotelresort-client {
+    .client-logo-style-08 {
+        .col {
+            @screen xs {
+                border-right: 0;
+                border-bottom: 1px solid #0000001a;
+
+                &:last-child {
+                    border-bottom: 0;
+                }
+            }
+        }
+    }
+}
+
+.hotelresort-footer {
+    .footer-menu {
+        ul {
+            li {
+                a {
+                    &:hover {
+                        color: #c89965;
+                    }
+                }
+            }
+        }
+    }
+}

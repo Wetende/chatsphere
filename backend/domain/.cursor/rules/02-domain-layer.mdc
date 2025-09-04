@@ -1,0 +1,65 @@
+---
+alwaysApply: true
+description: Domain layer rules for pure business logic
+globs: *.py
+---
+
+# Domain Layer Rules
+
+## Purity Requirements
+- NO external library imports (except typing, abc, enum, dataclasses)
+- NO framework dependencies (FastAPI, SQLAlchemy, etc.)
+- NO infrastructure concerns (HTTP, database, file I/O)
+- Pure Python business logic only
+
+## Entity Guidelines
+```python
+# ✅ GOOD - Pure domain entity
+@dataclass
+class User:
+    id: UserId
+    email: EmailAddress
+    created_at: datetime
+    
+    def change_password(self, new_password: Password) -> None:
+        # Pure business logic
+        pass
+
+# ❌ BAD - Framework dependencies
+class User(Base):  # NO SQLAlchemy
+    __tablename__ = "users"  # NO ORM annotations
+```
+
+## Value Objects
+- Immutable data structures
+- Encapsulate validation logic
+- No primitive obsession
+
+```python
+# ✅ GOOD - Value object
+@dataclass(frozen=True)
+class EmailAddress:
+    value: str
+    
+    def __post_init__(self):
+        if "@" not in self.value:
+            raise ValueError("Invalid email")
+```
+
+## Domain Services
+- Stateless business logic
+- Operate on domain entities
+- No external dependencies
+
+## Repository Interfaces
+- Define contracts in domain/repositories/
+- Abstract base classes only
+- No implementation details
+
+```python
+# ✅ GOOD - Pure interface
+class IUserRepository(ABC):
+    @abstractmethod
+    async def get_by_id(self, user_id: UserId) -> Optional[User]:
+        pass
+```

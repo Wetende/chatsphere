@@ -134,19 +134,14 @@ class AuthenticateUserUseCase:
                     raise AuthenticationFailedException("Authentication error")
                 
                 # Verify password
-                try:
-                    is_valid = await self.password_service.verify_password(
-                        request.password, 
-                        stored_password_hash
-                    )
-                    
-                    if not is_valid:
-                        logger.warning(f"Authentication failed: invalid password for user {user.id}")
-                        raise AuthenticationFailedException("Invalid email or password")
-                        
-                except Exception as e:
-                    logger.error(f"Password verification error for user {user.id}: {e}")
-                    raise AuthenticationFailedException("Authentication error")
+                is_valid = await self.password_service.verify_password(
+                    request.password, 
+                    stored_password_hash
+                )
+                
+                if not is_valid:
+                    logger.warning(f"Authentication failed: invalid password for user {user.id}")
+                    raise AuthenticationFailedException("Invalid email or password")
                 
                 # Generate JWT tokens
                 try:
@@ -168,12 +163,10 @@ class AuthenticateUserUseCase:
                     logger.error(f"Token generation error for user {user.id}: {e}")
                     raise AuthenticationFailedException("Authentication error")
                 
-                # Update last login timestamp
+                # Update last login timestamp (best-effort; context manager will commit)
                 try:
                     user.last_login = datetime.now(timezone.utc)
                     await self.user_repository.save(user)
-                    await self.unit_of_work.commit()
-                    
                 except Exception as e:
                     logger.error(f"Failed to update last login for user {user.id}: {e}")
                     # Don't fail authentication for this, but log it
