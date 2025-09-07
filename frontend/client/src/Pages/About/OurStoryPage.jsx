@@ -218,7 +218,7 @@ const OurStoryPage = (props) => {
               <div className="font-serif text-xmd font-medium mb-[30px]">
                 <span className="w-[50px] h-[1px] bg-fastblue inline-block align-middle mr-[20px]"></span>
                 <span className="text-gradient bg-gradient-to-r from-[#556fff] via-[#e05fc4] to-[#ff798e] inline-block">Looking for interface expertise?</span></div>
-              <h5 className="font-serif text-darkgray font-medium mb-[30px] w-full">We design brand, digital experience that engaged the right customers</h5>
+              <h5 className="font-serif text-darkgray font-medium mb-[30px] w-full">We build AI chat experiences that engage the right customers</h5>
               <p className="w-[95%] mb-[35px]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, nostrud exercitation ullamco.</p>
               <div className="xs:flex">
                 <Buttons to="/page/our-services/" className="mr-[20px] xs:mr-[10px] font-medium rounded-none font-serif uppercase hover:text-darkgray btn-slide-filling-right bg-gradient-to-r from-darkgray to-darkgray" size="md" color="#fff" themeColor="#fff" title="DISCOVER LITHO" />

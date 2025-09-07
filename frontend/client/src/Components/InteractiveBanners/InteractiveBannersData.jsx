@@ -31,50 +31,50 @@ const InteractiveBannersData01 = [
 
 const InteractiveBannersData02 = [
     {
-        subtitle: "Flexible",
-        title: "Bundle of layout type different layout",
+        subtitle: "No-code",
+        title: "Create chatbots in minutes",
         img: "https://via.placeholder.com/915x716",
         btnTitle: "Learn more",
         btnLink: "/page/about-us"
     },
     {
-        subtitle: "Unique",
-        title: "We are delivering beautiful products",
+        subtitle: "RAG",
+        title: "Train on your documents & URLs",
         img: "https://via.placeholder.com/915x716",
         btnTitle: "Learn more",
         btnLink: "/page/about-us"
     },
     {
-        subtitle: "Responsive",
-        title: "True responsiveness modern responsive",
+        subtitle: "Embeddable",
+        title: "Add a chat widget to your site",
         img: "https://via.placeholder.com/915x716",
         btnTitle: "Learn more",
         btnLink: "/page/about-us"
     },
     {
-        subtitle: "Modern",
-        title: "Beautiful and modern latest page builder",
+        subtitle: "Analytics",
+        title: "Insights to improve performance",
         img: "https://via.placeholder.com/915x716",
         btnTitle: "Learn more",
         btnLink: "/page/about-us"
     },
     {
-        subtitle: "Flexible",
-        title: "Bundle of layout type different layout",
+        subtitle: "Reliable",
+        title: "Fast, scalable, secure",
         img: "https://via.placeholder.com/915x716",
         btnTitle: "Learn more",
         btnLink: "/page/about-us"
     },
     {
-        subtitle: "Unique",
-        title: "We are delivering beautiful products",
+        subtitle: "Integrations",
+        title: "Webhooks and API access",
         img: "https://via.placeholder.com/915x716",
         btnTitle: "Learn more",
         btnLink: "/page/about-us"
     },
     {
-        subtitle: "Responsive",
-        title: "True responsiveness modern responsive",
+        subtitle: "Multilingual",
+        title: "200+ languages supported",
         img: "https://via.placeholder.com/915x716",
         btnTitle: "Learn more",
         btnLink: "/page/about-us"

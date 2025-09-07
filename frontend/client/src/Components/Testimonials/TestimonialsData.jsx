@@ -69,24 +69,24 @@ const TestimonialsData02 = [
 
 const TestimonialsData03 = [
   {
-    name: "Herman Miller",
-    designation: "ThemeZaa Design",
+    name: "Sarah Lee",
+    designation: "Support Lead, RetailCo",
     content:
-      "Lorem ipsum dolor amet consectetur do tempor incididunt labore et dolore magna nostrud exercitation ullamco.",
+      "We launched a fully trained support bot in under a week. Customer satisfaction is up 30% with KyroChat.",
     img: "https://via.placeholder.com/125x125",
   },
   {
-    name: "Jeremy Girard",
-    designation: "Microsoft Corporation",
+    name: "David Kim",
+    designation: "CTO, FinServe",
     content:
-      "Lorem ipsum dolor amet consectetur do tempor incididunt labore et dolore magna nostrud exercitation ullamco.",
+      "The no-code setup and secure backend let us move fast without compromising compliance.",
     img: "https://via.placeholder.com/125x125",
   },
   {
-    name: "Alexander Harvard",
-    designation: "ThemeZaa Design",
+    name: "Maria Garcia",
+    designation: "Product Manager, EduTech",
     content:
-      "Lorem ipsum dolor amet consectetur do tempor incididunt labore et dolore magna nostrud exercitation ullamco.",
+      "Multilingual support is terrific — one bot now serves 8 languages across our campuses.",
     img: "https://via.placeholder.com/125x125",
   },
 ];

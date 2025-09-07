@@ -1,34 +1,34 @@
 const FooterData = [
     {
-        title: "company",
+        title: "Company",
         submenu: [
             {
-                title: "About company",
+                title: "About KyroChat",
                 link: "/page/about-us"
             },
             {
-                title: "Company services",
+                title: "Platform features",
                 link: "/page/our-services"
             },
             {
-                title: "Job opportunities",
+                title: "Careers",
                 link: "/page/our-team"
             },
             {
-                title: "Contact us",
+                title: "Contact",
                 link: "/page/contact-classic"
             },
         ]
     },
     {
-        title: "customer",
+        title: "Customers",
         submenu: [
             {
-                title: "Client support",
+                title: "Support",
                 link: "/page/faq-s"
             },
             {
-                title: "Pricing packages",
+                title: "Pricing",
                 link: "/page/pricing-packages"
             },
             {
@@ -42,7 +42,7 @@ const FooterData = [
         ]
     },
     {
-        title: "Additional",
+        title: "Resources",
         submenu: [
             {
                 title: "Our story",
@@ -63,32 +63,31 @@ const FooterData = [
         ]
     },
     {
-        title: "Services",
+        title: "Capabilities",
         submenu: [
             {
-
-                title: "Brand experience",
+                title: "Chat widget",
                 link: "/page/our-services"
             },
             {
-                title: "e-Commerce website",
+                title: "Knowledge ingestion",
                 link: "/page/our-services"
             },
             {
-                title: "Content writing",
+                title: "Analytics",
                 link: "/page/our-services"
             },
             {
-                title: "Marketing strategy",
+                title: "Integrations",
                 link: "/page/our-services"
             },
         ]
     },
     {
-        title: "Resources",
+        title: "Developers",
         submenu: [
             {
-                title: "Theme guide",
+                title: "API docs",
                 link: "/page/faq-s"
             },
             {
@@ -96,53 +95,53 @@ const FooterData = [
                 link: "/page/faq-s"
             },
             {
-                title: "What we offer",
+                title: "SDKs",
                 link: "/page/what-we-offer"
             },
             {
-                title: "Company history",
+                title: "Changelog",
                 link: "/page/our-story"
             },
         ]
     },
     {
-        title: "Categories",
+        title: "Use cases",
         submenu: [
             {
-                title: "For men",
+                title: "Customer support",
                 link: "/shop/shop-wide"
             },
             {
-                title: "For woman",
+                title: "Sales assistant",
                 link: "/shop/shop-wide"
             },
             {
-                title: "Accessories",
+                title: "Internal knowledge base",
                 link: "/shop/shop-wide"
             },
             {
-                title: "Collections",
+                title: "Education",
                 link: "/shop/shop-wide"
             },
         ]
     },
     {
-        title: "Adavantages",
+        title: "Advantages",
         submenu: [
             {
-                title: "Free delivery",
+                title: "Fast setup",
                 link: "/page/faq-s"
             },
             {
-                title: "100 days refund",
+                title: "Secure by default",
                 link: "/page/faq-s"
             },
             {
-                title: "Multiple payments",
+                title: "Scalable",
                 link: "/page/faq-s"
             },
             {
-                title: "Sustainable",
+                title: "Accessible",
                 link: "/page/faq-s"
             },
         ]

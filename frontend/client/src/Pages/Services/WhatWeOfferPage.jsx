@@ -145,8 +145,8 @@ const WhatWeOfferPage = (props) => {
         <Container className="h-full relative xs:px-[15px]">
           <Row className="justify-center h-full">
             <Col xl={6} lg={7} md={8} className="relative font-serif text-center text-white flex justify-center flex-col">
-              <h1 className="opacity-60 mb-[20px] text-xmd leading-[20px]">What we offers</h1>
-              <h2 className="font-medium -tracking-[1px] mb-0">we are a creative design studio</h2>
+              <h1 className="opacity-60 mb-[20px] text-xmd leading-[20px]">What we offer</h1>
+              <h2 className="font-medium -tracking-[1px] mb-0">we provide an AI chatbot platform</h2>
             </Col>
             <ScrollTo to="about" offset={0} delay={0} spy={true} smooth={true} duration={800} className="absolute bottom-[50px] left-1/2 w-auto inline-block -translate-x-1/2 cursor-pointer">
               <i className="ti-arrow-down text-lg leading-none text-white bg-[rgba(0,0,0,0.7)] p-[15px] xs:p-[10px] rounded-full flex justify-center items-center"></i>
@@ -176,8 +176,8 @@ const WhatWeOfferPage = (props) => {
 
             </Col>
             <Col lg={{ span: 5, offset: 1 }} md={6} >
-              <h5 className="font-serif font-medium text-darkgray w-[90%]">Litho is meant to simplify the website building</h5>
-              <p className="w-[85%] mb-[25px] lg:w-[90%]">Lorem ipsum dolor sit amet, consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore magna Ut enim ad minim veniam, nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              <h5 className="font-serif font-medium text-darkgray w-[90%]">KyroChat is meant to simplify chatbot building</h5>
+              <p className="w-[85%] mb-[25px] lg:w-[90%]">Create bots without code, ingest your documents and URLs, embed a widget, and track analytics.</p>
               <div className="mt-[15px] sm:mt-0 inline-block">
                 <Buttons to="/page/who-we-are" className="mr-[24px] font-medium rounded-none font-serif uppercase hover:text-darkgray btn-slide-filling-right bg-gradient-to-r from-darkgray to-darkgray sm:mr-[20px] xs:mr-[8px]" size="md" color="#fff" themeColor="#fff" title="Discover Litho" />
                 <Buttons to="/page/about-us" className="font-medium rounded-none font-serif uppercase hover:text-white bg-transparent btn-slide-right" size="md" color="#232323" themeColor="#232323" title="Read more" />

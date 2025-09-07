@@ -1,42 +1,42 @@
 const TabData01 = [
     {
-        tabTitle: 'PLANNING',
-        subtitle: 'MODERNIZED REDESIGN',
+        tabTitle: 'CREATE',
+        subtitle: 'NO-CODE BUILDER',
         tabicons: "",
-        title: 'Business planning',
+        title: 'Bot creation',
         img: 'https://via.placeholder.com/800x625',
-        content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore magna ut enim ad minim veniam nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        buttonTitle: "Discover Litho",
+        content: 'Set up your chatbot with name, personality, and model in minutes. No coding required.',
+        buttonTitle: "Discover KyroChat",
         buttonLink: "/"
     },
     {
-        tabTitle: 'RESEARCH',
-        subtitle: 'INNOVATIVE SOLUTIONS',
+        tabTitle: 'INGEST',
+        subtitle: 'RAG-POWERED',
         tabicons: "",
-        title: 'Business research',
+        title: 'Knowledge ingestion',
         img: 'https://via.placeholder.com/800x625',
-        content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore magna ut enim ad minim veniam nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        buttonTitle: "Discover Litho",
+        content: 'Upload PDFs, DOCX, and text or crawl websites to build a rich knowledge base.',
+        buttonTitle: "Discover KyroChat",
         buttonLink: "/"
     },
     {
-        tabTitle: 'TARGET',
-        subtitle: 'MODERNIZED REDESIGN',
+        tabTitle: 'TEST',
+        subtitle: 'REAL-TIME',
         tabicons: "",
-        title: 'Business target',
+        title: 'Conversation testing',
         img: 'https://via.placeholder.com/800x625',
-        content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore magna ut enim ad minim veniam nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        buttonTitle: "Discover Litho",
+        content: 'Try your bot in real-time, validate answers, and refine settings before going live.',
+        buttonTitle: "Discover KyroChat",
         buttonLink: "/"
     },
     {
-        tabTitle: 'CAMPAIGN',
-        subtitle: 'INNOVATIVE SOLUTIONS',
+        tabTitle: 'DEPLOY',
+        subtitle: 'EMBED & API',
         tabicons: "",
-        title: 'Business campaign',
+        title: 'Deploy & embed',
         img: 'https://via.placeholder.com/800x625',
-        content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore magna ut enim ad minim veniam nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        buttonTitle: "Discover Litho",
+        content: 'Embed the chat widget on your website or integrate via API and webhooks.',
+        buttonTitle: "Discover KyroChat",
         buttonLink: "/"
     }
 ]

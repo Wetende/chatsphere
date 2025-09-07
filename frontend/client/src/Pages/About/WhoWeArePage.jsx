@@ -154,8 +154,8 @@ const WhoWeArePage = (props) => {
           <Container className="h-full">
             <Row className="items-end justify-center h-full">
               <Col xl={6} lg={7} md={10} className="relative z-[2] text-center">
-                <span className="mb-[5px] font-serif text-white opacity-60 block xs:mb-[15px]">we are a creative design studio</span>
-                <h1 className="text-white font-serif font-medium text-[42px] leading-[49px] mb-20 sm:mb-12 sm:text-[30px] sm:leading-[40px] xs:text-[30px] xs:leading-[40px]">Unleash your creativity and build website </h1>
+                <span className="mb-[5px] font-serif text-white opacity-60 block xs:mb-[15px]">we build an AI chatbot platform</span>
+                <h1 className="text-white font-serif font-medium text-[42px] leading-[49px] mb-20 sm:mb-12 sm:text-[30px] sm:leading-[40px] xs:text-[30px] xs:leading-[40px]">Create AI chatbots your users love</h1>
                 <span className="w-[1px] h-[80px] inline-block bg-white mb-20 sm:mb-12 sm:h-[50px]"></span>
               </Col>
             </Row>
@@ -170,8 +170,8 @@ const WhoWeArePage = (props) => {
         <Container>
           <Row className="items-center">
             <Col xl={5} lg={6} className="pb-12 lg:pb-28 sm:pb-[50px]">
-              <div className="text-xmd mb-[20px] font-serif">Browse amazing social media features</div>
-              <h5 className="font-serif text-darkgray font-medium mb-[5.5rem]">We offer a full range of digital marketing services!</h5>
+              <div className="text-xmd mb-[20px] font-serif">Build, train, and embed AI chatbots</div>
+              <h5 className="font-serif text-darkgray font-medium mb-[5.5rem]">We offer creation, training, analytics, and integration services</h5>
               <Row>
                 <Col>
                   <div className="flex">

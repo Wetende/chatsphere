@@ -168,7 +168,7 @@ const PricingPackagesPage = (props) => {
         <Container className='switch-tab'>
           <Row className="justify-center">
             <Col xl={5} lg={6} sm={7} className="text-center mb-14">
-              <h5 className="font-serif font-medium text-darkgray">Choose one of our plans get access to plugins for free</h5>
+              <h5 className="font-serif font-medium text-darkgray">Choose a KyroChat plan and start building chatbots</h5>
             </Col>
           </Row>
           <Tabs className="mb-[105px] md:mb-[50px] sm:mb-[20px]"

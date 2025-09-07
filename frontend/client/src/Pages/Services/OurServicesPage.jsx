@@ -116,7 +116,7 @@ const OurServicesPage = (props) => {
           <Row className="items-center justify-center">
             <Col xl={8} lg={6} className="text-center font-serif flex items-center md:justify-center sm:block">
               <h1 className="text-lg text-darkgray font-medium mb-0 inline-block">Our services</h1>
-              <span className="pl-[25px] ml-[30px] relative -top-[1px] text-[14px] leading-[25px] block md:inline-block sm:p-0 sm:m-0 sm:mt-[5px] before:absolute before:border-l-[2px] before:border-darkgray before:h-[12px] sm:before:border-0 before:top-[7px] before:left-[-2px] sm:block">Professional multi-purpose template</span>
+              <span className="pl-[25px] ml-[30px] relative -top-[1px] text-[14px] leading-[25px] block md:inline-block sm:p-0 sm:m-0 sm:mt-[5px] before:absolute before:border-l-[2px] before:border-darkgray before:h-[12px] sm:before:border-0 before:top-[7px] before:left-[-2px] sm:block">AI chatbot platform for teams</span>
             </Col>
             <Col xl={4} lg={6} className="text-center breadcrumb text-sm font-serif md:mt-[15px] justify-end md:justify-center mb-0">
               <ul>
@@ -135,9 +135,9 @@ const OurServicesPage = (props) => {
         <Container>
           <Row className="items-center justify-center">
             <Col lg={5} md={9} className="mb-[10px] md:mb-28">
-              <span className="font-serif mb-[20px] text-gradient bg-gradient-to-r from-[#556fff] via-[#e05fc4] to-[#ff798e] inline-block uppercase font-medium tracking-[1px]">Experience agency</span>
-              <h4 className="font-serif font-semibold text-darkgray w-[95%]">We help our clients build value digital web solutions</h4>
-              <p className="w-[80%] mb-[25px] lg:w-[95%]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua printing typesetting.</p>
+              <span className="font-serif mb-[20px] text-gradient bg-gradient-to-r from-[#556fff] via-[#e05fc4] to-[#ff798e] inline-block uppercase font-medium tracking-[1px]">KyroChat platform</span>
+              <h4 className="font-serif font-semibold text-darkgray w-[95%]">Build, train, and deploy AI chatbots</h4>
+              <p className="w-[80%] mb-[25px] lg:w-[95%]">Create bots without code, ingest documents and URLs, and embed a customizable chat widget.</p>
               <ScrollTo to="services" offset={0} delay={0} spy={true} smooth={true} duration={800}>
                 <Buttons className="btn-fill mt-[15px] font-medium font-serif uppercase rounded md:mb-[15px]" icon="feather-arrow-right" iconPosition="after" themeColor="#232323" color="#fff" size="md" title="Our services" />
               </ScrollTo>
@@ -171,8 +171,8 @@ const OurServicesPage = (props) => {
         <Container>
           <Row className="justify-center">
             <Col md={6} className="font-serif justify-center flex flex-col items-center mb-20 sm:mb-12">
-              <span className="mb-[10px] inline-block uppercase font-medium text-gradient bg-gradient-to-r from-[#556fff] via-[#e05fc4] to-[#ff798e] tracking-[1px]">Unlimited Possibilities</span>
-              <h5 className="text-darkgray font-semibold -tracking-[1px]">Research Strategy</h5>
+              <span className="mb-[10px] inline-block uppercase font-medium text-gradient bg-gradient-to-r from-[#556fff] via-[#e05fc4] to-[#ff798e] tracking-[1px]">Platform capabilities</span>
+              <h5 className="text-darkgray font-semibold -tracking-[1px]">Creation, training, embedding, analytics</h5>
             </Col>
           </Row>
           <Row className="justify-center">

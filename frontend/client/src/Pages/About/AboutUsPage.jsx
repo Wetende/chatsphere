@@ -157,7 +157,7 @@ const AboutUsPage = (props) => {
           <Row className="items-center justify-center">
             <Col md={8} xl={6} lg={7} sm={9} className="relative text-center">
               <h1 className="inline-block text-white opacity-60 mb-[20px] text-xmd leading-[20px] -tracking-[.5px] font-serif">About our company</h1>
-              <h2 className="font-serif text-white -tracking-[1px] text-[3.9rem] font-medium mb-0 sm:-tracking-[1px]">we are a creative design studio</h2>
+              <h2 className="font-serif text-white -tracking-[1px] text-[3.9rem] font-medium mb-0 sm:-tracking-[1px]">we build an AI chatbot platform</h2>
             </Col>
             <ScrollTo to="about" offset={0} delay={0} spy={true} smooth={true} duration={800} className="absolute bottom-[50px] left-1/2 w-auto inline-block p-0 -translate-x-1/2 sm:bottom-7 xs:bottom-[4.5rem] cursor-pointer">
               <i className="ti-arrow-down text-lg leading-[1] text-white bg-[#000000b3] p-[15px] xs:p-[10px] rounded-full flex justify-center items-center"></i>
@@ -176,16 +176,16 @@ const AboutUsPage = (props) => {
             </Col>
             <Col lg={4} md={6} className="ps-lg-0 flex items-center sm:mb-[30px]">
               <div className="justify-center h-full w-full flex flex-col items-start bg-fastblue px-[5.5rem] lg:px-[3rem] md:p-16">
-                <span className="text-xlg lg:text-lg lg:leading-[26px] font-medium text-white mb-[20px] block">We started this company 10 years ago out of a desire to design and build amazing things.</span>
-                <p className="text-white font-sans opacity-70 mb-[20px] xs:mb-[15px]">Lorem ipsum is simply dummy text of the printing and typeing industry. Lorem ipsum has been the industry's standard dummy text ever since text.</p>
+                <span className="text-xlg lg:text-lg lg:leading-[26px] font-medium text-white mb-[20px] block">We started KyroChat to help teams build intelligent chat experiences.</span>
+                <p className="text-white font-sans opacity-70 mb-[20px] xs:mb-[15px]">KyroChat is an AI-powered chatbot platform for creating, training, and deploying chatbots across channels.</p>
                 <Buttons href="/page/our-services" className="font-medium font-serif uppercase btn-link after:h-[2px] md:text-md md:mb-[15px] after:bg-[#fff] hover:text-[#fff]" color="#fff" title="Company overview" />
               </div>
             </Col>
             <Col lg={4} md={6} className="flex flex-col pr-0">
               <img src="https://via.placeholder.com/800x600" alt="about us" className="sm:w-full" />
               <div className="bg-white px-[3.5rem] py-[3rem] h-full lg:p-8 sm:p-16">
-                <span className="text-darkgray font-medium mb-[10px] block">About digital agency</span>
-                <p className="font-sans">Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem ipsum has been the industry's standard dummy text.</p>
+                <span className="text-darkgray font-medium mb-[10px] block">About KyroChat</span>
+                <p className="font-sans">We combine state-of-the-art AI with retrieval and great UX so you can build bots your users love.</p>
               </div>
             </Col>
           </Row>

@@ -34,23 +34,23 @@ const IconWithTextData_01 = [
 const IconWithTextData_02 = [
     {
         icon: "line-icon-Navigation-LeftWindow text-gradient bg-gradient-to-r from-[#556fff] via-[#e05fc4] to-[#ff798e]",
-        title: "Powerfull theme options",
-        content: "Lorem ipsum dolor sit amet consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore.",
+        title: "Secure authentication",
+        content: "JWT-based auth for users and teams.",
     },
     {
         icon: "line-icon-Cursor-Click2 text-gradient bg-gradient-to-r from-[#556fff] via-[#e05fc4] to-[#ff798e]",
-        title: "Unlimited layouts and styles",
-        content: "Lorem ipsum dolor sit amet consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore.",
+        title: "Bot management",
+        content: "Create, edit, and organize your bots.",
     },
     {
         icon: "line-icon-Archery-2 text-gradient bg-gradient-to-r from-[#556fff] via-[#e05fc4] to-[#ff798e]",
-        title: "Developing an effective strategy",
-        content: "Lorem ipsum dolor sit amet consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore.",
+        title: "Analytics dashboard",
+        content: "Track conversations, CSAT, and response time.",
     },
     {
         icon: "line-icon-Female text-gradient bg-gradient-to-r from-[#556fff] via-[#e05fc4] to-[#ff798e]",
-        title: "Automated testing and support",
-        content: "Lorem ipsum dolor sit amet consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore.",
+        title: "Webhooks & API",
+        content: "Integrate with your stack and workflows.",
     },
 ]
 

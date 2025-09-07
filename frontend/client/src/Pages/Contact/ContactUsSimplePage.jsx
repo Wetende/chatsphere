@@ -89,7 +89,7 @@ const ContactUsSimplePage = (props) => {
           <Row className="xs:text-center">
             <Col xl={8} lg={6} className="flex md:justify-center md:mb-[15px] sm:block sm:text-center sm:mb-[9px]">
               <h1 className="text-lg leading-[28px] text-darkgray font-medium mb-0 font-serif inline-block">Contact us</h1>
-              <span className="font-serif text-md leading-[28px] relative pl-[25px] ml-[30px] block sm:p-0 before:absolute before:bg-darkgray before:content-[''] before:h-[12px] before:top-[8px] before:w-[2px] before:left-0 sm:before:hidden sm:ml-0">Short tagline goes here</span>
+              <span className="font-serif text-md leading-[28px] relative pl-[25px] ml-[30px] block sm:p-0 before:absolute before:bg-darkgray before:content-[''] before:h-[12px] before:top-[8px] before:w-[2px] before:left-0 sm:before:hidden sm:ml-0">We’re here to help you build great chatbots</span>
             </Col>
             <Col xl={4} lg={6} className="breadcrumb justify-end px-[15px] text-sm font-serif m-0 md:justify-center">
               <ul>

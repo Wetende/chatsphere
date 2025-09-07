@@ -94,8 +94,8 @@ const OurProcessPage = (props) => {
         <Container className="h-full relative z-[2]">
           <Row className="justify-center h-full">
             <Col xl={6} lg={7} md={8} className="relative font-serif text-center flex justify-center flex-col">
-              <h1 className="text-white opacity-60 mb-[20px] text-xmd leading-[20px]">Our business process</h1>
-              <h2 className="text-white font-medium -tracking-[1px] mb-0">we provide high quality services</h2>
+              <h1 className="text-white opacity-60 mb-[20px] text-xmd leading-[20px]">Our process</h1>
+              <h2 className="text-white font-medium -tracking-[1px] mb-0">create, train, and deploy AI chatbots</h2>
             </Col>
           </Row>
         </Container>
@@ -111,18 +111,18 @@ const OurProcessPage = (props) => {
             <Col md={6} className="relative lg:mx-auto sm:mb-[30px]">
               <div className="flex items-center font-serif text-xmd font-medium mb-[30px]">
                 <span className="flex-shrink-0 w-[30px] h-[1px] bg-fastblue mr-[20px]"></span>
-                <div className="flex-grow-1 text-fastblue">Walking is the best possible exercise</div>
+                <div className="flex-grow-1 text-fastblue">The fastest path from data to chatbot</div>
               </div>
-              <h5 className="font-serif font-medium text-darkgray m-0">Litho specializes in strategy, creativity design and innovative technology build.</h5>
+              <h5 className="font-serif font-medium text-darkgray m-0">KyroChat specializes in AI chatbots, retrieval, and seamless integrations.</h5>
             </Col>
             <Col lg={5} md={6} className="lg:mx-auto relative">
-              <p className="w-[90%] mb-[45px] md:mb-[50px] xs:mb-[30px]">Lorem ipsum dolor sit amet, consectetur adipiscing elit do eiusmod tempor incididunt ut labore et dolore magna Ut enim ad minim veniam, nostrud exercitation.</p>
+              <p className="w-[90%] mb-[45px] md:mb-[50px] xs:mb-[30px]">Create, train, and deploy AI chatbots with no code. Connect documents and URLs to power accurate answers.</p>
               <div className="flex justify-start items-center">
                 {/* Modal Component Start */}
                 <CustomModal.Wrapper
                   modalBtn={<div className="flex items-center cursor-pointer">
                     <Buttons type="submit" className="btn-sonar border-0" themeColor="#0038e3" color="#fff" size="sm" title={<i className="icon-control-play !ml-[4px]" />} />
-                    <span className="font-medium font-serif text-md text-darkgray uppercase border-b border-solid border-darkgray no-underline ml-4 hover:text-darkgray">WATCH A PROJECTS</span>
+                    <span className="font-medium font-serif text-md text-darkgray uppercase border-b border-solid border-darkgray no-underline ml-4 hover:text-darkgray">WATCH DEMO</span>
                   </div>
                   } >
                   <div className="w-[1020px] max-w-full relative rounded mx-auto">
@@ -167,7 +167,7 @@ const OurProcessPage = (props) => {
                 duration={2} />
             </Col>
             <Col lg={6} sm={8} className="lg:flex lg:justify-center">
-              <h6 className="font-serif font-medium text-darkgray inline-block w-[90%] mb-0 md:w-full sm:text-center">We started this company 10 years ago out of a desire to design and things.</h6>
+              <h6 className="font-serif font-medium text-darkgray inline-block w-[90%] mb-0 md:w-full sm:text-center">We started KyroChat to help teams build intelligent chat experiences faster.</h6>
             </Col>
           </Row>
         </Container>
@@ -224,8 +224,8 @@ const OurProcessPage = (props) => {
         <Container>
           <Row className="justify-center">
             <Col xl={5} sm={8} className="text-center mb-24 font-serif sm:mb-12">
-              <span className="text-xmd mb-[20px] block text-fastblue font-medium">Simple work process</span>
-              <h5 className="text-darkgray font-medium inline-block">We provide high quality and cost effective services</h5>
+              <span className="text-xmd mb-[20px] block text-fastblue font-medium">Simple chatbot lifecycle</span>
+              <h5 className="text-darkgray font-medium inline-block">Fast, secure, and cost-effective AI chatbots</h5>
             </Col>
             <ProcessStep grid="row-cols-1 row-cols-lg-4 row-cols-sm-2 gap-y-10" theme='process-step-style-01' className="" data={ProcessStepData01} animation={fadeIn} />
           </Row>
