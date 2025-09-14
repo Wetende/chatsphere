@@ -42,7 +42,12 @@ module.exports = {
         coolgray: '#d6d5d5',
         neonorange: '#ff7a56',
         slateblue: '#8890a4',
-        error: 'red'
+        error: 'red',
+        // Green brand colors
+        kyrogreen: '#22c55e',     // Primary green
+        kyrogreenlight: '#16a34a', // Lighter green
+        kyrogreendark: '#15803d',  // Darker green
+        kyrogreenaccent: '#4ade80' // Accent green
       }
     },
   },

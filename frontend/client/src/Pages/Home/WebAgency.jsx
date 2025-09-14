@@ -30,6 +30,7 @@ import StaticInstagram from "../../Components/Instagram/StaticInstagram"
 import { resetForm, sendEmail } from "../../Functions/Utilities"
 import FooterStyle05 from '../../Components/Footers/FooterStyle05'
 import SideButtons from "../../Components/SideButtons";
+import Logo from '../../Components/Logo/Logo';
 
 // Data
 import { TestimonialsCarouselData6 } from '../../Components/TestimonialCarousel/TestimonialsCarouselData'
@@ -203,9 +204,7 @@ const WebagencyPage = (props) => {
                     <Col className="col-6 col-lg-2 me-auto ps-lg-0 px-[15px]">
                         <Link aria-label="header logo" className="flex items-center" to="/">
                             <Navbar.Brand className="inline-block p-0 m-0">
-                                <img className="default-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-white.webp' data-rjs='/assets/img/webp/logo-white.webp' alt='logo' />
-                                <img className="alt-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-fast-blue-black.webp' data-rjs='/assets/img/webp/logo-fast-blue-black.webp' alt='logo' />
-                                <img className="mobile-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-fast-blue-black.webp' data-rjs='/assets/img/webp/logo-fast-blue-black.webp' alt='logo' />
+                                <Logo textColor="text-white" />
                             </Navbar.Brand>
                         </Link>
                     </Col>
@@ -268,14 +267,14 @@ const WebagencyPage = (props) => {
 
             {/* Section Start */}
             <section className="p-0 cover-background" style={{ backgroundImage: `url('https://via.placeholder.com/1920x1100')` }}>
-                <div className="absolute h-full w-full opacity-50 top-0 left-0 bg-darkslateblue"></div>
+                <div className="absolute h-full w-full opacity-60 top-0 left-0 bg-[#232323]"></div>
                 <Container>
                     <Row className="items-stretch justify-center full-screen md:h-[650px] sm:h-[450px]">
                         <Col xl={6} lg={7} sm={8} className="relative page-title-extra-small text-center flex justify-center flex-col">
                             {/* Modal Component Start */}
                             <CustomModal.Wrapper
                                 modalBtn={
-                                    <Buttons ariaLabel="modal btn" type="submit" className="mx-auto mb-[40px] btn-sonar border-0" themeColor="#0038e3" color="#fff" size="lg" title={<i className="icon-control-play !ml-[8px]" />} />
+                                    <Buttons ariaLabel="modal btn" type="submit" className="mx-auto mb-[40px] btn-sonar border-0" themeColor="#22c55e" color="#fff" size="lg" title={<i className="icon-control-play !ml-[8px]" />} />
                                 } >
                                 <div className="w-[1020px] max-w-full relative rounded mx-auto">
                                     <div className="fit-video">
@@ -295,7 +294,7 @@ const WebagencyPage = (props) => {
             {/* Section End */}
 
             {/* Section Start */}
-            <section className="py-[100px] bg-gradient-to-b from-[#fff] via-[#fdfdfd] to-[#f7f7f7] overflow-hidden md:py-[75px] sm:py-[50px]">
+            <section className="py-[100px] bg-lightgray overflow-hidden md:py-[75px] sm:py-[50px]">
                 <Container>
                     <Clients grid="row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4" theme="client-logo-style-02" data={ClientData} animation={fadeIn} />
                 </Container>
@@ -348,7 +347,7 @@ const WebagencyPage = (props) => {
                 <Container>
                     <Row className="items-center justify-center">
                         <m.div className="col-12 col-xl-5 col-lg-6 col-md-9" {...fadeIn}>
-                            <span className="font-serif font-semibold text-gradient bg-gradient-to-r from-[#0039e3] via-[#741bd9] to-[#8600d4] uppercase inline-block mb-[15px]">Business process</span>
+                            <span className="font-serif font-semibold text-kyrogreen uppercase inline-block mb-[15px]">Business process</span>
                             <h2 className="heading-4 font-serif font-semibold text-darkgray block -tracking-[1px] mb-20 lg:mb-[80px] md:mb-[75px] xs:mb-20">Understand and apply the business process</h2>
                             <ProcessStep grid="row-cols-1" theme='process-step-style-02' data={ProcessStepData} animation={fadeIn} />
                         </m.div>

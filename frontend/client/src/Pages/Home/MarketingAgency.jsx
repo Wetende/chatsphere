@@ -27,6 +27,7 @@ import { fadeIn, fadeInRight, fadeInLeft } from '../../Functions/GlobalAnimation
 import { Footer } from '../../Components/Footers/Footer';
 import { Input } from '../../Components/Form/Form'
 import SideButtons from "../../Components/SideButtons";
+import Logo from '../../Components/Logo/Logo';
 import ReactCustomScrollbar from "../../Components/ReactCustomScrollbar";
 import StaticInstagram from '../../Components/Instagram/StaticInstagram';
 
@@ -176,9 +177,7 @@ const MarketingAgencyPage = (props) => {
           <Col className="col-auto col-sm-6 col-lg-2 mr-auto ps-lg-0 sm:!pl-0">
             <Link aria-label="header logo" className="flex items-center" to="/">
               <Navbar.Brand className="inline-block p-0 m-0">
-                <img className="default-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-white.webp' data-rjs='/assets/img/webp/logo-white@2x.webp' alt='logo' />
-                <img className="alt-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-black.webp' data-rjs='/assets/img/webp/logo-black@2x.webp' alt='logo' />
-                <img className="mobile-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-black.webp' data-rjs='/assets/img/webp/logo-black@2x.webp' alt='logo' />
+                <Logo textColor="text-white" />
               </Navbar.Brand>
             </Link>
           </Col>
@@ -253,14 +252,14 @@ const MarketingAgencyPage = (props) => {
             SwiperData.map((item, i) => {
               return (
                 <SwiperSlide key={i} style={{ backgroundImage: `url(${item.img})` }} className="cover-background overflow-hidden relative">
-                  <div className="absolute h-full w-full opacity-40 top-0 left-0 bg-gradient-to-r from-[#232323] via-[#232323] to-[#232323]"></div>
+                  <div className="absolute h-full w-full opacity-60 top-0 left-0 bg-[#232323]"></div>
                   <Container className="h-full  text-center justify-center">
                     <Row className="h-full w-[70%] md:w-full my-0 mx-auto">
                       <Col className="h-full justify-center flex-col relative flex">
                         <h2 className="font-serif font-light text-white mb-16">{item.title}<span className="font-semibold">{item.titlebold}</span>{item.titlelast}</h2>
                         <div className="inline-block xs:grid xs:justify-center">
-                          <Buttons to="/page/our-services" className="mr-[20px] btn-fancy tracking-[1px] btn-fill rounded-none font-medium font-serif uppercase btn-fancy md:mb-[15px] sm:mb-0 xs:block xs:w-full xs:mx-0" size="md" color="#000" themeColor="#f4d956" title="Explore services" />
-                          <Buttons to="/" className="btn-fancy tracking-[1px] rounded-none font-medium font-serif uppercase btn-transparent hover:text-black xs:block xs:w-fit xs:mx-0" themeColor="#fff" size="md" color="#fff" icon="fas fa-arrow-right right-icon" iconPosition="after" title="Discover litho" />
+                          <Buttons to="/page/our-services" className="mr-[20px] btn-fancy tracking-[1px] btn-fill rounded-none font-medium font-serif uppercase btn-fancy md:mb-[15px] sm:mb-0 xs:block xs:w-full xs:mx-0" size="md" color="#fff" themeColor="#22c55e" title="Explore services" />
+                          <Buttons to="/" className="btn-fancy tracking-[1px] rounded-none font-medium font-serif uppercase btn-transparent hover:text-kyrogreen xs:block xs:w-fit xs:mx-0" themeColor="#22c55e" size="md" color="#fff" icon="fas fa-arrow-right right-icon" iconPosition="after" title="Discover KyroChat" />
                         </div>
                       </Col>
                     </Row>
@@ -396,7 +395,7 @@ const MarketingAgencyPage = (props) => {
         {/* Section End */}
 
         {/* Section Start */}
-        <m.section className="bg-gradient-to-b from-[#fff] to-[#f0f2f0] pt-[130px] overflow-hidden lg:pt-[90px] md:pt-[75px] sm:pt-[50px]" {...fadeIn}>
+        <m.section className="bg-lightgray pt-[130px] overflow-hidden lg:pt-[90px] md:pt-[75px] sm:pt-[50px]" {...fadeIn}>
           <Container>
             <Row className="justify-center text-center">
               <Col lg={4} className="mb-16 text-center">
@@ -462,8 +461,8 @@ const MarketingAgencyPage = (props) => {
                 </ul>
               </Col>
               <Col xl={{ span: 2, order: 2 }} xs={{ span: 12, order: 1 }} className="text-center lg:mb-[30px]">
-                <Link to="/">
-                  <img src="/assets/img/webp/logo-black.webp" className="my-0 mx-auto" alt="logo" width="111" height="36" />
+                <Link to="/" className="flex justify-center">
+                  <Logo />
                 </Link>
               </Col>
               <Col xl={5} md={6} xs={{ span: 12, order: 3 }} className="text-right">

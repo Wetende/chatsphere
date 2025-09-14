@@ -12,6 +12,7 @@ import FooterStyle01 from "../../Components/Footers/FooterStyle01";
 import ShopWide from '../../Components/Products/ShopWide';
 import { fadeIn } from '../../Functions/GlobalAnimations';
 import SideButtons from "../../Components/SideButtons";
+import Logo from '../../Components/Logo/Logo';
 
 // Data
 import { shopWideData } from '../../Components/Products/ProductData'
@@ -25,9 +26,7 @@ const ShopWidePage = (props) => {
                     <Col className="col-auto col-sm-6 col-lg-2 me-auto ps-lg-0">
                         <Link aria-label="header logo" className="flex items-center" to="/">
                             <Navbar.Brand className="inline-block p-0 m-0">
-                                <img className="default-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-fast-blue-black.webp' data-rjs='/assets/img/webp/logo-fast-blue-black@2x.webp' alt='logo' />
-                                <img className="alt-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-fast-blue-black.webp' data-rjs='/assets/img/webp/logo-fast-blue-black@2x.webp' alt='logo' />
-                                <img className="mobile-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-fast-blue-black.webp' data-rjs='/assets/img/webp/logo-fast-blue-black@2x.webp' alt='logo' />
+                                <Logo textColor="text-darkgray" />
                             </Navbar.Brand>
                         </Link>
                     </Col>

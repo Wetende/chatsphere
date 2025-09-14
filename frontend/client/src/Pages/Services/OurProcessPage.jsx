@@ -19,6 +19,7 @@ import Testimonials from '../../Components/Testimonials/Testimonials';
 import { fadeIn, fadeInRight } from '../../Functions/GlobalAnimations';
 import FooterStyle01 from '../../Components/Footers/FooterStyle01';
 import SideButtons from "../../Components/SideButtons";
+import Logo from '../../Components/Logo/Logo';
 
 // Data
 import { ClientData03 } from '../../Components/Clients/ClientsData';
@@ -61,9 +62,7 @@ const OurProcessPage = (props) => {
           <Col className="col-auto col-sm-6 col-lg-2 me-auto ps-lg-0">
             <Link aria-label="header logo" className="flex items-center" to="/">
               <Navbar.Brand className="inline-block p-0 m-0">
-                <img className="default-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-white.webp' data-rjs='/assets/img/webp/logo-white@2x.webp' alt='logo' />
-                <img className="alt-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-fast-blue-black.webp' data-rjs='/assets/img/webp/logo-fast-blue-black@2x.webp' alt='logo' />
-                <img className="mobile-logo" width="111" height="36" loading="lazy" src='/assets/img/webp/logo-fast-blue-black.webp' data-rjs='/assets/img/webp/logo-fast-blue-black@2x.webp' alt='logo' />
+                <Logo textColor="text-white" />
               </Navbar.Brand>
             </Link>
           </Col>
@@ -81,7 +80,7 @@ const OurProcessPage = (props) => {
           <Col className="col-auto text-right pe-0">
             <SearchBar className="pr-0 xs:pl-[15px]" />
             <HeaderLanguage className="xs:pl-[15px]" />
-            <HeaderCart className="xs:pl-[15px]" style={{ "--base-color": "#0038e3" }} />
+            <HeaderCart className="xs:pl-[15px]" style={{ "--base-color": "#22c55e" }} />
           </Col>
         </HeaderNav>
       </Header>
@@ -110,8 +109,8 @@ const OurProcessPage = (props) => {
           <Row className="justify-center">
             <Col md={6} className="relative lg:mx-auto sm:mb-[30px]">
               <div className="flex items-center font-serif text-xmd font-medium mb-[30px]">
-                <span className="flex-shrink-0 w-[30px] h-[1px] bg-fastblue mr-[20px]"></span>
-                <div className="flex-grow-1 text-fastblue">The fastest path from data to chatbot</div>
+                <span className="flex-shrink-0 w-[30px] h-[1px] bg-kyrogreen mr-[20px]"></span>
+                <div className="flex-grow-1 text-kyrogreen">The fastest path from data to chatbot</div>
               </div>
               <h5 className="font-serif font-medium text-darkgray m-0">KyroChat specializes in AI chatbots, retrieval, and seamless integrations.</h5>
             </Col>
@@ -121,7 +120,7 @@ const OurProcessPage = (props) => {
                 {/* Modal Component Start */}
                 <CustomModal.Wrapper
                   modalBtn={<div className="flex items-center cursor-pointer">
-                    <Buttons type="submit" className="btn-sonar border-0" themeColor="#0038e3" color="#fff" size="sm" title={<i className="icon-control-play !ml-[4px]" />} />
+                    <Buttons type="submit" className="btn-sonar border-0" themeColor="#22c55e" color="#fff" size="sm" title={<i className="icon-control-play !ml-[4px]" />} />
                     <span className="font-medium font-serif text-md text-darkgray uppercase border-b border-solid border-darkgray no-underline ml-4 hover:text-darkgray">WATCH DEMO</span>
                   </div>
                   } >
@@ -158,7 +157,7 @@ const OurProcessPage = (props) => {
         <Container>
           <Row className="justify-center">
             <Col md={4} lg={{ offset: 1 }} className="flex items-center sm:mb-[10px] sm:justify-center">
-              <span className="w-[30%] h-[1px] bg-fastblue mr-[25px] md:inline-block sm:hidden"></span>
+              <span className="w-[30%] h-[1px] bg-kyrogreen mr-[25px] md:inline-block sm:hidden"></span>
               <Counter
                 theme="counter-style-02"
                 grid="row-cols-1 gap-y-10"
@@ -181,7 +180,7 @@ const OurProcessPage = (props) => {
             <Col lg={6} className="relative mt-[70px] lg:mt-[30px] md:mb-[50px]">
               <div className="relative">
                 <Parallax className="lg-no-parallax w-[70%] rounded-[6px] lg:relative lg:!top-[-20px]" speed={0}>
-                  <div className="absolute top-0 left-0 w-full h-full rounded-[6px] opacity-50 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                  <div className="absolute top-0 left-0 w-full h-full rounded-[6px] opacity-20 bg-[#22c55e]"></div>
                   <img loading="lazy" src="https://via.placeholder.com/800x945" className="rounded-[6px] w-full" width="394.8" height="466.34" alt="our-process" />
                 </Parallax>
                 <Parallax className="lg-no-parallax flex rounded-[6px] justify-center items-center w-[70%] bg-no-repeat absolute bottom-0 right-[15px] lg:!top-0 lg:ml-auto" speed={20}>
@@ -191,8 +190,8 @@ const OurProcessPage = (props) => {
             </Col>
             <Col lg={{ span: 5, offset: 1 }}>
               <div className="font-serif text-xmd font-medium mb-[30px]">
-                <span className="w-[30px] h-[1px] bg-fastblue inline-block align-middle mr-[20px]"></span>
-                <span className="text-fastblue inline-block">Looking for interface expertise?</span></div>
+                <span className="w-[30px] h-[1px] bg-kyrogreen inline-block align-middle mr-[20px]"></span>
+                <span className="text-kyrogreen inline-block">Looking for interface expertise?</span></div>
               <h5 className="font-serif text-darkgray font-medium mb-[30px] w-[95%]">We design brand, digital experience that engaged the right customers</h5>
               <p className="w-[95%]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, nostrud exercitation ullamco.</p>
               <div className="mt-[30px] inline-block lg:mt-[40px] md:mt-[35px] sm:mt-[30px]">
@@ -224,7 +223,7 @@ const OurProcessPage = (props) => {
         <Container>
           <Row className="justify-center">
             <Col xl={5} sm={8} className="text-center mb-24 font-serif sm:mb-12">
-              <span className="text-xmd mb-[20px] block text-fastblue font-medium">Simple chatbot lifecycle</span>
+              <span className="text-xmd mb-[20px] block text-kyrogreen font-medium">Simple chatbot lifecycle</span>
               <h5 className="text-darkgray font-medium inline-block">Fast, secure, and cost-effective AI chatbots</h5>
             </Col>
             <ProcessStep grid="row-cols-1 row-cols-lg-4 row-cols-sm-2 gap-y-10" theme='process-step-style-01' className="" data={ProcessStepData01} animation={fadeIn} />
@@ -250,12 +249,12 @@ const OurProcessPage = (props) => {
             <m.div className="col-lg-5 offset-lg-1" {...fadeIn}>
               <h5 className="font-serif font-medium text-darkgray mb-[50px] xs:mb-[30px]">We are expert in search engine and social media optimization</h5>
               <div className="font-serif font-medium inline-block text-xmd mb-[15px]">
-                <span className="w-[30px] h-[1px] inline-block align-middle bg-fastblue mr-[15px]"></span>
-                <span className="text-fastblue inline-block">Unique designs</span></div>
+                <span className="w-[30px] h-[1px] inline-block align-middle bg-kyrogreen mr-[15px]"></span>
+                <span className="text-kyrogreen inline-block">Unique designs</span></div>
               <p className="w-[75%] lg:w-[95%] mb-[25px] xs:mb-[15px]">Lorem ipsum dolor sit amet, consectetur adipiscing do eiusmod tempor incididunt labore et dolore ut enim ad minim veniam nostrud.</p>
               <div className="font-serif font-medium inline-block text-xmd mb-[15px] mt-[20px]">
-                <span className="w-[30px] h-[1px] inline-block align-middle bg-fastblue mr-[15px]"></span>
-                <span className="text-fastblue inline-block">Creative concept designs</span></div>
+                <span className="w-[30px] h-[1px] inline-block align-middle bg-kyrogreen mr-[15px]"></span>
+                <span className="text-kyrogreen inline-block">Creative concept designs</span></div>
               <p className="w-[75%] lg:w-[95%]">Lorem ipsum dolor sit amet, consectetur adipiscing do eiusmod tempor incididunt labore et dolore ut enim ad minim veniam nostrud.</p>
             </m.div>
           </Row>
@@ -282,7 +281,7 @@ const OurProcessPage = (props) => {
               <CustomModal.Wrapper
                 className="absolute top-0 left-0 flex h-full w-full justify-center items-center"
                 modalBtn={
-                  <Buttons type="submit" className="btn-sonar border-0" themeColor="#fff" size="lg" title={<i className="text-gradient bg-gradient-to-tr from-[#b783ff] to-[#ff9393] icon-control-play" />} />
+                  <Buttons type="submit" className="btn-sonar border-0" themeColor="#22c55e" size="lg" title={<i className="icon-control-play" />} />
                 } >
                 <div className="w-[1020px] max-w-full relative rounded mx-auto">
                   <div className="fit-video">

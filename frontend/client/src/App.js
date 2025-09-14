@@ -14,50 +14,8 @@ import ScrollToTopButton from "./Components/ScrollToTop";
 // Home
 import HomeStartupPage from "./Pages/Home/Startup/Startup";
 const HomeBusinessPage = lazy(() => import("./Pages/Home/Business"));
-const CorporatePage = lazy(() => import("./Pages/Home/Corporate"));
-const FinancePage = lazy(() => import("./Pages/Home/Finance"));
-const ApplicationPage = lazy(() => import("./Pages/Home/Application"));
-const ConsultingPage = lazy(() => import("./Pages/Home/Consulting"));
-const DigitalagencyPage = lazy(() => import("./Pages/Home/DigitalAgency"));
 const MarketingAgencyPage = lazy(() => import("./Pages/Home/MarketingAgency"));
-const EventsConferencePage = lazy(() =>
-  import("./Pages/Home/EventsConference")
-);
-const SeoAgencyPage = lazy(() => import("./Pages/Home/SeoAgency"));
-const DesignagencyPage = lazy(() => import("./Pages/Home/DesignAgency"));
 const WebagencyPage = lazy(() => import("./Pages/Home/WebAgency"));
-const CreativeAgencyPage = lazy(() => import("./Pages/Home/CreativeAgency"));
-const BrandingagencyPage = lazy(() => import("./Pages/Home/BrandingAgency"));
-const PhotographyPage = lazy(() => import("./Pages/Home/Photography"));
-const PersonalportfolioPage = lazy(() =>
-  import("./Pages/Home/PersonalPortfolio")
-);
-const InteractiveportfolioPage = lazy(() =>
-  import("./Pages/Home/InteractivePortfolio")
-);
-const CreativeportfolioPage = lazy(() =>
-  import("./Pages/Home/CreativePortfolio")
-);
-const VerticalportfolioPage = lazy(() =>
-  import("./Pages/Home/VerticalPortfolio")
-);
-const SplitPortfolioPage = lazy(() => import("./Pages/Home/SplitPortfolio"));
-const ArchitecturePage = lazy(() => import("./Pages/Home/Architecture"));
-const HotelResortPage = lazy(() => import("./Pages/Home/HotelResort"));
-const TravelAgencyPage = lazy(() => import("./Pages/Home/TravelAgency"));
-const YogaMeditationPage = lazy(() => import("./Pages/Home/YogaMeditation"));
-const RestaurantPage = lazy(() => import("./Pages/Home/Restaurant"));
-const GymFitnessPage = lazy(() => import("./Pages/Home/GymFitness"));
-const SpaSalonPage = lazy(() => import("./Pages/Home/Spasalon"));
-const CafePage = lazy(() => import("./Pages/Home/Cafe"));
-const HomeDecorPage = lazy(() => import("./Pages/Home/Decor"));
-const DentistPage = lazy(() => import("./Pages/Home/Dentist"));
-const InteriorDesignPage = lazy(() => import("./Pages/Home/InteriorDesign"));
-const FurnitureShopPage = lazy(() => import("./Pages/Home/FurnitureShop"));
-const FashionShopPage = lazy(() => import("./Pages/Home/FashionShop"));
-const LifestyleBlogPage = lazy(() => import("./Pages/Home/LifestyleBlog"));
-const ClassicBlogPage = lazy(() => import("./Pages/Home/ClassicBlog"));
-const MagazinePage = lazy(() => import("./Pages/Home/Magazine"));
 
 // Pages
 const LandingPage = lazy(() => import("./Pages/Landing"));
@@ -430,7 +388,6 @@ const LatestNewsPage = lazy(() =>
   import("./Pages/AdditionalPages/LatestNewsPage")
 );
 const OurTeamPage = lazy(() => import("./Pages/AdditionalPages/OurTeamPage"));
-const FreelancerPage = lazy(() => import("./Pages/Home/Freelancer"));
 const PricingPackagesPage = lazy(() =>
   import("./Pages/AdditionalPages/PricingPackagesPage")
 );
@@ -451,7 +408,6 @@ const SearchResultPage = lazy(() =>
 
 // Shop Pages
 const ShopWidePage = lazy(() => import("./Pages/Shop/ShopWide"));
-const HomeBlogMetroPage = lazy(() => import("./Pages/Home/BlogMetro"));
 const ShoppingCart = lazy(() => import("./Pages/Shop/ShoppingCart"));
 const Checkout = lazy(() => import("./Pages/Shop/Checkout"));
 const LoginRegister = lazy(() => import("./Pages/Shop/LoginRegister"));
@@ -595,7 +551,7 @@ function App() {
                   <Route
                     path="/"
                     element={
-                      <HomeBusinessPage style={{ "--base-color": "#3452ff" }} />
+                      <HomeBusinessPage style={{ "--base-color": "#22c55e" }} />
                     }
                   />
 
@@ -605,7 +561,7 @@ function App() {
                       path="transparent-header"
                       element={
                         <TransparentHeaderPage
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -637,7 +593,7 @@ function App() {
                       path="one-page-navigation"
                       element={
                         <OnePageNavigationPage
-                          style={{ "--base-color": "#f4d956" }}
+                          style={{ "--base-color": "#15803d" }}
                         />
                       }
                     />
@@ -710,13 +666,13 @@ function App() {
                   {/* Footers */}
                   <Route
                     path="footers"
-                    element={<Footer style={{ "--base-color": "#0038e3" }} />}
+                    element={<Footer style={{ "--base-color": "#16a34a" }} />}
                   >
                     <Route
                       path="footer-style-01"
                       element={
                         <FooterStyle01Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -724,7 +680,7 @@ function App() {
                       path="footer-style-02"
                       element={
                         <FooterStyle02Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -732,7 +688,7 @@ function App() {
                       path="footer-style-03"
                       element={
                         <FooterStyle03Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -740,7 +696,7 @@ function App() {
                       path="footer-style-04"
                       element={
                         <FooterStyle04Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -748,7 +704,7 @@ function App() {
                       path="footer-style-05"
                       element={
                         <FooterStyle05Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -756,7 +712,7 @@ function App() {
                       path="footer-style-06"
                       element={
                         <FooterStyle06Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -764,7 +720,7 @@ function App() {
                       path="footer-style-07"
                       element={
                         <FooterStyle07Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -772,7 +728,7 @@ function App() {
                       path="footer-style-08"
                       element={
                         <FooterStyle08Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -786,7 +742,7 @@ function App() {
                       path="footer-style-10"
                       element={
                         <FooterStyle10Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -794,7 +750,7 @@ function App() {
                       path="footer-style-10"
                       element={
                         <FooterStyle10Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -802,7 +758,7 @@ function App() {
                       path="footer-style-11"
                       element={
                         <FooterStyle11Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -810,7 +766,7 @@ function App() {
                       path="footer-style-12"
                       element={
                         <FooterStyle12Page
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -820,239 +776,27 @@ function App() {
                   <Route
                     path="/home-startup"
                     element={
-                      <HomeStartupPage style={{ "--base-color": "#27ae60" }} />
+                      <HomeStartupPage style={{ "--base-color": "#22c55e" }} />
                     }
                   />
                   <Route
                     path="/home-business"
                     element={
-                      <HomeBusinessPage style={{ "--base-color": "#3452ff" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-corporate"
-                    element={
-                      <CorporatePage style={{ "--base-color": "#2ed47c" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-finance"
-                    element={
-                      <FinancePage style={{ "--base-color": "#8bb867" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-application"
-                    element={
-                      <ApplicationPage style={{ "--base-color": "#502e95" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-consulting"
-                    element={
-                      <ConsultingPage style={{ "--base-color": "#bf8c4c" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-digital-agency"
-                    element={
-                      <DigitalagencyPage
-                        style={{ "--base-color": "#e6994e" }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/home-seo-agency"
-                    element={
-                      <SeoAgencyPage style={{ "--base-color": "#374162" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-events-conference"
-                    element={
-                      <EventsConferencePage
-                        style={{ "--base-color": "#ff7a56" }}
-                      />
+                      <HomeBusinessPage style={{ "--base-color": "#22c55e" }} />
                     }
                   />
                   <Route
                     path="/home-marketing-agency"
                     element={
                       <MarketingAgencyPage
-                        style={{ "--base-color": "#f4d956" }}
+                        style={{ "--base-color": "#15803d" }}
                       />
-                    }
-                  />
-
-                  {/* Home Specialized */}
-                  <Route path="/home-restaurant" element={<RestaurantPage />} />
-                  <Route
-                    path="/home-architecture"
-                    element={
-                      <ArchitecturePage style={{ "--base-color": "#cee002" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-hotel-resort"
-                    element={
-                      <HotelResortPage style={{ "--base-color": "#c89965" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-travel-agency"
-                    element={
-                      <TravelAgencyPage style={{ "--base-color": "#ff7a56" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-yoga-meditation"
-                    element={
-                      <YogaMeditationPage
-                        style={{ "--base-color": "#EA9D8D" }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/home-gym-fitness"
-                    element={
-                      <GymFitnessPage style={{ "--base-color": "#ff7a56" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-spa-salon"
-                    element={
-                      <SpaSalonPage style={{ "--base-color": "#ec606c" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-cafe"
-                    element={<CafePage style={{ "--base-color": "#cd9452" }} />}
-                  />
-                  <Route
-                    path="/home-decor"
-                    element={
-                      <HomeDecorPage style={{ "--base-color": "#bf8c4c" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-dentist"
-                    element={
-                      <DentistPage style={{ "--base-color": "#00b8b8" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-interior-design"
-                    element={
-                      <InteriorDesignPage
-                        style={{ "--base-color": "#c3964e" }}
-                      />
-                    }
-                  />
-
-                  {/* Home Specialized */}
-                  <Route
-                    path="/home-design-agency"
-                    element={
-                      <DesignagencyPage style={{ "--base-color": "#ffcc2e" }} />
                     }
                   />
                   <Route
                     path="/home-web-agency"
                     element={
-                      <WebagencyPage style={{ "--base-color": "#ffcc2e" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-creative-agency"
-                    element={
-                      <CreativeAgencyPage
-                        style={{ "--base-color": "#cc754c" }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/home-branding-agency"
-                    element={
-                      <BrandingagencyPage
-                        style={{ "--base-color": "#cc754c" }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/home-photography"
-                    element={
-                      <PhotographyPage style={{ "--base-color": "#c7da26" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-personal-portfolio"
-                    element={
-                      <PersonalportfolioPage
-                        style={{ "--base-color": "#ffeb04" }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/home-interactive-portfolio"
-                    element={
-                      <InteractiveportfolioPage
-                        style={{ "--base-color": "#ffeb04" }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/home-creative-portfolio"
-                    element={<CreativeportfolioPage />}
-                  />
-                  <Route
-                    path="/home-vertical-portfolio"
-                    element={<VerticalportfolioPage />}
-                  />
-                  <Route
-                    path="/home-split-portfolio"
-                    element={<SplitPortfolioPage />}
-                  />
-                  <Route path="/home-freelancer" element={<FreelancerPage />} />
-
-                  {/* Home Other */}
-                  <Route
-                    path="/home-furniture-shop"
-                    element={
-                      <FurnitureShopPage
-                        style={{ "--base-color": "#ff6437" }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/home-fashion-shop"
-                    element={
-                      <FashionShopPage style={{ "--base-color": "#000" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-magazine"
-                    element={
-                      <MagazinePage style={{ "--base-color": "#c89965" }} />
-                    }
-                  />
-                  <Route
-                    path="/home-lifestyle-blog"
-                    element={
-                      <LifestyleBlogPage
-                        style={{ "--base-color": "#FE7A56" }}
-                      />
-                    }
-                  />
-                  <Route
-                    path="/home-classic-blog"
-                    element={<ClassicBlogPage />}
-                  />
-                  <Route
-                    path="/home-blog-metro"
-                    element={
-                      <HomeBlogMetroPage
-                        style={{ "--base-color": "#0038e3" }}
-                      />
+                      <WebagencyPage style={{ "--base-color": "#4ade80" }} />
                     }
                   />
 
@@ -1060,7 +804,7 @@ function App() {
                   <Route
                     path="elements"
                     element={
-                      <ElementPage style={{ "--base-color": "#0038e3" }} />
+                      <ElementPage style={{ "--base-color": "#16a34a" }} />
                     }
                   >
                     <Route path="accordions" element={<AccordionPage />} />
@@ -1149,7 +893,7 @@ function App() {
                   <Route
                     path="portfolio"
                     element={
-                      <PortfolioPage style={{ "--base-color": "#0038e3" }} />
+                      <PortfolioPage style={{ "--base-color": "#16a34a" }} />
                     }
                   >
                     <Route
@@ -1423,7 +1167,7 @@ function App() {
                     path="/portfolio/single-project-page-01"
                     element={
                       <SingleProjectPage01
-                        style={{ "--base-color": "#0038e3" }}
+                        style={{ "--base-color": "#16a34a" }}
                       />
                     }
                   />
@@ -1431,7 +1175,7 @@ function App() {
                     path="/portfolio/single-project-page-02"
                     element={
                       <SingleProjectPage02
-                        style={{ "--base-color": "#0038e3" }}
+                        style={{ "--base-color": "#16a34a" }}
                       />
                     }
                   />
@@ -1439,7 +1183,7 @@ function App() {
                     path="/portfolio/single-project-page-03"
                     element={
                       <SingleProjectPage03
-                        style={{ "--base-color": "#0038e3" }}
+                        style={{ "--base-color": "#16a34a" }}
                       />
                     }
                   />
@@ -1455,7 +1199,7 @@ function App() {
                     path="/portfolio/single-project-page-05"
                     element={
                       <SingleProjectPage05
-                        style={{ "--base-color": "#0038e3" }}
+                        style={{ "--base-color": "#16a34a" }}
                       />
                     }
                   />
@@ -1463,19 +1207,19 @@ function App() {
                   {/* Blogs */}
                   <Route
                     path="blogs"
-                    element={<BlogPage style={{ "--base-color": "#0038e3" }} />}
+                    element={<BlogPage style={{ "--base-color": "#16a34a" }} />}
                   >
                     <Route
                       path="blog-grid"
                       element={
-                        <BlogGridPage style={{ "--base-color": "#0038e3" }} />
+                        <BlogGridPage style={{ "--base-color": "#16a34a" }} />
                       }
                     />
                     <Route
                       path="blog-masonry"
                       element={
                         <BlogMasonryPage
-                          style={{ "--base-color": "#0038e3" }}
+                          style={{ "--base-color": "#16a34a" }}
                         />
                       }
                     />
@@ -1493,7 +1237,7 @@ function App() {
                     <Route
                       path="blog-modern"
                       element={
-                        <BlogModernPage style={{ "--base-color": "#0038e3" }} />
+                        <BlogModernPage style={{ "--base-color": "#16a34a" }} />
                       }
                     />
                     <Route path="blog-clean" element={<BlogCleanPage />} />
@@ -1517,7 +1261,7 @@ function App() {
                         path=":id"
                         element={
                           <BlogStandardPostPage
-                            style={{ "--base-color": "#0038e3" }}
+                            style={{ "--base-color": "#16a34a" }}
                           />
                         }
                       />
@@ -1527,7 +1271,7 @@ function App() {
                         path=":id"
                         element={
                           <BlogGalleryPostPage
-                            style={{ "--base-color": "#0038e3" }}
+                            style={{ "--base-color": "#16a34a" }}
                           />
                         }
                       />
@@ -1537,7 +1281,7 @@ function App() {
                         path=":id"
                         element={
                           <BlogSliderPostPage
-                            style={{ "--base-color": "#0038e3" }}
+                            style={{ "--base-color": "#16a34a" }}
                           />
                         }
                       />
@@ -1547,7 +1291,7 @@ function App() {
                         path=":id"
                         element={
                           <BlogHtml5VideoPostPage
-                            style={{ "--base-color": "#0038e3" }}
+                            style={{ "--base-color": "#16a34a" }}
                           />
                         }
                       />
@@ -1557,7 +1301,7 @@ function App() {
                         path=":id"
                         element={
                           <BlogYoutubeVideoPostPage
-                            style={{ "--base-color": "#0038e3" }}
+                            style={{ "--base-color": "#16a34a" }}
                           />
                         }
                       />
@@ -1567,7 +1311,7 @@ function App() {
                         path=":id"
                         element={
                           <BlogVimeoVideoPostPage
-                            style={{ "--base-color": "#0038e3" }}
+                            style={{ "--base-color": "#16a34a" }}
                           />
                         }
                       />
@@ -1577,7 +1321,7 @@ function App() {
                         path=":id"
                         element={
                           <BlogAudioPostPage
-                            style={{ "--base-color": "#0038e3" }}
+                            style={{ "--base-color": "#16a34a" }}
                           />
                         }
                       />
@@ -1587,7 +1331,7 @@ function App() {
                         path=":id"
                         element={
                           <BlogBlockquotePostPage
-                            style={{ "--base-color": "#0038e3" }}
+                            style={{ "--base-color": "#16a34a" }}
                           />
                         }
                       />
@@ -1597,7 +1341,7 @@ function App() {
                         path=":id"
                         element={
                           <BlogFullWidthPost
-                            style={{ "--base-color": "#0038e3" }}
+                            style={{ "--base-color": "#16a34a" }}
                           />
                         }
                       />
@@ -1704,25 +1448,25 @@ function App() {
                   <Route
                     path="/page/about-me"
                     element={
-                      <AboutMePage style={{ "--base-color": "#0038e3" }} />
+                      <AboutMePage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
                   <Route
                     path="/page/about-us"
                     element={
-                      <AboutUsPage style={{ "--base-color": "#0038e3" }} />
+                      <AboutUsPage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
                   <Route
                     path="/page/our-story"
                     element={
-                      <OurStoryPage style={{ "--base-color": "#0038e3" }} />
+                      <OurStoryPage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
                   <Route
                     path="/page/who-we-are"
                     element={
-                      <WhoWeArePage style={{ "--base-color": "#0038e3" }} />
+                      <WhoWeArePage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
 
@@ -1730,19 +1474,19 @@ function App() {
                   <Route
                     path="/page/our-services"
                     element={
-                      <OurServicesPage style={{ "--base-color": "#0038e3" }} />
+                      <OurServicesPage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
                   <Route
                     path="/page/what-we-offer"
                     element={
-                      <WhatWeOfferPage style={{ "--base-color": "#0038e3" }} />
+                      <WhatWeOfferPage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
                   <Route
                     path="/page/our-process"
                     element={
-                      <OurProcessPage style={{ "--base-color": "#0038e3" }} />
+                      <OurProcessPage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
 
@@ -1751,7 +1495,7 @@ function App() {
                     path="/page/contact-simple"
                     element={
                       <ContactUsSimplePage
-                        style={{ "--base-color": "#0038e3" }}
+                        style={{ "--base-color": "#16a34a" }}
                       />
                     }
                   />
@@ -1759,7 +1503,7 @@ function App() {
                     path="/page/contact-classic"
                     element={
                       <ContactUsClassicPage
-                        style={{ "--base-color": "#0038e3" }}
+                        style={{ "--base-color": "#16a34a" }}
                       />
                     }
                   />
@@ -1767,7 +1511,7 @@ function App() {
                     path="/page/contact-modern"
                     element={
                       <ContactUsModernPage
-                        style={{ "--base-color": "#0038e3" }}
+                        style={{ "--base-color": "#16a34a" }}
                       />
                     }
                   />
@@ -1776,27 +1520,27 @@ function App() {
                   <Route
                     path="/page/our-team"
                     element={
-                      <OurTeamPage style={{ "--base-color": "#0038e3" }} />
+                      <OurTeamPage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
                   <Route
                     path="/page/latest-news"
                     element={
-                      <LatestNewsPage style={{ "--base-color": "#0038e3" }} />
+                      <LatestNewsPage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
                   <Route
                     path="/page/pricing-packages"
                     element={
                       <PricingPackagesPage
-                        style={{ "--base-color": "#0038e3" }}
+                        style={{ "--base-color": "#16a34a" }}
                       />
                     }
                   />
                   <Route
                     path="/page/error-404"
                     element={
-                      <NotFoundPage style={{ "--base-color": "#0038e3" }} />
+                      <NotFoundPage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
                   <Route
@@ -1813,18 +1557,18 @@ function App() {
                   />
                   <Route
                     path="/page/faq-s"
-                    element={<FaqSPage style={{ "--base-color": "#0038e3" }} />}
+                    element={<FaqSPage style={{ "--base-color": "#16a34a" }} />}
                   />
                   <Route
                     path="/page/search-result"
                     element={
-                      <SearchResultPage style={{ "--base-color": "#0038e3" }} />
+                      <SearchResultPage style={{ "--base-color": "#16a34a" }} />
                     }
                   />
                   <Route path="*" element={<NotFoundPage />} />
                   <Route
                     path="/privacy"
-                    element={<Privacy style={{ "--base-color": "#0038e3" }} />}
+                    element={<Privacy style={{ "--base-color": "#16a34a" }} />}
                   />
 
                   {/* Shop Pages */}
@@ -1840,7 +1584,7 @@ function App() {
                     <Route
                       path="shopping-cart"
                       element={
-                        <ShoppingCart style={{ "--base-color": "#0038e3" }} />
+                        <ShoppingCart style={{ "--base-color": "#16a34a" }} />
                       }
                     />
                     <Route path="checkout" element={<Checkout />} />
